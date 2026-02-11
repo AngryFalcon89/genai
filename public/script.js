@@ -66,7 +66,7 @@ chatForm.addEventListener('submit', async (e) => {
         typingIndicator.remove();
 
         if (data.error) {
-            addMessage('Sorry, something went wrong. Please try again.', false);
+            addMessage(data.error, false);
         } else {
             addMessage(data.response, false);
         }

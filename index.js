@@ -3,49 +3,71 @@ dotenv.config();
 
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
 import { Pinecone } from '@pinecone-database/pinecone';
-import { PineconeStore } from '@langchain/pinecone';
-
-
+import { pipeline } from '@xenova/transformers';
 
 async function indexDocument() {
-    //Step 1: import and use PDFLoader to load and index a PDF document
-
+    //Step 1: Load the PDF document
     const PDF_PATH = './ordinance.pdf';
     const pdfLoader = new PDFLoader(PDF_PATH);
     const rawDocs = await pdfLoader.load();
-    console.log("PDF document loaded successfully.");
-    
-    //Step 2: PDF chunking is performed
+    console.log(`PDF loaded: ${rawDocs.length} pages.`);
 
+    //Step 2: Chunk the PDF into smaller pieces
     const textSplitter = new RecursiveCharacterTextSplitter({
         chunkSize: 1000,
         chunkOverlap: 200,
     });
     const chunkedDocs = await textSplitter.splitDocuments(rawDocs);
-    console.log("PDF document chunked successfully.");
+    console.log(`Chunked into ${chunkedDocs.length} pieces.`);
 
-    //Step 3: Initializing the Embedding model
+    //Step 3: Initialize the local embedding model (768 dims)
+    console.log('Loading embedding model (first time may download ~100MB)...');
+    const embedder = await pipeline('feature-extraction', 'Xenova/all-mpnet-base-v2');
+    console.log('Embedding model loaded.');
 
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-        apiKey: process.env.GEMINI_API_KEY,
-        model: 'text-embedding-004',
-    });
-    console.log("Embedding model initialized successfully.");
-
-    //Step 4: Initializing Pinecone client and getting the index
-
+    //Step 4: Initialize Pinecone
     const pinecone = new Pinecone();
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-    console.log("Pinecone client initialized successfully.");
+    console.log('Pinecone initialized.');
 
-    //Step 5: Creating Pinecone vector store from the documents
+    // Clear existing vectors (old Google embeddings)
+    console.log('Clearing old vectors from index...');
+    await pineconeIndex.deleteAll();
+    console.log('Old vectors cleared.');
 
-    await PineconeStore.fromDocuments(chunkedDocs, embeddings, {
-        pineconeIndex,
-        maxConcurrency: 5,
-    });
-    console.log("Document indexed successfully in Pinecone.");
+    //Step 5: Embed and upsert in batches
+    const BATCH_SIZE = 50;
+    let totalUpserted = 0;
+
+    for (let i = 0; i < chunkedDocs.length; i += BATCH_SIZE) {
+        const batch = chunkedDocs.slice(i, i + BATCH_SIZE);
+
+        // Generate embeddings for this batch
+        const vectors = [];
+        for (let j = 0; j < batch.length; j++) {
+            const doc = batch[j];
+            const output = await embedder(doc.pageContent, { pooling: 'mean', normalize: true });
+            const embedding = Array.from(output.data);
+
+            vectors.push({
+                id: `doc-${i + j}`,
+                values: embedding,
+                metadata: {
+                    text: doc.pageContent,
+                    source: doc.metadata?.source || PDF_PATH,
+                    page: doc.metadata?.loc?.pageNumber || 0,
+                },
+            });
+        }
+
+        // Upsert batch to Pinecone
+        await pineconeIndex.upsert(vectors);
+        totalUpserted += vectors.length;
+        console.log(`Progress: ${totalUpserted}/${chunkedDocs.length} chunks indexed.`);
+    }
+
+    console.log(`\nDone! ${totalUpserted} chunks indexed successfully.`);
 }
+
 indexDocument();

@@ -1,63 +1,147 @@
-# GenAI RAG Application
+# 🎓 University GenAI Assistant
 
-This project is a Retrieval-Augmented Generation (RAG) system built with Node.js, Express, LangChain, and Google Gemini. It allows users to ask questions against a specific PDF document (university ordinance) using vector search for context retrieval.
+A Retrieval-Augmented Generation (RAG) chatbot that answers questions about university policies, academic ordinances, and regulations by searching through PDF documents using AI.
 
-## Features
+![University Assistant Chat Interface](/Users/ahmadbilalzaidi/.gemini/antigravity/brain/000dbe2a-b961-4d7f-9a77-89176fc39e0e/assistant_professor_workload_1770789332762.png)
 
-- **PDF Ingestion**: Parses and chunks PDF documents.
-- **Vector Search**: Uses Pinecone to store and retrieve vector embeddings of the document chunks.
-- **AI-Powered Q&A**: Uses Google's Gemini 1.5 Flash model to generate answers based on the retrieved context.
-- **Conversation Memory**: Maintains a simple session history for follow-up questions (in-memory).
-- **Web Interface**: Simple frontend to interact with the chat bot.
+## ✨ Features
 
-## Prerequisites
+- **PDF-Powered Q&A** — Ask questions and get answers sourced directly from university documents
+- **Conversational Memory** — Supports follow-up questions with chat history context
+- **Vector Search** — Uses Pinecone to find the most relevant document sections
+- **Local Embeddings** — Runs embedding model locally (no external API needed)
+- **Markdown Rendering** — AI responses are formatted with headers, lists, and code blocks
+- **Modern Web UI** — Clean, responsive chat interface
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- A [Google AI Javascript API Key](https://aistudio.google.com/)
-- A [Pinecone](https://www.pinecone.io/) API Key and Index
+## 🛠️ Tech Stack
 
-## Installation
+### 🧠 LLM (Chat)
+| | |
+|---|---|
+| **Provider** | [Groq](https://groq.com) |
+| **Model** | `llama-3.3-70b-versatile` (Meta's Llama 3.3, 70 billion parameters) |
+| **Context Window** | 128K tokens |
+| **Cost** | Free tier — 30 req/min, 14,400 req/day |
+| **SDK** | `groq-sdk` (npm) |
 
-1.  **Clone the repository** (if applicable) or download the source code.
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
+### 📐 Embeddings (Vector Search)
+| | |
+|---|---|
+| **Provider** | Local — runs on your machine, no API needed |
+| **Model** | `all-mpnet-base-v2` via [@xenova/transformers](https://github.com/xenova/transformers.js) |
+| **Dimensions** | 768 |
+| **Cost** | Completely free (runs locally) |
 
-## Configuration
+### 🗄️ Vector Database
+| | |
+|---|---|
+| **Provider** | [Pinecone](https://pinecone.io) |
+| **Index** | `virtual-assistant` |
+| **Records** | 1,081 chunks from `ordinance.pdf` |
+| **Cost** | Free Starter plan |
 
-1.  Create a `.env` file in the root directory.
-2.  Add your API keys to the `.env` file:
-    ```env
-    GEMINI_API_KEY=your_google_ai_api_key
-    PINECONE_API_KEY=your_pinecone_api_key
-    PINECONE_INDEX_NAME=your_index_name
-    ```
+### 🌐 Frontend & Backend
+| | |
+|---|---|
+| **Server** | Express.js (Node.js) |
+| **Frontend** | Vanilla HTML, CSS, JavaScript |
+| **Markdown** | `marked` library (CDN) |
+| **PDF Parsing** | LangChain `PDFLoader` + `RecursiveCharacterTextSplitter` |
 
-## Usage
+## 📁 Project Structure
 
-### 1. Ingest Data
-Before running the server, you need to process the PDF and store the embeddings in Pinecone.
+```
+GenAI/
+├── server.js          # Express server with RAG pipeline
+├── index.js           # PDF ingestion and Pinecone indexing script
+├── ordinance.pdf      # Source PDF document
+├── package.json
+├── .env               # API keys (not committed)
+└── public/
+    ├── index.html     # Chat UI
+    ├── style.css      # Styling
+    └── script.js      # Frontend logic
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v18 or higher
+- A free [Groq API Key](https://console.groq.com/keys) (no credit card needed)
+- A free [Pinecone API Key](https://app.pinecone.io/) and Index
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Environment
+
+Create a `.env` file in the project root:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+PINECONE_API_KEY=your_pinecone_api_key
+PINECONE_ENVIRONMENT=us-east-1
+PINECONE_INDEX_NAME=your_index_name
+```
+
+### 3. Index the PDF
+
+This processes the PDF, generates embeddings locally, and stores them in Pinecone. Only needed once (or when the PDF changes).
 
 ```bash
 node index.js
 ```
-*Note: Ensure `ordinance.pdf` is present in the root directory or update the path in `index.js`.*
 
-### 2. Start the Server
-Run the Express server:
+> **Note:** The first run downloads the embedding model (~100MB). Subsequent runs use the cached model. Indexing ~1000 chunks takes about 10 minutes.
+
+### 4. Start the Server
 
 ```bash
 npm start
 ```
-The server will start at `http://localhost:3000`.
 
-### 3. Use the Application
-Open your browser and navigate to `http://localhost:3000`. You can now chat with the AI about the contents of the uploaded PDF.
+Open [http://localhost:3000](http://localhost:3000) in your browser and start chatting!
 
-## Project Structure
+## 🔄 How It Works (RAG Pipeline)
 
-- `server.js`: Main Express server handling API requests and chat logic.
-- `index.js`: Script for loading PDF, splitting text, and indexing embeddings to Pinecone.
-- `public/`: Contains static frontend files (`index.html`, `style.css`, `script.js`).
-- `ordinance.pdf`: The source document for the RAG system.
+```
+User Question
+     │
+     ▼
+┌─────────────────┐
+│  Query Rewrite   │ ← Groq rewrites follow-ups into standalone questions
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Local Embedding │ ← all-mpnet-base-v2 converts text → 768-dim vector
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Pinecone Search │ ← Finds top 10 most relevant PDF chunks
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Groq (Llama 3.3)│ ← Generates answer using retrieved context only
+└────────┬────────┘
+         │
+         ▼
+   AI Response
+```
+
+## 📝 Notes
+
+- **Free tier limits**: Groq provides 30 requests/minute and 14,400 requests/day on the free plan
+- **No Google dependency**: The app originally used Google Gemini but was migrated to Groq + local embeddings to avoid regional API restrictions
+- **In-memory history**: Chat history is stored in memory and resets when the server restarts
+- **First request delay**: The first chat request after server start may take a few extra seconds as the embedding model loads into memory
+
+## 📄 License
+
+ISC

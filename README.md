@@ -2,8 +2,6 @@
 
 A Retrieval-Augmented Generation (RAG) chatbot that answers questions about university policies, academic ordinances, and regulations by searching through PDF documents using AI.
 
-![University Assistant Chat Interface](/Users/ahmadbilalzaidi/.gemini/antigravity/brain/000dbe2a-b961-4d7f-9a77-89176fc39e0e/assistant_professor_workload_1770789332762.png)
-
 ## ✨ Features
 
 - **PDF-Powered Q&A** — Ask questions and get answers sourced directly from university documents

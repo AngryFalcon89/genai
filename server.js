@@ -88,6 +88,22 @@ async function transformQuery(history, question) {
     return response.choices[0].message.content;
 }
 
+// --- Options Parsing ---
+function parseOptions(text) {
+    const optionRegex = /<<OPTIONS:\s*(.+?)\s*>>/g;
+    const options = [];
+    let cleanText = text;
+
+    let match;
+    while ((match = optionRegex.exec(text)) !== null) {
+        const items = match[1].split('|').map(s => s.trim()).filter(Boolean);
+        options.push(...items);
+        cleanText = cleanText.replace(match[0], '');
+    }
+
+    return { cleanText: cleanText.trim(), options };
+}
+
 async function getChatResponse(sessionId, question) {
     // 1. Get or Create Session
     if (!Sessions.has(sessionId)) {
@@ -102,11 +118,9 @@ async function getChatResponse(sessionId, question) {
     const store = await getVectorStore();
     const results = await store.similaritySearchWithScore(rewrittenQuery, 10);
 
-    // Filter by relevance score (lower = more similar in cosine distance)
     const SCORE_THRESHOLD = 0.65;
     const relevantResults = results.filter(res => res[1] <= SCORE_THRESHOLD);
 
-    // Build context with section metadata for better grounding
     const context = relevantResults
         .map(res => {
             const section = res[0].metadata.section || 'Unknown Section';
@@ -120,25 +134,42 @@ async function getChatResponse(sessionId, question) {
     const messages = [
         {
             role: 'system',
-            content: `You are an expert **University Academic Advisor** for **Zakir Husain College of Engineering & Technology (ZHCET), Aligarh Muslim University**. You help students, faculty, and visitors with ANY question about the university using the provided "Context".
+            content: `You are **ZHCET Buddy** 🎓 — a friendly, warm, and knowledgeable Academic Advisor for **Zakir Husain College of Engineering & Technology (ZHCET), Aligarh Muslim University**.
+
+### Your Personality:
+- You're like a helpful senior who genuinely cares about students
+- Use a warm, encouraging tone — address students casually ("Hey!", "Sure thing!", "Great question!")
+- Use emojis sparingly but naturally (📚, ✅, 🎯, 💡)
+- Keep responses concise but complete — students are busy!
+- When listing courses or rules, use clean markdown tables for readability
 
 ### Your Knowledge Covers:
-- **College Information:** Departments, programmes (B.Tech, M.Tech, M.Arch, etc.), rankings, objectives
-- **Courses & Curriculum:** Semester-wise course structures for ALL branches (AI, Computer, Electrical, Mechanical, Civil, Chemical, ECE, Food Tech, Automobile, Petrochemical), credit allocations, course categories (PC, PE, OE, BS, ESA, HM, PSI, AU)
-- **Academic Rules (Ordinances):** Registration, attendance, examination, grading, promotion, degree requirements
-- **Registration Rules:** Max 40 credits/semester, modes of registration (a/b/c), graduating courses, minor degrees
-- **Grading System:** Grade points (A+ to E), grade ranges for theory and lab courses, SGPA/CGPA calculation
-- **Promotion Rules:** Minimum earned credits for promotion at end of semesters II, IV, and VI
-- **Library & Facilities:** Book bank rules, e-resources, timings, contact details
-- **Scholarships & Placement:** Available support and services
+- **College Info:** 17 departments/centres, B.Tech/M.Tech/M.Arch programmes, rankings
+- **Courses:** Semester-wise course structures for ALL 10 B.Tech branches with course numbers, credits, marks
+- **Rules (Ordinances):** Registration, attendance (75% min), exams, grading, promotion, degree requirements
+- **Registration:** Max 40 credits/semester, modes a/b/c, graduating courses, minor degrees
+- **Grading:** A+ (10) to E (0), SGPA/CGPA formulas, grace marks
+- **Promotion:** Min credits for II (16), IV (60), VI (108)
+- **Library:** Book bank, e-resources, timings, contacts
+
+### Interactive Options (IMPORTANT!):
+When your response naturally leads to a follow-up choice, include clickable options using this EXACT format:
+<<OPTIONS: Option 1 | Option 2 | Option 3>>
+
+Examples of when to use options:
+- After greeting: <<OPTIONS: 📋 View my course structure | 📖 Ask about rules & ordinances | 📊 Check grading system | 🏫 College information>>
+- When branch is needed: <<OPTIONS: Computer Engineering | Electrical Engineering | Mechanical Engineering | Civil Engineering | Electronics & Communication | Chemical Engineering | Artificial Intelligence | Food Technology | Automobile Engineering | Petrochemical Engineering>>
+- When semester is needed: <<OPTIONS: Semester 1 | Semester 2 | Semester 3 | Semester 4 | Semester 5 | Semester 6 | Semester 7 | Semester 8>>
+- After answering about rules: <<OPTIONS: 📋 Registration rules | 📊 Grading system | 🎓 Promotion criteria | 📝 Attendance policy>>
+
+Always offer relevant options so students can explore further without typing!
 
 ### Instructions:
-1. **Answer from Context ONLY.** Base your answers strictly on the provided context. If the information is not in the context, say so honestly.
-2. **Be Specific.** When asked about courses, list the exact course numbers, titles, credits, and marks distribution from the tables.
-3. **For Registration Queries:** If a student asks about registration, backlogs, or credit limits, ask for their semester, branch, and current credit details before advising.
-4. **Cite Rules:** Reference specific ordinance clause numbers (e.g., "As per Clause 7.1(e)") when quoting rules.
-5. **Format Well:** Use markdown tables, bullet points, and bold text to make answers clear and scannable.
-6. **Tone:** Professional, helpful, thorough.
+1. **Answer from Context ONLY.** If info isn't available, say so honestly.
+2. **Be Specific.** List exact course numbers, titles, credits from tables.
+3. **For Registration Queries:** Ask for semester, branch, credits before advising.
+4. **Cite Rules:** Reference clause numbers (e.g., "As per Clause 7.1(e)").
+5. **Always end with options** to keep the conversation flowing!
 
 ### Context:
 ${context || 'No relevant context found for this query.'}`
@@ -153,14 +184,15 @@ ${context || 'No relevant context found for this query.'}`
         max_tokens: 2048,
     });
 
-    const assistantMessage = response.choices[0].message.content;
+    const rawMessage = response.choices[0].message.content;
+    const { cleanText, options } = parseOptions(rawMessage);
 
     // 5. Update History with ORIGINAL user message (not rewritten)
     history.push({ role: 'user', content: question });
-    history.push({ role: 'assistant', content: assistantMessage });
+    history.push({ role: 'assistant', content: cleanText });
     saveSessions();
 
-    return assistantMessage;
+    return { text: cleanText, options };
 }
 
 // --- API Endpoints ---
@@ -208,11 +240,10 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: 'Message is required' });
         }
 
-        // Generate ID if missing (though frontend should ideally send one)
         const finalSessionId = sessionId || `session_${Date.now()}`;
 
-        const response = await getChatResponse(finalSessionId, message);
-        res.json({ response, sessionId: finalSessionId });
+        const { text, options } = await getChatResponse(finalSessionId, message);
+        res.json({ response: text, options, sessionId: finalSessionId });
     } catch (error) {
         console.error('Error processing chat:', error);
         res.status(500).json({ error: error.message || 'Internal server error' });

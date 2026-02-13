@@ -1,0 +1,78 @@
+{
+  "session_1770991767090": [
+    {
+      "role": "user",
+      "content": "What subject options are available for a mechanical engineering student in their 4th semester if they have 2 back papers from the 3rd semester, and what are the possible ways to clear these back papers while progressing to the next semester?"
+    },
+    {
+      "role": "assistant",
+      "content": "To determine the subject options available for a mechanical engineering student in their 4th semester, I would need to know the specific courses offered in the 4th semester for mechanical engineering students. However, based on the provided context, I can see the courses offered in the 4th semester for some branches, but not specifically for mechanical engineering.\n\nAssuming the student has 2 back papers from the 3rd semester, to clear these back papers while progressing to the next semester, the student has a few options:\n\n1. **Register for the back papers along with the 4th-semester courses**: The student can register for the 2 back papers from the 3rd semester along with the courses offered in the 4th semester. However, the student needs to ensure that the total credits for the semester do not exceed 40 credits (as per Rule 5.2/10.1).\n\n2. **Register for the back papers in the summer semester or as a supplementary exam**: If the student is not able to register for the back papers along with the 4th-semester courses, they can register for the back papers in the summer semester or as a supplementary exam. This will allow the student to clear the back papers without overloading themselves with too many courses in the 4th semester.\n\n3. **Postpone registering for some 4th-semester courses**: If the student is not able to clear the back papers along with the 4th-semester courses, they can postpone registering for some 4th-semester courses and focus on clearing the back papers first. This will allow the student to focus on clearing the back papers without overloading themselves with too many courses.\n\nTo provide more specific guidance, I would need to know the following information:\n\n* The specific courses offered in the 4th semester for mechanical engineering students\n* The credit values of the back papers and the 4th-semester courses\n* The current semester load of the student\n\nWith this information, I can provide more tailored advice on how the student can clear their back papers while progressing to the next semester."
+    }
+  ],
+  "session_1770991953937": [
+    {
+      "role": "user",
+      "content": "What subject options are available to a mechanical engineering student in their 4th semester if they have 2 back papers from the 3rd semester, and what are the possible ways to clear these back papers while progressing to the next semester?"
+    },
+    {
+      "role": "assistant",
+      "content": "To provide accurate advice, I need to know the following details:\n\n1.  **Current Earned Credits:** What is the total number of credits the student has passed so far?\n2.  **Backlog Details:** What are the credit values of the 2 backlog papers from the 3rd semester?\n3.  **Current Semester Load:** What is the total credit value of the regular courses the student plans to take in the 4th semester?\n\nWith this information, I can offer guidance on:\n\n*   Available subject options for the 4th semester\n*   Possible ways to clear the backlog papers while progressing to the next semester\n*   Ensuring the student does not exceed the 40-credit limit for the semester\n\nPlease provide the necessary details to help me assist you better."
+    }
+  ],
+  "session_1770992081365": [
+    {
+      "role": "user",
+      "content": "What departments are in ZHCET?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Zakir Husain College of Engineering and Technology (ZHCET) has the following departments:\n\n1. Department of Architecture\n2. Department of Chemical Engineering\n3. Department of Civil Engineering\n4. Department of Computer Engineering\n5. Department of Electrical Engineering\n6. Department of Electronics Engineering\n7. Department of Mechanical Engineering\n8. Department of Petroleum Studies\n9. Department of Applied Chemistry\n10. Department of Applied Mathematics\n11. Department of Applied Physics\n\nAdditionally, the college has the following centers:\n\n1. Interdisciplinary Nanotechnology Centre\n2. Centre for Food Science and Technology\n3. Centre for Biomedical Engineering\n4. Interdisciplinary Centre for Artificial Intelligence\n5. Centre For Integrated Green and Renewable Energy\n6. Centre of Advanced Research in Electrified Transportation"
+    }
+  ],
+  "session_1770992092237": [
+    {
+      "role": "user",
+      "content": "What courses do Computer Engineering students take in semester 3?"
+    },
+    {
+      "role": "assistant",
+      "content": "**Semester 3 Courses for Computer Engineering Students:**\n\nThe following courses are taken by Computer Engineering students in Semester 3:\n\n1. **AMS2612 - Higher Mathematics** (BS) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n2. **COC2032 - Object Oriented Programming** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n3. **COC2062 - Data Structure and Algorithm** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n4. **COC2072 - Digital Logic and System Design** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n5. **COC2122 - Database Management System** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n6. **COC2932 - C & C++ Programming Lab** (PC) - 2 credits\n\t* LTP: 0-1-2\n\t* Int/Ext/Tot Marks: 60/40/100\n7. **ELA2112 - Electronic Devices & Circuits** (ESA) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n\n**Total Credits:** 26"
+    },
+    {
+      "role": "user",
+      "content": "what courses are offered in mechanical engineering 3rd semester"
+    },
+    {
+      "role": "assistant",
+      "content": "**Semester 3 Courses for Mechanical Engineering Students:**\n\nThe following courses are taken by Mechanical Engineering students in Semester 3:\n\n1. **MTH2012 - Mathematics III** (BS) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n2. **MEC2032 - Mechanics of Solids** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n3. **MEC2042 - Thermodynamics** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n4. **MEC2052 - Fluid Mechanics** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n5. **MEC2062 - Manufacturing Process** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n6. **MEC2112 - Mechanical Measurement and Metrology** (PC) - 3 credits\n\t* LTP: 2-1-0\n\t* Int/Ext/Tot Marks: 15/25/50/100\n7. **MEC2932 - Workshop Practice** (PC) - 2 credits\n\t* LTP: 0-0-4\n\t* Int/Ext/Tot Marks: 100/0/100\n8. **HUM2012 - English for Professional Communication** (HM) - 2 credits\n\t* LTP: 2-0-0\n\t* Int/Ext/Tot Marks: 40/60/100\n\n**Total Credits:** 25"
+    },
+    {
+      "role": "user",
+      "content": "I have got back in MEC2042 and MEC2052 in 3rd sem, in which sem I can take back paper, and also what are the course options I can choose in 5th sem"
+    },
+    {
+      "role": "assistant",
+      "content": "**Backlog Courses:**\nYou have backlogs in MEC2042 - Thermodynamics and MEC2052 - Fluid Mechanics, which are 3rd-semester courses. As per the ordinances, you can take these backlog courses in the next semester, i.e., 4th semester, or in any subsequent semester when these courses are offered.\n\n**5th Semester Course Options:**\nIn the 5th semester, you will have the following course options:\n\n1. **MEC3012 - Kinematics of Machines** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n2. **MEC3022 - Heat Transfer** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n3. **MEC3032 - Design of Machine Elements** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n4. **MEC3042 - Control Systems** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n5. **MEC3052 - Mechanical Vibrations** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n6. **MEC3062 - Internal Combustion Engines** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n7. **MEC3072 - Refrigeration and Air Conditioning** (PC) - 4 credits\n\t* LTP: 3-1-0\n\t* Int/Ext/Tot Marks: 15/25/60/100\n8. **MEC3082 - Computer Aided Design** (PC) - 3 credits\n\t* LTP: 2-1-0\n\t* Int/Ext/Tot Marks: 15/25/50/100\n9. **MEC3092 - Mechanical Engineering Lab** (PC) - 2 credits\n\t* LTP: 0-0-4\n\t* Int/Ext/Tot Marks: 100/0/100\n\n**Elective Courses:**\nIn addition to the above courses, you will also have the option to choose elective courses from the following categories:\n\n* **Programme Electives (PE)**: You can choose 2-3 courses from the list of programme electives, which are specific to the Mechanical Engineering program.\n* **Open Electives (OE)**: You can choose 1-2 courses from the list of open electives, which are common to all programs.\n\nPlease note that the course options and elective courses may vary depending on the university's curriculum and availability of courses. It is recommended to consult with your academic advisor or departmental coordinator to confirm the course options and elective courses available in the 5th semester."
+    }
+  ],
+  "session_1770992096525": [
+    {
+      "role": "user",
+      "content": "What are the grade ranges for theory courses?"
+    },
+    {
+      "role": "assistant",
+      "content": "The grade ranges for **theory courses** are as follows:\n\n| Range | Grade |\n| :--- | :--- |\n| 85 and above | A+ |\n| 75 and above but less than 85 | A |\n| 65 and above but less than 75 | B+ |\n| 55 and above but less than 65 | B |\n| 45 and above but less than 55 | C |\n| 35 and above but less than 45 | D (Minimum Pass Grade) |\n| Less than 35 | E |"
+    }
+  ],
+  "session_1770992098405": [
+    {
+      "role": "user",
+      "content": "What are the minimum credits needed for promotion to 3rd year?"
+    },
+    {
+      "role": "assistant",
+      "content": "As per the promotion rules (Clause 11.1), the minimum earned credits required for promotion to the 3rd year (i.e., at the end of Semester IV) is **60 credits**, including at least 36 credits of the first two semesters."
+    }
+  ]
+}

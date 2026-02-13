@@ -3,3 +3,5 @@ node_modules/
 .DS_Store
 secret.txt
 questions.txt
+
+vector_store/

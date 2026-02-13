@@ -1,10 +1,13 @@
+
 import * as dotenv from 'dotenv';
 dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import Groq from 'groq-sdk';
-import { Pinecone } from '@pinecone-database/pinecone';
-import { pipeline } from '@xenova/transformers';
+import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
+import { LocalEmbeddings } from './utils/LocalEmbeddings.js';
 
 const app = express();
 const port = 3000;
@@ -13,35 +16,65 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-const pinecone = new Pinecone();
-const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const MODEL = 'llama-3.3-70b-versatile';
+const VECTOR_STORE_PATH = './vector_store';
+const SESSIONS_FILE = './sessions.json';
 
-let History = [];
+// In-memory session store (Map<sessionId, Array<Message>>)
+let Sessions = new Map();
+let vectorStore = null;
 
-// Initialize embedding model (runs locally, no API key needed)
-// First call will download the model (~100MB), subsequent calls use cache
-let embeddingPipeline = null;
-
-async function getEmbedding(text) {
-    if (!embeddingPipeline) {
-        console.log('Loading embedding model (first time may take a moment)...');
-        embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-mpnet-base-v2');
-        console.log('Embedding model loaded.');
+// --- Session Management ---
+function loadSessions() {
+    if (fs.existsSync(SESSIONS_FILE)) {
+        try {
+            const data = fs.readFileSync(SESSIONS_FILE, 'utf8');
+            const parsed = JSON.parse(data);
+            // Convert Object back to Map
+            Sessions = new Map(Object.entries(parsed));
+            console.log(`Loaded ${Sessions.size} chat sessions.`);
+        } catch (e) {
+            console.error("Error loading sessions:", e);
+        }
     }
-    const output = await embeddingPipeline(text, { pooling: 'mean', normalize: true });
-    return Array.from(output.data);
 }
 
-async function transformQuery(question) {
+function saveSessions() {
+    try {
+        const obj = Object.fromEntries(Sessions);
+        fs.writeFileSync(SESSIONS_FILE, JSON.stringify(obj, null, 2));
+    } catch (e) {
+        console.error("Error saving sessions:", e);
+    }
+}
+
+// Load sessions on startup
+loadSessions();
+
+// --- Vector Store Logic ---
+async function getVectorStore() {
+    if (!vectorStore) {
+        console.log("Loading vector store...");
+        try {
+            vectorStore = await HNSWLib.load(VECTOR_STORE_PATH, new LocalEmbeddings());
+            console.log("Vector store loaded.");
+        } catch (error) {
+            console.error("Failed to load vector store. Make sure you have run 'node index.js'.", error);
+            throw error;
+        }
+    }
+    return vectorStore;
+}
+
+// --- Chat Logic ---
+async function transformQuery(history, question) {
     const messages = [
         {
             role: 'system',
             content: `You are a query rewriting expert. Based on the provided chat history, rephrase the "Follow Up user Question" into a complete, standalone question that can be understood without the chat history. Only output the rewritten question and nothing else.`
         },
-        ...History,
+        ...history,
         { role: 'user', content: question }
     ];
 
@@ -55,70 +88,142 @@ async function transformQuery(question) {
     return response.choices[0].message.content;
 }
 
-async function getChatResponse(question) {
-    // Step 1: Rewrite the query for standalone context
-    const rewrittenQuery = await transformQuery(question);
+async function getChatResponse(sessionId, question) {
+    // 1. Get or Create Session
+    if (!Sessions.has(sessionId)) {
+        Sessions.set(sessionId, []);
+    }
+    const history = Sessions.get(sessionId);
 
-    // Step 2: Convert query into embedding vector (runs locally)
-    const queryVector = await getEmbedding(rewrittenQuery);
+    // 2. Rewrite Query (for vector search only)
+    const rewrittenQuery = await transformQuery(history, question);
 
-    // Step 3: Query Pinecone for relevant context
-    const searchResults = await pineconeIndex.query({
-        topK: 10,
-        vector: queryVector,
-        includeMetadata: true,
-    });
+    // 3. Retrieve Context with score filtering
+    const store = await getVectorStore();
+    const results = await store.similaritySearchWithScore(rewrittenQuery, 10);
 
-    const context = searchResults.matches
-        .map(match => match.metadata.text)
+    // Filter by relevance score (lower = more similar in cosine distance)
+    const SCORE_THRESHOLD = 0.65;
+    const relevantResults = results.filter(res => res[1] <= SCORE_THRESHOLD);
+
+    // Build context with section metadata for better grounding
+    const context = relevantResults
+        .map(res => {
+            const section = res[0].metadata.section || 'Unknown Section';
+            return `[Section: ${section}]\n${res[0].pageContent}`;
+        })
         .join("\n\n---\n\n");
 
-    // Step 4: Send to Groq with context
-    History.push({ role: 'user', content: rewrittenQuery });
+    // 4. Generate Response
+    const currentHistory = [...history, { role: 'user', content: question }];
 
     const messages = [
         {
             role: 'system',
-            content: `You will be given a "Student Query" and a "Context" block containing retrieved university documents (like academic policies, course prerequisites, and schedules). Your answer MUST be based only on the information within that "Context". Do not use any external knowledge. Do not make assumptions or guess if the information is not in the "Context". If the "Context" does not contain the information needed to answer the query, you must respond with: "I'm sorry, I don't have the specific information about that. I recommend contacting your academic advisor for assistance". While your information source is technical, your tone should be helpful and easy to understand, as if you are assisting a confused student. Your expertise is limited to course enrollment, prerequisites, eligibility, credit limits, and academic policies. Context: ${context}`
+            content: `You are an expert **University Academic Advisor** for **Zakir Husain College of Engineering & Technology (ZHCET), Aligarh Muslim University**. You help students, faculty, and visitors with ANY question about the university using the provided "Context".
+
+### Your Knowledge Covers:
+- **College Information:** Departments, programmes (B.Tech, M.Tech, M.Arch, etc.), rankings, objectives
+- **Courses & Curriculum:** Semester-wise course structures for ALL branches (AI, Computer, Electrical, Mechanical, Civil, Chemical, ECE, Food Tech, Automobile, Petrochemical), credit allocations, course categories (PC, PE, OE, BS, ESA, HM, PSI, AU)
+- **Academic Rules (Ordinances):** Registration, attendance, examination, grading, promotion, degree requirements
+- **Registration Rules:** Max 40 credits/semester, modes of registration (a/b/c), graduating courses, minor degrees
+- **Grading System:** Grade points (A+ to E), grade ranges for theory and lab courses, SGPA/CGPA calculation
+- **Promotion Rules:** Minimum earned credits for promotion at end of semesters II, IV, and VI
+- **Library & Facilities:** Book bank rules, e-resources, timings, contact details
+- **Scholarships & Placement:** Available support and services
+
+### Instructions:
+1. **Answer from Context ONLY.** Base your answers strictly on the provided context. If the information is not in the context, say so honestly.
+2. **Be Specific.** When asked about courses, list the exact course numbers, titles, credits, and marks distribution from the tables.
+3. **For Registration Queries:** If a student asks about registration, backlogs, or credit limits, ask for their semester, branch, and current credit details before advising.
+4. **Cite Rules:** Reference specific ordinance clause numbers (e.g., "As per Clause 7.1(e)") when quoting rules.
+5. **Format Well:** Use markdown tables, bullet points, and bold text to make answers clear and scannable.
+6. **Tone:** Professional, helpful, thorough.
+
+### Context:
+${context || 'No relevant context found for this query.'}`
         },
-        ...History
+        ...currentHistory
     ];
 
     const response = await groq.chat.completions.create({
         model: MODEL,
         messages: messages,
-        temperature: 0.5,
+        temperature: 0.3,
         max_tokens: 2048,
     });
 
     const assistantMessage = response.choices[0].message.content;
 
-    History.push({ role: 'assistant', content: assistantMessage });
+    // 5. Update History with ORIGINAL user message (not rewritten)
+    history.push({ role: 'user', content: question });
+    history.push({ role: 'assistant', content: assistantMessage });
+    saveSessions();
 
     return assistantMessage;
 }
 
-app.post('/api/chat', async (req, res) => {
-    try {
-        const { message } = req.body;
-        if (!message) {
-            return res.status(400).json({ error: 'Message is required' });
-        }
-        const response = await getChatResponse(message);
-        res.json({ response });
-    } catch (error) {
-        console.error('Error processing chat:', error);
-        const errorMessage = error?.message || 'Internal server error';
-        if (error?.status === 429) {
-            res.status(429).json({ error: 'API quota exceeded. Please wait a moment and try again.' });
-        } else if (error?.status === 400 || error?.status === 401) {
-            res.status(error.status).json({ error: 'API key is invalid. Please check your GROQ_API_KEY in the .env file.' });
-        } else {
-            res.status(500).json({ error: errorMessage });
-        }
+// --- API Endpoints ---
+
+// Get all sessions (lightweight list)
+app.get('/api/sessions', (req, res) => {
+    const list = Array.from(Sessions.keys()).map(id => {
+        const history = Sessions.get(id);
+        const firstMsg = history.find(m => m.role === 'user')?.content || 'New Chat';
+        return {
+            id,
+            title: firstMsg.substring(0, 30) + (firstMsg.length > 30 ? '...' : ''),
+            count: history.length
+        };
+    });
+    res.json(list.reverse()); // Newest first (if keys are ordered by insertion)
+});
+
+// Get specific session history
+app.get('/api/sessions/:id', (req, res) => {
+    const { id } = req.params;
+    if (Sessions.has(id)) {
+        res.json(Sessions.get(id));
+    } else {
+        res.status(404).json({ error: 'Session not found' });
     }
 });
 
-app.listen(port, () => {
+// Delete a session
+app.delete('/api/sessions/:id', (req, res) => {
+    const { id } = req.params;
+    if (Sessions.delete(id)) {
+        saveSessions();
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ error: 'Session not found' });
+    }
+});
+
+// Chat endpoint
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message, sessionId } = req.body;
+        if (!message) {
+            return res.status(400).json({ error: 'Message is required' });
+        }
+
+        // Generate ID if missing (though frontend should ideally send one)
+        const finalSessionId = sessionId || `session_${Date.now()}`;
+
+        const response = await getChatResponse(finalSessionId, message);
+        res.json({ response, sessionId: finalSessionId });
+    } catch (error) {
+        console.error('Error processing chat:', error);
+        res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+});
+
+app.listen(port, async () => {
     console.log(`Server running at http://localhost:${port}`);
+    try {
+        await getVectorStore();
+    } catch (e) {
+        console.log("Warning: Vector store not found. Please run 'node index.js' to create it.");
+    }
 });

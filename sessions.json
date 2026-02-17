@@ -63,6 +63,42 @@
     {
       "role": "assistant",
       "content": "Here are the courses in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Credits | LTP |\n| --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | 4 | 3-1-0 |"
+    },
+    {
+      "role": "user",
+      "content": "List all the courses in the 3rd semester for Artificial Intelligence."
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | Programme Core (PC) | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+    }
+  ],
+  "test_verification": [
+    {
+      "role": "user",
+      "content": "List all courses in 3rd semester for Artificial Intelligence"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech Artificial Intelligence — Semester 3** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AIC2022 | Introduction to Artificial Intel | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | Programme Core (PC) | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+    }
+  ],
+  "session_1771351018860": [
+    {
+      "role": "user",
+      "content": "List all the courses in the 3rd semester for Artificial Intelligence."
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech Artificial Intelligence — Semester 3** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AIC2022 | Introduction to Artificial Intel | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | Programme Core (PC) | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+    },
+    {
+      "role": "user",
+      "content": "Show electives only"
+    },
+    {
+      "role": "assistant",
+      "content": "I cannot find this exact information in the official curriculum."
     }
   ]
 }

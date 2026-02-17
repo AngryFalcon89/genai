@@ -11,6 +11,50 @@ const VECTOR_STORE_PATH = './vector_store';
 const COURSES_JSON = './zhcet_courses.json';
 const GENERAL_INFO_MD = './zhcet_general_info.md';
 
+/**
+ * Build a rich, searchable text block for a group of courses
+ * sharing the same branch and semester.
+ */
+function buildGroupText(coursesInGroup) {
+    const { program, branch, semester } = coursesInGroup[0];
+    const lines = [
+        `${program} ${branch} — Semester ${semester}`,
+        `This semester contains ${coursesInGroup.length} courses:`,
+        '',
+    ];
+
+    for (const c of coursesInGroup) {
+        const code = c.course_code || 'Elective/TBD';
+        const ltp = c.contact_periods ? ` (LTP: ${c.contact_periods})` : '';
+        lines.push(
+            `• ${code}: ${c.course_title} — ${c.course_category_full} (${c.course_category}), ${c.credits} credits${ltp}`
+        );
+    }
+
+    return lines.join('\n');
+}
+
+/**
+ * Build metadata for a grouped semester document.
+ */
+function buildGroupMetadata(coursesInGroup) {
+    const first = coursesInGroup[0];
+    return {
+        source: 'zhcet_courses.json',
+        type: 'course_group',
+        program: first.program,
+        branch: first.branch,
+        semester: first.semester,
+        course_count: coursesInGroup.length,
+        course_codes: coursesInGroup
+            .map(c => c.course_code || 'Elective/TBD')
+            .join(', '),
+        course_titles: coursesInGroup
+            .map(c => c.course_title)
+            .join(', '),
+    };
+}
+
 async function indexDocuments() {
     // ── Step 1: Clear old vector store ──────────────────────────────────────
     console.log("🧹 Clearing old vector store...");
@@ -31,6 +75,25 @@ async function indexDocuments() {
     const courses = JSON.parse(fs.readFileSync(COURSES_JSON, 'utf-8'));
     console.log(`   Found ${courses.length} course records.`);
 
+    // ── Group courses by branch + semester ──────────────────────────────────
+    const grouped = {};
+    for (const course of courses) {
+        const key = `${course.branch}__${course.semester}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(course);
+    }
+
+    console.log(`   Grouped into ${Object.keys(grouped).length} (branch + semester) chunks.`);
+
+    // Create one Document per (branch + semester) group
+    for (const [key, coursesInGroup] of Object.entries(grouped)) {
+        allDocs.push(new Document({
+            pageContent: buildGroupText(coursesInGroup),
+            metadata: buildGroupMetadata(coursesInGroup),
+        }));
+    }
+
+    // Also keep individual course documents for fine-grained single-course lookups
     for (const course of courses) {
         allDocs.push(new Document({
             pageContent: course.searchable_text,
@@ -112,7 +175,10 @@ async function indexDocuments() {
     console.log(`Saving index to ${VECTOR_STORE_PATH}...`);
     await vectorStore.save(VECTOR_STORE_PATH);
 
-    console.log(`\n🎉 Done! Vector store built with ${allDocs.length} documents (${courses.length} courses + general info).`);
+    console.log(`\n🎉 Done! Vector store built with ${allDocs.length} documents.`);
+    console.log(`   • ${Object.keys(grouped).length} semester-group docs`);
+    console.log(`   • ${courses.length} individual course docs`);
+    console.log(`   • general info chunks`);
 }
 
 indexDocuments();

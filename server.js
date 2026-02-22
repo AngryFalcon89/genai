@@ -6,8 +6,10 @@ import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import Groq from 'groq-sdk';
+import multer from 'multer';
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import { LocalEmbeddings } from './utils/LocalEmbeddings.js';
+import { TimetableManager } from './timetableManager.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -27,6 +29,9 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '128kb' }));
 app.use(express.static('public'));
+
+// Setup Multer for handling file uploads (temporarily stores in 'uploads/' folder)
+const upload = multer({ dest: 'uploads/' });
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const MODEL = 'llama-3.3-70b-versatile';
@@ -467,7 +472,7 @@ function normalizeCategoryFilters(categories) {
 
 function normalizeIntent(intent, combinedText) {
     const normalized = String(intent || '').toLowerCase().trim();
-    if (['course_list', 'course_detail', 'registration_rule', 'general_info', 'comparison'].includes(normalized)) {
+    if (['course_list', 'course_detail', 'registration_rule', 'general_info', 'comparison', 'schedule_check'].includes(normalized)) {
         return normalized;
     }
     if (isGeneralInfoQuery(combinedText)) return 'general_info';
@@ -885,7 +890,7 @@ RULES:
 5. Output ONLY valid JSON using this schema:
 {
   "rewritten_query": "string (the user's question expanded with current context)",
-  "intent": "course_list|course_detail|registration_rule|general_info|comparison|other",
+  "intent": "course_list|course_detail|registration_rule|general_info|comparison|schedule_check|other",
   "branch": "string|null (must be one of: ${branchOptions})",
   "semester": "number|null",
   "section": "string|null",
@@ -1101,6 +1106,14 @@ ${JSON.stringify(REGISTRATION_RULES, null, 2)}`
 
     const context = contextChunks.join("\n\n");
 
+    // Fetch dynamic timetable if it exists and user intent matches
+    const activeTimetable = TimetableManager.getActiveTimetable();
+    let timetableInjection = "";
+
+    if (activeTimetable && (queryPlan.intent === 'schedule_check' || question.toLowerCase().includes('time') || question.toLowerCase().includes('clash') || question.toLowerCase().includes('schedule'))) {
+        timetableInjection = `\n### ACTIVE SEMESTER TIMETABLE (PRIORITIZE THIS):\n${JSON.stringify(activeTimetable, null, 2)}\n\n*INSTRUCTION: Use the above timetable to answer scheduling questions. If a user asks if two courses clash, check if their days and start/end times overlap.*\n`;
+    }
+
     // 5. Generate Response — inject currentContext instead of full message history
     const messages = [
         {
@@ -1109,7 +1122,7 @@ ${JSON.stringify(REGISTRATION_RULES, null, 2)}`
 
 CURRENT USER STATE:
 ${JSON.stringify(currentContext, null, 2)}
-
+${timetableInjection}
 ### STRICT ACCURACY RULES & MISSING DATA GUARDRAIL (NON-NEGOTIABLE):
 1. **Source Dependency:** Use ONLY the retrieved context below to answer. Do not rely on prior knowledge. NEVER fabricate or hallucinate course codes, names, or credits.
 2. **Complete Context:** Include ALL courses from the retrieved context for the requested branch/semester.
@@ -1220,6 +1233,68 @@ app.delete('/api/sessions/:id', (req, res) => {
         res.json({ success: true });
     } else {
         res.status(404).json({ error: 'Session not found' });
+    }
+});
+
+// Get all Timetables (Admin)
+app.get('/api/admin/timetable', (req, res) => {
+    const timetables = TimetableManager.getAllTimetables();
+    res.json({ active: timetables.length > 0, timetables });
+});
+
+// Upload a new Timetable (Admin only)
+app.post('/api/admin/timetable', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+        const course = req.body.course || '';
+        const branch = req.body.branch || '';
+        const semester = req.body.semester || '';
+        const newTimetable = await TimetableManager.processAndSaveTimetable(req.file.path, req.file.mimetype, course, branch, semester);
+        const displayName = branch || 'Untitled Timetable';
+        res.json({ success: true, message: `Timetable "${displayName}" processed!`, data: newTimetable });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Delete a specific timetable by ID
+app.delete('/api/admin/timetable/:id', (req, res) => {
+    if (TimetableManager.deleteTimetable(req.params.id)) {
+        res.json({ success: true, message: 'Timetable removed.' });
+    } else {
+        res.status(404).json({ error: 'Timetable not found.' });
+    }
+});
+
+// Delete all timetables
+app.delete('/api/admin/timetable', (req, res) => {
+    if (TimetableManager.deleteAllTimetables()) {
+        res.json({ success: true, message: 'All timetables removed.' });
+    } else {
+        res.status(404).json({ error: 'No timetables found.' });
+    }
+});
+
+// Update timetable metadata
+app.patch('/api/admin/timetable/:id/metadata', (req, res) => {
+    const { course, branch, semester } = req.body;
+    const updated = TimetableManager.updateTimetableMetadata(req.params.id, { course, branch, semester });
+    if (updated) {
+        res.json({ success: true, timetable: updated });
+    } else {
+        res.status(404).json({ error: 'Timetable not found.' });
+    }
+});
+
+// Update timetable entries (full replace)
+app.patch('/api/admin/timetable/:id/entries', (req, res) => {
+    const { entries } = req.body;
+    if (!Array.isArray(entries)) return res.status(400).json({ error: 'Entries must be an array.' });
+    const updated = TimetableManager.updateTimetableEntries(req.params.id, entries);
+    if (updated) {
+        res.json({ success: true, timetable: updated });
+    } else {
+        res.status(404).json({ error: 'Timetable not found.' });
     }
 });
 

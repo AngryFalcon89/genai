@@ -219,8 +219,33 @@ body {
     box-shadow: 0 0 12px rgba(124, 58, 237, 0.1);
 }
 
+/* --- Admin Panel Link in Sidebar --- */
 
+.sidebar-admin-link {
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+}
 
+.admin-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(124, 58, 237, 0.06);
+    border: 1px solid rgba(124, 58, 237, 0.1);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.admin-link-btn:hover {
+    background: rgba(124, 58, 237, 0.12);
+    color: var(--accent-light);
+    border-color: rgba(124, 58, 237, 0.2);
+}
 
 /* ========== Chat Container ========== */
 

@@ -5,3 +5,5 @@ secret.txt
 questions.txt
 sessions.json
 vector_store/
+uploads/
+active_timetable.json

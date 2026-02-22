@@ -1,0 +1,1096 @@
+/* ========== Admin Panel Styles ========== */
+
+/* --- Layout --- */
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg-main);
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(59, 130, 246, 0.05));
+    backdrop-filter: blur(8px);
+}
+
+.admin-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: linear-gradient(135deg, var(--accent), #3B82F6);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.admin-header p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* --- Sidebar Admin Nav --- */
+.back-to-chat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    border-radius: 10px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    margin-top: 12px;
+}
+
+.back-to-chat-btn:hover {
+    background: rgba(124, 58, 237, 0.2);
+    border-color: rgba(124, 58, 237, 0.3);
+}
+
+.admin-nav {
+    flex: 1;
+    padding: 16px 12px;
+}
+
+.admin-nav-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    margin-bottom: 4px;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+.admin-nav-item:hover {
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--text-primary);
+}
+
+.admin-nav-item.active {
+    background: rgba(124, 58, 237, 0.12);
+    color: var(--accent-light);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+/* --- Sections --- */
+.admin-section {
+    display: none;
+}
+
+.admin-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.section-header {
+    margin-bottom: 28px;
+}
+
+.section-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.section-header p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* --- Metadata Inputs --- */
+.metadata-input-group {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.input-field {
+    flex: 1;
+    min-width: 150px;
+}
+
+.input-field label {
+    display: block;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.input-field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.input-field input::placeholder {
+    color: var(--text-muted);
+}
+
+.name-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+/* --- Upload Zone --- */
+.upload-zone {
+    border: 2px dashed rgba(124, 58, 237, 0.25);
+    border-radius: var(--radius-lg);
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(124, 58, 237, 0.03);
+}
+
+.upload-zone:hover {
+    border-color: rgba(124, 58, 237, 0.5);
+    background: rgba(124, 58, 237, 0.06);
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.08);
+}
+
+.upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(124, 58, 237, 0.1);
+    box-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
+    transform: scale(1.01);
+}
+
+.upload-zone-content {
+    pointer-events: none;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3));
+}
+
+.upload-zone h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.upload-zone p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.upload-formats {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(124, 58, 237, 0.08);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+/* --- File Preview --- */
+.file-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    margin-top: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.file-preview-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--accent-light);
+}
+
+.file-preview-info div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.file-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.file-size {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.file-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.file-remove:hover {
+    color: var(--error);
+    background: rgba(248, 113, 113, 0.1);
+}
+
+/* --- Upload Button --- */
+.upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 24px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--accent), #3B82F6);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+.upload-btn:hover:not(:disabled) {
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
+    transform: translateY(-1px);
+}
+
+.upload-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Processing / Result --- */
+.processing-state {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    margin-top: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.processing-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(124, 58, 237, 0.15);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.processing-text h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.processing-text p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.result-message {
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    margin-top: 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.result-message.success {
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+    color: var(--success);
+}
+
+.result-message.error {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    color: var(--error);
+}
+
+/* --- Status Loading / Empty --- */
+.status-loading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.status-empty {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.status-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.6;
+}
+
+.status-empty h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.status-empty p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ========== Timetable Card ========== */
+.timetable-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: 28px;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+}
+
+.timetable-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(124, 58, 237, 0.04);
+}
+
+.timetable-card-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.timetable-card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.5);
+    flex-shrink: 0;
+}
+
+/* Editable Name */
+.timetable-card-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.timetable-card-name:hover {
+    border-color: rgba(124, 58, 237, 0.2);
+    background: rgba(124, 58, 237, 0.05);
+}
+
+.timetable-name-edit {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: var(--bg-main);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-family: inherit;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    width: 300px;
+    max-width: 100%;
+}
+
+.timetable-card-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.timetable-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.timetable-card-delete,
+.timetable-card-edit-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    border: 1px solid;
+}
+
+.timetable-card-delete {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.15);
+    color: var(--error);
+}
+
+.timetable-card-delete:hover {
+    background: rgba(248, 113, 113, 0.16);
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+.timetable-card-edit-toggle {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+}
+
+.timetable-card-edit-toggle:hover {
+    background: rgba(59, 130, 246, 0.16);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.timetable-card-edit-toggle.active {
+    background: rgba(52, 211, 153, 0.1);
+    border-color: rgba(52, 211, 153, 0.2);
+    color: var(--success);
+}
+
+/* ========== Weekly Grid (Days as ROWS, Time as COLUMNS) ========== */
+.weekly-grid-wrapper {
+    overflow-x: auto;
+    padding: 16px 20px 20px;
+}
+
+.weekly-grid {
+    display: grid;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 750px;
+    border: 1px solid var(--border-color);
+}
+
+.grid-header {
+    padding: 10px 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    background: rgba(124, 58, 237, 0.06);
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.grid-header.day-col {
+    text-align: left;
+    padding-left: 12px;
+    font-size: 0.7rem;
+}
+
+.grid-day-label {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-align: left;
+    background: rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    border-right: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.grid-cell {
+    min-height: 56px;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.grid-cell:hover {
+    background: rgba(124, 58, 237, 0.04);
+}
+
+.grid-day-row {
+    min-height: 56px;
+    padding: 1px;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.grid-cell-empty {
+    min-height: 52px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    margin: 1px;
+    grid-row: 1;
+}
+
+/* --- Grid Event Block --- */
+.grid-event {
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    cursor: default;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    border-left: 3px solid transparent;
+    transition: transform 0.15s, box-shadow 0.15s;
+    grid-row: 1;
+    box-sizing: border-box;
+}
+
+.grid-event:hover {
+    transform: scale(1.03);
+    z-index: 2;
+    position: relative;
+}
+
+.grid-event .event-code {
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: -0.01em;
+}
+
+.grid-event .event-title {
+    font-weight: 400;
+    opacity: 0.85;
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grid-event.lecture {
+    background: rgba(59, 130, 246, 0.15);
+    border-left-color: #3B82F6;
+    color: #93C5FD;
+}
+
+.grid-event.lab {
+    background: rgba(52, 211, 153, 0.15);
+    border-left-color: #34D399;
+    color: #6EE7B7;
+}
+
+.grid-event.tutorial {
+    background: rgba(251, 146, 60, 0.15);
+    border-left-color: #FB923C;
+    color: #FDBA74;
+}
+
+.grid-event.lecture:hover {
+    background: rgba(59, 130, 246, 0.25);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.grid-event.lab:hover {
+    background: rgba(52, 211, 153, 0.25);
+    box-shadow: 0 2px 8px rgba(52, 211, 153, 0.2);
+}
+
+.grid-event.tutorial:hover {
+    background: rgba(251, 146, 60, 0.25);
+    box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+}
+
+/* --- Grid Legend --- */
+.grid-legend {
+    display: flex;
+    gap: 16px;
+    padding: 12px 20px 4px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+}
+
+.legend-dot.lecture {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+.legend-dot.lab {
+    background: rgba(52, 211, 153, 0.5);
+}
+
+.legend-dot.tutorial {
+    background: rgba(251, 146, 60, 0.5);
+}
+
+/* ========== Grid Edit Mode Utilities ========== */
+.grid-event.editing {
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px inset rgba(255, 255, 255, 0.1);
+}
+
+.grid-event.editing:hover {
+    box-shadow: 0 0 0 2px inset var(--accent);
+}
+
+.resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 14px;
+    cursor: ew-resize;
+    z-index: 20;
+    border-radius: 0 6px 6px 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15));
+    display: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.resize-handle.left {
+    right: auto;
+    left: 0;
+    border-radius: 6px 0 0 6px;
+    border-left: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(270deg, transparent, rgba(255, 255, 255, 0.15));
+}
+
+.grid-event.editing .resize-handle {
+    display: block;
+}
+
+.resize-handle:hover,
+.resize-handle.active {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.grid-cell-empty.editing {
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.grid-cell-empty.editing:hover {
+    background: rgba(124, 58, 237, 0.15);
+}
+
+.grid-cell-empty.editing:hover::after {
+    content: '+ Add Class';
+    position: absolute;
+    font-size: 0.7rem;
+    color: var(--accent-light);
+    font-weight: 600;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+/* ========== Grid Popover Editor ========== */
+.grid-popover-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+}
+
+.grid-popover {
+    position: absolute;
+    z-index: 1000;
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(124, 58, 237, 0.15);
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.grid-popover .popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.grid-popover .close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 2px 6px;
+}
+
+.grid-popover .close-btn:hover {
+    color: var(--error);
+}
+
+.grid-popover .input-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.grid-popover .input-group input,
+.grid-popover .input-group select {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.grid-popover .input-group input:focus,
+.grid-popover .input-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+}
+
+.grid-popover .row {
+    display: flex;
+    gap: 8px;
+}
+
+.grid-popover .popover-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.grid-popover .btn-save {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    margin-left: 8px;
+    transition: background 0.2s;
+}
+
+.grid-popover .btn-save:hover {
+    background: #6D28D9;
+}
+
+.grid-popover .btn-delete {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.grid-popover .btn-delete:hover {
+    background: rgba(248, 113, 113, 0.2);
+}
+
+/* ========== Action Bar ========== */
+.edit-actions-bar {
+    display: none;
+    /* hidden by default */
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-color);
+    background: rgba(124, 58, 237, 0.05);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.edit-actions-bar.visible {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.edit-actions-info {
+    font-size: 0.85rem;
+    color: var(--accent-light);
+    font-weight: 500;
+}
+
+.edit-actions-bar .btn-primary {
+    background: var(--success);
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+}
+
+.edit-actions-bar .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(52, 211, 153, 0.4);
+}
+
+
+.edit-table input,
+.edit-table select {
+    width: 100%;
+    padding: 6px 8px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.edit-table input:focus,
+.edit-table select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.edit-table select {
+    cursor: pointer;
+}
+
+.edit-row-delete {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 5px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.edit-row-delete:hover {
+    color: var(--error);
+    background: rgba(248, 113, 113, 0.1);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0 0;
+    justify-content: flex-end;
+}
+
+.edit-save-btn,
+.edit-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    border: 1px solid;
+}
+
+.edit-save-btn {
+    background: rgba(52, 211, 153, 0.1);
+    border-color: rgba(52, 211, 153, 0.2);
+    color: var(--success);
+}
+
+.edit-save-btn:hover {
+    background: rgba(52, 211, 153, 0.2);
+    border-color: rgba(52, 211, 153, 0.35);
+}
+
+.edit-add-btn {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+}
+
+.edit-add-btn:hover {
+    background: rgba(59, 130, 246, 0.16);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 16px 20px;
+    }
+
+    .admin-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .admin-content {
+        padding: 20px 16px;
+    }
+
+    .upload-zone {
+        padding: 32px 16px;
+    }
+
+    .timetable-card-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .weekly-grid-wrapper {
+        padding: 12px;
+    }
+
+    .timetable-name-edit {
+        width: 100%;
+    }
+}

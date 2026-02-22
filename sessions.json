@@ -1,1 +1,29 @@
-{}
+{
+  "session_1771761478674": {
+    "context": {
+      "branch": "MECHANICAL ENGINEERING",
+      "semester": 2,
+      "section": null,
+      "categories": [],
+      "intent": "schedule_check"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "tell me about periods on tuesday 11:30 for mtech 2nd sem computer"
+      },
+      {
+        "role": "assistant",
+        "content": "For **Semester 2**, the course structure differs based on your section. 📋\n\nPlease select your section group so I can show you the correct courses:\n\n- **Sections A1A, A1B, A1C** — one set of courses\n- **Sections A1D, A1E, A1F** — a different set (swapped between semesters)"
+      },
+      {
+        "role": "user",
+        "content": "tell me about periods on tuesday 11:30 for mtech 2nd sem computer from time table"
+      },
+      {
+        "role": "assistant",
+        "content": "According to the timetable, on **Tuesday at 11:20 AM**, you have:\n\n* **COE6330: Logic for Computer Science** (Lecture) from 11:20 AM to 01:00 PM.\n\nSo, at **11:30 AM** on Tuesday, you are attending the **COE6330: Logic for Computer Science** lecture."
+      }
+    ]
+  }
+}

@@ -3,5 +3,5 @@ node_modules/
 .DS_Store
 secret.txt
 questions.txt
-
+sessions.json
 vector_store/

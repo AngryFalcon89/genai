@@ -1,60 +1,76 @@
 {
-  "session_1771345263340": [
+  "session_1771723938054": [
     {
       "role": "user",
-      "content": "What are the core courses I need to take in B.Tech 5th semester Computer Engineering?"
+      "content": "How do I register for a course?"
     },
     {
       "role": "assistant",
-      "content": "In B.Tech Computer Engineering, 5th semester, the core courses are:\n\n| Course Code | Title | Credits | LTP |\n| --- | --- | --- | --- |\n| COC3092 | Microprocessor Theory & Applications | 3 | 3-0-0 |\n| COC3932 | Algorithms & Operating Systems Lab | 2 | 0-1-2 |\n\nAdditionally, you will take an Open Elective-1 course, but the specific details are not provided in the context."
+      "content": "To provide you with accurate guidance on registering for a course, I need a bit more information about your situation. Are you a new student, a continuing student, or are you looking to register for a specific type of course (e.g., regular semester, repeating a backlog, or improving your grade in a previously passed course)?"
     },
     {
       "role": "user",
-      "content": "Can you list all the Programme Electives (PE) available for 7th-semester Electrical Engineering students?"
+      "content": "New Student"
     },
     {
       "role": "assistant",
-      "content": "I cannot find this exact information in the official curriculum. However, based on the provided context, the following Programme Electives (PE) are available for 7th-semester Electrical Engineering students:\n\n| Course Code | Title | Credits |\n| --- | --- | --- |\n| Elective/TBD | Programme Elective-1 | 3 |\n| Elective/TBD | Programme Elective-2 | 3 |\n\nNote that the exact course codes are not provided in the context."
+      "content": "As a new student, you'll be registering for your first semester. To proceed, I need to know: Are you looking to register for a full semester load or do you have any specific courses in mind? Additionally, are there any special considerations, such as registering for a minor degree or taking a graduating course?"
     },
     {
       "role": "user",
-      "content": "What is the course code and credit value for 'Software Engineering'?"
+      "content": "Regular Semester"
     },
     {
       "role": "assistant",
-      "content": "The course code and credit value for 'Software Engineering' are:\n\n| Course Code | Title | Credits |\n| --- | --- | --- |\n| COC3162 | Software Engineering | 3 |\n\nThis is a Programme Core (PC) category course."
+      "content": "For a regular semester registration as a new student, you will be registering in **Mode 'a'** as per the ZHCET registration rules. This mode requires you to:\n* Fulfill the class attendance requirement\n* Appear in all components of evaluation\n\nPlease note the following important conditions:\n* The **maximum credits per semester** you can register for is **40**.\n* You must maintain a **minimum attendance of 75%** to avoid any attendance-related issues.\n\nBefore proceeding, I would like to clarify: Do you have any backlogs or failed courses from a previous institution that you need to consider during this registration, or is this your first time enrolling in a semester at ZHCET?"
     },
     {
       "role": "user",
-      "content": "How many credits is the Industrial Training/Internship worth in the 8th semester?"
+      "content": "No Backlogs"
     },
     {
       "role": "assistant",
-      "content": "The Industrial Training/Internship in the 8th semester is worth 2 credits.\n\n| Course Code | Title | Credits |\n| --- | --- | --- |\n| COP4802 | Industrial Training/Internship | 2 |\n\nThis is a Project, Seminar, Internship (PSI) category course."
+      "content": "As a new student with no backlogs, registering for a regular semester in **Mode 'a'**, you should be aware of the following:\n\n* You will need to fulfill the class attendance requirement of **at least 75%**.\n* You must appear in all components of evaluation for each course.\n* The **maximum credits per semester** you can register for is **40**.\n\nTo ensure a smooth registration process, please verify that you meet the attendance requirement and are aware of the evaluation components for each course.\n\nNext, I need to ask: Are you aware of the courses you want to register for, or would you like guidance on selecting courses for your first semester?"
     },
     {
       "role": "user",
-      "content": "List all the courses in the 3rd semester for Artificial Intelligence."
+      "content": "yes please guide me"
     },
     {
       "role": "assistant",
-      "content": "Here are the courses in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Credits | LTP |\n| --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | 2 | 0-1-2 |"
+      "content": "As a new student, selecting courses for your first semester can be a bit overwhelming. To guide you, I need to know: What is your current semester (e.g., Semester 1) and what is your program (e.g., Bachelor's, Master's)? \n\nAlso, are you looking to register for the standard curriculum courses or do you have interests in other areas, such as minor degrees or elective courses?"
     },
     {
       "role": "user",
-      "content": "are there only 4 courses in 3rd sem Ai?"
+      "content": "Standard Curriculum"
     },
     {
       "role": "assistant",
-      "content": "I cannot find this exact information in the official curriculum. However, based on the provided context, the following courses are available in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Credits | LTP |\n| --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | 4 | 3-1-0 |\n| AMS2612 | Higher Mathematics | 4 | 3-1-0 |\n\nThere may be additional courses, but the exact information is not provided in the context."
+      "content": "For the standard curriculum, I'll need to know your branch of study. Please select your branch from the following options:\n\n\nOnce I know your branch, I can provide you with the list of courses for your first semester. \n\nPlease note that the courses will be based on the credit system, with each course having a specific number of credits assigned to it. The courses will also have a specific category, such as Basic Sciences (BS), Engineering Sciences & Arts (ESA), Humanities and Management (HM), Programme Core (PC), Project, Seminar, Internships (PSI), Programme Electives (PE), Open Electives (OE), or Audit Courses (AU)."
     },
     {
       "role": "user",
-      "content": "List all the courses in the 3rd semester for Artificial Intelligence."
+      "content": "Computer Engineering"
     },
     {
       "role": "assistant",
-      "content": "Here are the courses in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Credits | LTP |\n| --- | --- | --- | --- |\n| AIC2062 | Data Structure and Algorithm | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | 2 | 0-1-2 |\n\nNote that the context does not provide a comprehensive list of courses for the 3rd semester. These are the only courses mentioned in the context for the 3rd semester of Artificial Intelligence."
+      "content": "For **B.Tech Computer Engineering**, I need to know which semester you are interested in. Please select from the following options:\n\n\n\nOnce I know your semester, I can provide you with the list of courses for that semester.\n\nPlease note that the courses will be based on the credit system, with each course having a specific number of credits assigned to it.\n\nAlso, I would like to inform you that I couldn't find the exact course details for Computer Engineering in the provided context. If you select a semester, I'll try to provide you with the available information. \n\nPlease select a semester to proceed."
+    },
+    {
+      "role": "user",
+      "content": "Semester 1"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 1**, I couldn't find the exact course details in the provided context. \n\nI cannot find this exact information in the official curriculum.\n\nHowever, I can offer you options to explore other semesters or branches."
+    },
+    {
+      "role": "user",
+      "content": "Semester 2"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 2**, I couldn't find the exact course details in the provided context. \n\nI cannot find this exact information in the official curriculum.\n\nHowever, I can offer you options to explore other semesters or branches."
     },
     {
       "role": "user",
@@ -62,43 +78,189 @@
     },
     {
       "role": "assistant",
-      "content": "Here are the courses in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Credits | LTP |\n| --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | 4 | 3-1-0 |"
+      "content": "For **B.Tech Computer Engineering — Semester 3**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n| ELA2112 | Electronic Devices & Circuits | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| COC2932 | C & C++ Programming Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COC2032 | Object Oriented Programming | Programme Core (PC) | 4 | 3-1-0 |\n| COC2122 | Database Management System | Programme Core (PC) | 4 | 3-1-0 |\n| COC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| COC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
     },
     {
       "role": "user",
-      "content": "List all the courses in the 3rd semester for Artificial Intelligence."
+      "content": "semester 1"
     },
     {
       "role": "assistant",
-      "content": "Here are the courses in the 3rd semester for Artificial Intelligence:\n\n| Course Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | Programme Core (PC) | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+      "content": "For **B.Tech Computer Engineering — Semester 1**, I found some common courses that are applicable to all branches, including Computer Engineering. Here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COA1912 | Computer Programming Lab | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n| EZH1112 | English | Humanities & Management (HM) | 3 | 2-1-0 |\n| CEU1112 | Environmental Studies (Audit) | Audit Course (AU) | 0 | 3-0-0 |\n| EZH1912 | Communication Skills Lab | Humanities & Management (HM) | 2 | 0-1-2 |\n| MEA1122 | Engineering Mechanics | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| MEA1922 | Engineering Workshop | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n| MEA1912 | Engineering Graphics Lab | Engineering Sciences & Arts (ESA) | 2 | 1-0-2 |\n| MEA1112 | Thermal Sciences | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| AMS1112 | Applied Mathematics-I | Basic Sciences (BS) | 4 | 3-1-0 |\n| APS1112 | Applied Physics | Basic Sciences (BS) | 4 | 3-1-0 |\n| ACS1112 | Applied Chemistry | Basic Sciences (BS) | 4 | 3-1-0 |\n| ELA1112 | Principles of Electronics Engg | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| EEA1112 | Principles of Electrical Engg | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| APS1912 | Applied Physics Lab | Basic Sciences (BS) | 1.5 | 0-0-3 |\n| ACS1912 | Applied Chemistry Lab | Basic Sciences (BS) | 1.5 | 0-0-3 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+    },
+    {
+      "role": "user",
+      "content": "semester 3"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 3**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n| ELA2112 | Electronic Devices & Circuits | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| COC2932 | C & C++ Programming Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COC2032 | Object Oriented Programming | Programme Core (PC) | 4 | 3-1-0 |\n| COC2122 | Database Management System | Programme Core (PC) | 4 | 3-1-0 |\n| COC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| COC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |"
+    },
+    {
+      "role": "user",
+      "content": "semester 7"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 7**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC4012 | Information Security | Programme Core (PC) | 3 | 3-0-0 |\n| COC4062 | Compiler Design | Programme Core (PC) | 3 | 3-0-0 |\n| COC4962 | Computer Network & Security Lab | Programme Core (PC) | 2 | 0-1-2 |\n| Elective/TBD | Programme Elective-1 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-2 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-3 | Programme Elective (PE) | 3 | N/A |\n\n⚠️ Note: The exact elective courses are not specified in the provided context."
+    },
+    {
+      "role": "user",
+      "content": "semester 7"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 7**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC4012 | Information Security | Programme Core (PC) | 3 | 3-0-0 |\n| COC4062 | Compiler Design | Programme Core (PC) | 3 | 3-0-0 |\n| COC4962 | Computer Network & Security Lab | Programme Core (PC) | 2 | 0-1-2 |\n| Elective/TBD | Programme Elective-1 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-2 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-3 | Programme Elective (PE) | 3 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "semester 7"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 7**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC4012 | Information Security | Programme Core (PC) | 3 | 3-0-0 |\n| COC4062 | Compiler Design | Programme Core (PC) | 3 | 3-0-0 |\n| COC4962 | Computer Network & Security Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COP4982 | Project Phase-1 | Project, Seminar, Internship (PSI) | 4 | 0-0-3 |\n| Elective/TBD | Programme Elective-1 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-2 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-3 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Audit Course-3 | Audit Course (AU) | 0 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "Semester 6"
+    },
+    {
+      "role": "assistant",
+      "content": "I cannot find this exact information in the official curriculum for Semester 7, but for **B.Tech Computer Engineering — Semester 6**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC3082 | Digital Electronics | Programme Core (PC) | 3 | 3-0-0 |\n| COC3112 | Theory of Computation | Programme Core (PC) | 4 | 3-1-0 |\n| COC3132 | Computer Networks | Programme Core (PC) | 4 | 3-1-0 |\n| COC3152 | Computer Graphics | Programme Core (PC) | 3 | 3-0-0 |\n| COC3962 | Advanced Computing Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COC3972 | Microprocessor & Embedded Systems Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COP3952 | Minor Project | Project, Seminar, Internship (PSI) | 3 | 0-0-3 |\n| Elective/TBD | Elective Course under Humanities category | Humanities & Management (HM) | 3 | N/A |\n| Elective/TBD | Audit Course-2 | Audit Course (AU) | 0 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "Semester 5"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Computer Engineering — Semester 5**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC3092 | Microprocessor Theory & Applications | Programme Core (PC) | 3 | 3-0-0 |\n| COC3102 | Operating Systems | Programme Core (PC) | 4 | 3-1-0 |\n| COC3162 | Software Engineering | Programme Core (PC) | 3 | 3-0-0 |\n| COC3932 | Algorithms & Operating Systems Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COP3802 | Colloquium | Project, Seminar, Internship (PSI) | 2 | 0-2-0 |\n| ELA3402 | Communication Systems | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| MEH3452 | Engineering Economy & Management | Humanities & Management (HM) | 3 | 0-3-0 |\n| Elective/TBD | Open Elective-1 | Open Elective (OE) | 3 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "semester 7 mechanical engineering"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Mechanical Engineering — Semester 7**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| MEC4112 | Mechanical Vibrations | Programme Core (PC) | 4 | 3-1-0 |\n| MEC4932 | Manufacturing Technology Lab-III | Programme Core (PC) | 1.5 | 0-0-3 |\n| MEC4942 | Vibrations Lab. | Programme Core (PC) | 1.5 | 0-0-3 |\n| MEC4952 | Energy Conversion Systems Lab | Programme Core (PC) | 2 | 0-1-2 |\n| MEP4812 | Colloquium | Project, Seminar, Internship (PSI) | 2 | 0-2-0 |\n| MEP4912 | Project (Phase I) | Project, Seminar, Internship (PSI) | 3 | 0-3-0 |\n| Elective/TBD | Programme Elective-2 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Open Elective-1 | Open Elective (OE) | 3 | N/A |\n| Elective/TBD | Elective Course under Humanities category | Humanities & Management (HM) | 3 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "semester 8"
+    },
+    {
+      "role": "assistant",
+      "content": "For **B.Tech Mechanical Engineering — Semester 8**, here are the courses:\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| MEP4802 | Industrial Training/Internship | Project, Seminar, Internship (PSI) | 2 | N/A |\n| MEP4922 | Project (Phase II) | Project, Seminar, Internship (PSI) | 4 | 0-4-0 |\n| Elective/TBD | Programme Elective-3 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-4 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-5 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Open Elective-2 | Open Elective (OE) | 3 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "semester 9 computer engineering"
+    },
+    {
+      "role": "assistant",
+      "content": "I cannot find this exact information in the official curriculum. The provided context only mentions up to Semester 8 for Computer Engineering."
+    },
+    {
+      "role": "user",
+      "content": "semester 9"
+    },
+    {
+      "role": "assistant",
+      "content": "I cannot find this exact information in the official curriculum. The provided context does not mention Semester 9 for any branch."
+    },
+    {
+      "role": "user",
+      "content": "Semester 8"
+    },
+    {
+      "role": "assistant",
+      "content": "I can provide information for **B.Tech Computer Engineering — Semester 8** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COP4802 | Industrial Training/Internship | Project, Seminar, Internship (PSI) | 2 | N/A |\n| COP4992 | Project Phase II | Project, Seminar, Internship (PSI) | 6 | 0-0-3 |\n| Elective/TBD | Programme Elective-4 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-5 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Open Elective-2 | Open Elective (OE) | 3 | N/A |"
     }
   ],
-  "test_verification": [
+  "session_1771726508454": [
     {
       "role": "user",
-      "content": "List all courses in 3rd semester for Artificial Intelligence"
+      "content": "semester 9 courses for btech computer engineering"
     },
     {
       "role": "assistant",
-      "content": "Here are the courses for **B.Tech Artificial Intelligence — Semester 3** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AIC2022 | Introduction to Artificial Intel | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | Programme Core (PC) | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+      "content": "B.Tech programs at ZHCET have **8 semesters** (Semester 1 through Semester 8). Semester 9 does not exist. 😊\n\nWould you like to explore one of the valid semesters?"
+    },
+    {
+      "role": "user",
+      "content": "Semester 8"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech Computer Engineering — Semester 8** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COP4802 | Industrial Training/Internship | Project, Seminar, Internship (PSI) | 2 | N/A |\n| COP4992 | Project Phase II | Project, Seminar, Internship (PSI) | 6 | 0-0-3 |\n| Elective/TBD | Programme Elective-4 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-5 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Open Elective-2 | Open Elective (OE) | 3 | N/A |\n\nPlease note that the exact titles and LTP for the elective courses are not specified in the provided context."
+    },
+    {
+      "role": "user",
+      "content": "Show all semesters"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech Computer Engineering** for all available semesters:\n\n### Semester 3\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n| COC2032 | Object Oriented Programming | Programme Core (PC) | 4 | 3-1-0 |\n| COC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| COC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| COC2122 | Database Management System | Programme Core (PC) | 4 | 3-1-0 |\n| COC2932 | C & C++ Programming Lab | Programme Core (PC) | 2 | 0-1-2 |\n| ELA2112 | Electronic Devices & Circuits | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n\n### Semester 4\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS2622 | Numerical Analysis & Probability | Basic Sciences (BS) | 3 | 3-0-0 |\n| AMS2632 | Discrete Structures | Basic Sciences (BS) | 4 | 3-1-0 |\n| COC2082 | Computer Architecture | Programme Core (PC) | 4 | 3-1-0 |\n| COC2142 | Design & Analysis of Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| COC2922 | Digital Design & Simulation Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COC2942 | Data Structure Lab | Programme Core (PC) | 2 | 0-1-2 |\n| ELA2412 | Fundamentals of Digital Sig Proc | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| ELA2902 | Electronics Laboratory | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n\n### Semester 5\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC3092 | Microprocessor Theory & Applications | Programme Core (PC) | 3 | 3-0-0 |\n| COC3102 | Operating Systems | Programme Core (PC) | 4 | 3-1-0 |\n| COC3162 | Software Engineering | Programme Core (PC) | 3 | 3-0-0 |\n| COC3932 | Algorithms & Operating Systems Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COP3802 | Colloquium | Project, Seminar, Internship (PSI) | 2 | 0-2-0 |\n| ELA3402 | Communication Systems | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| MEH3452 | Engineering Economy & Management | Humanities & Management (HM) | 3 | 0-3-0 |\n| Elective/TBD | Open Elective-1 | Open Elective (OE) | 3 | N/A |\n\n### Semester 6\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC3082 | Digital Electronics | Programme Core (PC) | 3 | 3-0-0 |\n| COC3112 | Theory of Computation | Programme Core (PC) | 4 | 3-1-0 |\n| COC3132 | Computer Networks | Programme Core (PC) | 4 | 3-1-0 |\n| COC3152 | Computer Graphics | Programme Core (PC) | 3 | 3-0-0 |\n| COC3962 | Advanced Computing Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COC3972 | Microprocessor & Embedded Systems Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COP3952 | Minor Project | Project, Seminar, Internship (PSI) | 3 | 0-0-3 |\n| Elective/TBD | Elective Course under Humanities category | Humanities & Management (HM) | 3 | N/A |\n| Elective/TBD | Audit Course-2 | Audit Course (AU) | 0 | N/A |\n\n### Semester 7\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COC4012 | Information Security | Programme Core (PC) | 3 | 3-0-0 |\n| COC4062 | Compiler Design | Programme Core (PC) | 3 | 3-0-0 |\n| COC4962 | Computer Network & Security Lab | Programme Core (PC) | 2 | 0-1-2 |\n| COP4982 | Project Phase-1 | Project, Seminar, Internship (PSI) | 4 | 0-0-3 |\n| Elective/TBD | Programme Elective-1 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-2 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-3 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Audit Course-3 | Audit Course (AU) | 0 | N/A |\n\n### Semester 8\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| COP4802 | Industrial Training/Internship | Project, Seminar, Internship (PSI) | 2 | N/A |\n| COP4992 | Project Phase II | Project, Seminar, Internship (PSI) | 6 | 0-0-3 |\n| Elective/TBD | Programme Elective-4 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Programme Elective-5 | Programme Elective (PE) | 3 | N/A |\n| Elective/TBD | Open Elective-2 | Open Elective (OE) | 3 | N/A |"
+    },
+    {
+      "role": "user",
+      "content": "what about semester 1 and 2"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech Computer Engineering** for Semester 1 and 2:\n\n### Semester 1\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS1112 | Applied Mathematics-I | Basic Sciences (BS) | 4 | 3-1-0 |\n| APS1112 | Applied Physics | Basic Sciences (BS) | 4 | 3-1-0 |\n| ELA1112 | Principles of Electronics Engg | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| MEA1122 | Engineering Mechanics | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| EZH1112 | English | Humanities & Management (HM) | 3 | 2-1-0 |\n| APS1912 | Applied Physics Lab | Basic Sciences (BS) | 1.5 | 0-0-3 |\n| MEA1922 | Engineering Workshop | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n| EZH1912 | Communication Skills Lab | Humanities & Management (HM) | 2 | 0-1-2 |\n| COA1912 | Computer Programming Lab | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n| MEA1912 | Engineering Graphics Lab | Engineering Sciences & Arts (ESA) | 2 | 1-0-2 |\n| CEU1112 | Environmental Studies (Audit) | Audit Course (AU) | 0 | 3-0-0 |\n\n### Semester 2\nI cannot find this exact information in the official curriculum.\n\nPlease note that the provided context only contains information about Semester 1 and some individual courses, but it does not have a complete course list for Semester 2."
     }
   ],
-  "session_1771351018860": [
+  "session_1771728250729": [
     {
       "role": "user",
-      "content": "List all the courses in the 3rd semester for Artificial Intelligence."
+      "content": "semester 2 courses for computer engineering"
     },
     {
       "role": "assistant",
-      "content": "Here are the courses for **B.Tech Artificial Intelligence — Semester 3** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AIC2022 | Introduction to Artificial Intel | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | Programme Core (PC) | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | Programme Core (PC) | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | Basic Sciences (BS) | 4 | 3-1-0 |\n\n⚠️ Note: The retrieved data may be incomplete. The official syllabus may list additional courses not shown here."
+      "content": "For **Semester 2**, the course structure differs based on your section. 📋\n\nPlease select your section group so I can show you the correct courses:\n\n- **Sections A1A, A1B, A1C** — one set of courses\n- **Sections A1D, A1E, A1F** — a different set (swapped between semesters)"
     },
     {
       "role": "user",
-      "content": "Show electives only"
+      "content": "Section A1D/A1E/A1F"
     },
     {
       "role": "assistant",
-      "content": "I cannot find this exact information in the official curriculum."
+      "content": "Here are the courses for **B.Tech All Branches (First Year) — Semester 2**, applicable to sections A1D, A1E, A1F 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS1122 | Applied Mathematics-II | Basic Sciences (BS) | 4 | 3-1-0 |\n| ACS1112 | Applied Chemistry | Basic Sciences (BS) | 4 | 3-1-0 |\n| EEA1112 | Principles of Electrical Engg | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| CEU1112 | Environmental Studies (Audit) | Audit Course (AU) | 0 | 3-0-0 |\n| MEA1112 | Thermal Sciences | Engineering Sciences & Arts (ESA) | 4 | 3-1-0 |\n| ACS1912 | Applied Chemistry Lab | Basic Sciences (BS) | 1.5 | 0-0-3 |\n| COA1912 | Computer Programming Lab | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n| MEA1912 | Engineering Graphics Lab | Engineering Sciences & Arts (ESA) | 2 | 1-0-2 |\n| APS1112 | Applied Physics | Basic Sciences (BS) | 4 | 3-1-0 |\n| ELA1112 | Principles of Electronics Engg | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| MEA1122 | Engineering Mechanics | Engineering Sciences & Arts (ESA) | 3 | 2-1-0 |\n| EZH1112 | English | Humanities & Management (HM) | 3 | 2-1-0 |\n| APS1912 | Applied Physics Lab | Basic Sciences (BS) | 1.5 | 0-0-3 |\n| MEA1922 | Engineering Workshop | Engineering Sciences & Arts (ESA) | 2 | 0-1-2 |\n| EZH1912 | Communication Skills Lab | Humanities & Management (HM) | 2 | 0-1-2 |"
+    }
+  ],
+  "session_1771737656595": [
+    {
+      "role": "user",
+      "content": "semester 2 courses for computer engineering"
+    },
+    {
+      "role": "assistant",
+      "content": "For **Semester 2**, the course structure differs based on your section. 📋\n\nPlease select your section group so I can show you the correct courses:\n\n- **Sections A1A, A1B, A1C** — one set of courses\n- **Sections A1D, A1E, A1F** — a different set (swapped between semesters)"
+    },
+    {
+      "role": "user",
+      "content": "Section A1D/A1E/A1F"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech All Branches (First Year) — Semester 2** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| MEA1122 | Engineering Mechanics | ESA | 3 | 2-1-0 |\n| MEA1922 | Engineering Workshop | ESA | 2 | 0-1-2 |\n| ELA1112 | Principles of Electronics Engg | ESA | 3 | 2-1-0 |\n| EZH1112 | English | HM | 3 | 2-1-0 |\n| AMS1122 | Applied Mathematics-I | BS | 4 | 3-1-0 |\n| APS1112 | Applied Physics | BS | 4 | 3-1-0 |\n| APS1912 | Applied Physics Lab | BS | 1.5 | 0-0-3 |\n| EZH1912 | Communication Skills Lab | HM | 2 | 0-1-2 |"
+    },
+    {
+      "role": "user",
+      "content": "Semester 1"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech All Branches (First Year) — Semester 1** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS1112 | Applied Mathematics-I | BS | 4 | 3-1-0 |\n| APS1112 | Applied Physics | BS | 4 | 3-1-0 |\n| ELA1112 | Principles of Electronics Engg | ESA | 3 | 2-1-0 |\n| MEA1122 | Engineering Mechanics | ESA | 3 | 2-1-0 |\n| EZH1112 | English | HM | 3 | 2-1-0 |\n| APS1912 | Applied Physics Lab | BS | 1.5 | 0-0-3 |\n| MEA1922 | Engineering Workshop | ESA | 2 | 0-1-2 |\n| EZH1912 | Communication Skills Lab | HM | 2 | 0-1-2 |"
+    },
+    {
+      "role": "user",
+      "content": "Semester 2"
+    },
+    {
+      "role": "assistant",
+      "content": "Here are the courses for **B.Tech All Branches (First Year) — Semester 2** 📚\n\n| Code | Title | Category | Credits | LTP |\n|------|-------|----------|---------|-----|\n| AMS1122 | Applied Mathematics-II | BS | 4 | 3-1-0 |\n| ACS1112 | Applied Chemistry | BS | 4 | 3-1-0 |\n| EEA1112 | Principles of Electrical Engg | ESA | 3 | 2-1-0 |\n| MEA1112 | Thermal Sciences | ESA | 4 | 3-1-0 |\n| CEU1112 | Environmental Studies (Audit) | AU | 0 | 3-0-0 |\n| ACS1912 | Applied Chemistry Lab | BS | 1.5 | 0-0-3 |\n| COA1912 | Computer Programming Lab | ESA | 2 | 0-1-2 |\n| MEA1912 | Engineering Graphics Lab | ESA | 2 | 1-0-2 |"
     }
   ]
 }

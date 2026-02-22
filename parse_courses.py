@@ -66,12 +66,15 @@ def parse_branch_from_heading(line: str) -> str | None:
     """
     # Match B.TECH variations
     m = re.match(
-        r"^#{2,4}\s+B\.?TECH\.?[:\s(]+(.+?)[\s)]*$",
+        r"^#{2,4}\s+B\.?\s*TECH\.?\s*[:\-]?\s*(.+?)\s*$",
         line.strip(),
         re.IGNORECASE,
     )
     if m:
-        return m.group(1).strip().rstrip(")")
+        branch = m.group(1).strip()
+        if branch.startswith("(") and branch.endswith(")"):
+            branch = branch[1:-1].strip()
+        return branch
 
     # Match FIRST YEAR-ALL BRANCHES
     m = re.match(r"^#{2,4}\s+(FIRST YEAR.+)$", line.strip(), re.IGNORECASE)

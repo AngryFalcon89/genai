@@ -7,17 +7,24 @@ const sessionList = document.getElementById('session-list');
 const newChatBtn = document.getElementById('new-chat-btn');
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
-const welcomeScreen = document.getElementById('welcome-screen');
 
 let currentSessionId = localStorage.getItem('currentSessionId') || null;
 
 // --- UI Helpers ---
+function getWelcomeScreen() {
+    return document.getElementById('welcome-screen');
+}
 
-function addMessage(text, isUser, options = []) {
-    // Hide welcome screen when first message appears
+function hideWelcomeScreen() {
+    const welcomeScreen = getWelcomeScreen();
     if (welcomeScreen) {
         welcomeScreen.style.display = 'none';
     }
+}
+
+function addMessage(text, isUser, options = []) {
+    // Hide welcome screen when first message appears
+    hideWelcomeScreen();
 
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
@@ -29,7 +36,8 @@ function addMessage(text, isUser, options = []) {
     if (isUser) {
         contentDiv.textContent = text;
     } else {
-        contentDiv.innerHTML = marked.parse(text);
+        const rawHtml = marked.parse(text, { gfm: true, breaks: true });
+        contentDiv.innerHTML = DOMPurify.sanitize(rawHtml);
     }
 
     messageDiv.appendChild(contentDiv);
@@ -127,20 +135,29 @@ function bindWelcomeChips() {
 async function loadSessions() {
     try {
         const res = await fetch('/api/sessions');
+        if (!res.ok) return;
         const sessions = await res.json();
 
         sessionList.innerHTML = '';
         sessions.forEach(session => {
             const div = document.createElement('div');
             div.className = `session-item ${session.id === currentSessionId ? 'active' : ''}`;
-            div.innerHTML = `
-                <span>${session.title}</span>
-                <button class="delete-session-btn" onclick="deleteSession(event, '${session.id}')">&times;</button>
-            `;
+
+            const title = document.createElement('span');
+            title.textContent = session.title;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-session-btn';
+            deleteBtn.type = 'button';
+            deleteBtn.textContent = '\u00d7';
+            deleteBtn.addEventListener('click', (e) => deleteSession(e, session.id));
+
             div.onclick = (e) => {
-                if (e.target.classList.contains('delete-session-btn')) return;
+                if (e.target === deleteBtn) return;
                 loadSession(session.id);
             };
+            div.appendChild(title);
+            div.appendChild(deleteBtn);
             sessionList.appendChild(div);
         });
     } catch (e) {
@@ -161,6 +178,7 @@ async function loadSession(sessionId) {
 
     try {
         const res = await fetch(`/api/sessions/${sessionId}`);
+        if (!res.ok) return;
         const history = await res.json();
 
         chatMessages.innerHTML = '';
@@ -169,9 +187,7 @@ async function loadSession(sessionId) {
             clearChat();
         } else {
             // Hide welcome screen
-            if (welcomeScreen) welcomeScreen.style.display = 'none';
-            const ws = document.getElementById('welcome-screen');
-            if (ws) ws.style.display = 'none';
+            hideWelcomeScreen();
 
             history.forEach(msg => {
                 if (msg.role === 'system') return;
@@ -230,10 +246,10 @@ async function sendMessage(message) {
             })
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => ({ error: 'Invalid server response' }));
         typingIndicator.remove();
 
-        if (data.error) {
+        if (!res.ok || data.error) {
             addMessage(data.error, false);
         } else {
             addMessage(data.response, false, data.options || []);
@@ -294,5 +310,3 @@ if (currentSessionId) {
 } else {
     loadSessions();
 }
-
-window.deleteSession = deleteSession;

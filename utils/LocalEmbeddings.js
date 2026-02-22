@@ -2,15 +2,23 @@ import { pipeline } from '@xenova/transformers';
 
 class LocalEmbeddings {
     constructor() {
-        this.model = 'Xenova/all-mpnet-base-v2';
+        this.model = process.env.EMBEDDING_MODEL || 'Xenova/bge-base-en-v1.5';
+        this.fallbackModel = 'Xenova/all-mpnet-base-v2';
         this.pipeline = null;
     }
 
     async ensurePipeline() {
         if (!this.pipeline) {
             console.log('Loading embedding model...');
-            this.pipeline = await pipeline('feature-extraction', this.model);
-            console.log('Embedding model loaded.');
+            try {
+                this.pipeline = await pipeline('feature-extraction', this.model);
+                console.log(`Embedding model loaded: ${this.model}`);
+            } catch (error) {
+                console.warn(`Failed to load embedding model "${this.model}". Falling back to "${this.fallbackModel}".`);
+                this.model = this.fallbackModel;
+                this.pipeline = await pipeline('feature-extraction', this.model);
+                console.log(`Embedding model loaded: ${this.model}`);
+            }
         }
     }
 
@@ -33,4 +41,3 @@ class LocalEmbeddings {
 
 
 export { LocalEmbeddings };
-

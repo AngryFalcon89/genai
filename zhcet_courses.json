@@ -10,7 +10,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course AMS1112: Applied Mathematics-I. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course AMS1112: Applied Mathematics-I. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -23,7 +24,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course APS1112: Applied Physics. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course APS1112: Applied Physics. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -36,7 +38,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course ELA1112: Principles of Electronics Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course ELA1112: Principles of Electronics Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -49,7 +52,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1122: Engineering Mechanics. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1122: Engineering Mechanics. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -62,7 +66,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course EZH1112: English. This is a Humanities & Management (HM) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course EZH1112: English. This is a Humanities & Management (HM) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -75,7 +80,8 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course APS1912: Applied Physics Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course APS1912: Applied Physics Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -88,7 +94,8 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1922: Engineering Workshop. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1922: Engineering Workshop. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -101,7 +108,8 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course EZH1912: Communication Skills Lab. This is a Humanities & Management (HM) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course EZH1912: Communication Skills Lab. This is a Humanities & Management (HM) category course worth 2 credits with contact periods 0-1-2.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -114,7 +122,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course AMS1122: Applied Mathematics-II. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course AMS1122: Applied Mathematics-II. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -127,7 +136,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course ACS1112: Applied Chemistry. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course ACS1112: Applied Chemistry. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -140,7 +150,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course EEA1112: Principles of Electrical Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course EEA1112: Principles of Electrical Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -153,7 +164,8 @@
     "contact_periods": "3-0-0",
     "credits": 0.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course CEU1112: Environmental Studies (Audit). This is a Audit Course (AU) category course worth 0 credits with contact periods 3-0-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course CEU1112: Environmental Studies (Audit). This is a Audit Course (AU) category course worth 0 credits with contact periods 3-0-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -166,7 +178,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1112: Thermal Sciences. This is a Engineering Sciences & Arts (ESA) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1112: Thermal Sciences. This is a Engineering Sciences & Arts (ESA) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -179,7 +192,8 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course ACS1912: Applied Chemistry Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course ACS1912: Applied Chemistry Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -192,7 +206,8 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course COA1912: Computer Programming Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course COA1912: Computer Programming Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -205,7 +220,8 @@
     "contact_periods": "1-0-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1912: Engineering Graphics Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 1-0-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1912: Engineering Graphics Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 1-0-2.",
+    "section": "A1ABC"
   },
   {
     "program": "B.Tech",
@@ -218,7 +234,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course AMS1112: Applied Mathematics-II. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course AMS1112: Applied Mathematics-II. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -231,7 +248,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course ACS1112: Applied Chemistry. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course ACS1112: Applied Chemistry. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -244,7 +262,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course EEA1112: Principles of Electrical Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course EEA1112: Principles of Electrical Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -257,7 +276,8 @@
     "contact_periods": "3-0-0",
     "credits": 0.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course CEU1112: Environmental Studies (Audit). This is a Audit Course (AU) category course worth 0 credits with contact periods 3-0-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course CEU1112: Environmental Studies (Audit). This is a Audit Course (AU) category course worth 0 credits with contact periods 3-0-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -270,7 +290,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1112: Thermal Sciences. This is a Engineering Sciences & Arts (ESA) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1112: Thermal Sciences. This is a Engineering Sciences & Arts (ESA) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -283,7 +304,8 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course ACS1912: Applied Chemistry Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course ACS1912: Applied Chemistry Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -296,7 +318,8 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course COA1912: Computer Programming Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course COA1912: Computer Programming Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -309,7 +332,8 @@
     "contact_periods": "1-0-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1912: Engineering Graphics Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 1-0-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 1, students take the course MEA1912: Engineering Graphics Lab. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 1-0-2.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -322,7 +346,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course AMS1122: Applied Mathematics-I. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course AMS1122: Applied Mathematics-I. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -335,7 +360,8 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course APS1112: Applied Physics. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course APS1112: Applied Physics. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -348,7 +374,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course ELA1112: Principles of Electronics Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course ELA1112: Principles of Electronics Engg. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -361,7 +388,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1122: Engineering Mechanics. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1122: Engineering Mechanics. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -374,7 +402,8 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course EZH1112: English. This is a Humanities & Management (HM) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course EZH1112: English. This is a Humanities & Management (HM) category course worth 3 credits with contact periods 2-1-0.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -387,7 +416,8 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course APS1912: Applied Physics Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course APS1912: Applied Physics Lab. This is a Basic Sciences (BS) category course worth 1.5 credits with contact periods 0-0-3.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -400,7 +430,8 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1922: Engineering Workshop. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course MEA1922: Engineering Workshop. This is a Engineering Sciences & Arts (ESA) category course worth 2 credits with contact periods 0-1-2.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -413,7 +444,8 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course EZH1912: Communication Skills Lab. This is a Humanities & Management (HM) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech All Branches (First Year), Semester 2, students take the course EZH1912: Communication Skills Lab. This is a Humanities & Management (HM) category course worth 2 credits with contact periods 0-1-2.",
+    "section": "A1DEF"
   },
   {
     "program": "B.Tech",
@@ -989,7 +1021,7 @@
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "ESA",
     "course_category_full": "Engineering Sciences & Arts",
@@ -998,11 +1030,11 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEA2422: Experimental Methods & Analysis. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEA2422: Experimental Methods & Analysis. This is a Engineering Sciences & Arts (ESA) category course worth 3 credits with contact periods 2-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1011,11 +1043,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2112: Mechanics of Solids. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2112: Mechanics of Solids. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1024,11 +1056,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2322: Fluid Mechanics. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2322: Fluid Mechanics. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1037,11 +1069,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2432: Automotive Materials. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2432: Automotive Materials. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1050,11 +1082,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2752: Lean Methods for Auto Engineers. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2752: Lean Methods for Auto Engineers. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1063,11 +1095,11 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2912: Machine Drawing Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2912: Machine Drawing Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1076,11 +1108,11 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2932: Manufacturing Technology Lab-I. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2932: Manufacturing Technology Lab-I. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1089,11 +1121,11 @@
     "contact_periods": "0-1-2",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AEC2952: Fluids Mechanics Lab. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AEC2952: Fluids Mechanics Lab. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 3,
     "course_category": "BS",
     "course_category_full": "Basic Sciences",
@@ -1102,11 +1134,11 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 3, students take the course AMS2312: Higher Mathematics. This is a Basic Sciences (BS) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 3, students take the course AMS2312: Higher Mathematics. This is a Basic Sciences (BS) category course worth 3 credits with contact periods 2-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "ESA",
     "course_category_full": "Engineering Sciences & Arts",
@@ -1115,11 +1147,11 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AEA2972: Automotive Electrical & Elec Lab. This is a Engineering Sciences & Arts (ESA) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AEA2972: Automotive Electrical & Elec Lab. This is a Engineering Sciences & Arts (ESA) category course worth 1.5 credits with contact periods 0-0-3."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1128,11 +1160,11 @@
     "contact_periods": "2-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AEC2222: Applied Thermodynamics & Heat T. This is a Programme Core (PC) category course worth 4 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AEC2222: Applied Thermodynamics & Heat T. This is a Programme Core (PC) category course worth 4 credits with contact periods 2-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1141,11 +1173,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AEC2412: Manufacturing Technology. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AEC2412: Manufacturing Technology. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1154,11 +1186,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AEC2452: Vehicle Body Design. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AEC2452: Vehicle Body Design. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1167,11 +1199,11 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AEC2762: Additive Manufacturing. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AEC2762: Additive Manufacturing. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1180,11 +1212,11 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AEC2962: Thermal System Lab-I. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AEC2962: Thermal System Lab-I. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-0-3."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "BS",
     "course_category_full": "Basic Sciences",
@@ -1193,11 +1225,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course AMS2322: Numerical Methods & Optimization. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course AMS2322: Numerical Methods & Optimization. This is a Basic Sciences (BS) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "ESA",
     "course_category_full": "Engineering Sciences & Arts",
@@ -1206,11 +1238,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course EEA2042: Automotive Electrical & Elec Sys. This is a Engineering Sciences & Arts (ESA) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course EEA2042: Automotive Electrical & Elec Sys. This is a Engineering Sciences & Arts (ESA) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 4,
     "course_category": "AU",
     "course_category_full": "Audit Course",
@@ -1219,11 +1251,11 @@
     "contact_periods": null,
     "credits": 0.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 4, students take the course Audit Course-2. This is a Audit Course (AU) category course worth 0 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 4, students take the course Audit Course-2. This is a Audit Course (AU) category course worth 0 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1232,11 +1264,11 @@
     "contact_periods": "3-0-1",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course AEC3112: Design of Vehicle Components. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-0-1."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course AEC3112: Design of Vehicle Components. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-0-1."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1245,11 +1277,11 @@
     "contact_periods": "3-0-1",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course AEC3132: Automotive Drives & Transmission. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-0-1."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course AEC3132: Automotive Drives & Transmission. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-0-1."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1258,11 +1290,11 @@
     "contact_periods": "3-0-1",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course AEC3242: Fuels, Lubricants & Coolants. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-0-1."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course AEC3242: Fuels, Lubricants & Coolants. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-0-1."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1271,11 +1303,11 @@
     "contact_periods": "2-0-1",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course AEC3292: Electric & Hybrid Vehicles. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-0-1."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course AEC3292: Electric & Hybrid Vehicles. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-0-1."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1284,11 +1316,11 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course AEC3962: Model & Simulation of Thermo Sys. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course AEC3962: Model & Simulation of Thermo Sys. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "PE",
     "course_category_full": "Programme Elective",
@@ -1297,11 +1329,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course Programme Elective-1. This is a Programme Elective (PE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course Programme Elective-1. This is a Programme Elective (PE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "HM",
     "course_category_full": "Humanities & Management",
@@ -1310,11 +1342,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course Elective Course under Humanities. This is a Humanities & Management (HM) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course Elective Course under Humanities. This is a Humanities & Management (HM) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 5,
     "course_category": "AU",
     "course_category_full": "Audit Course",
@@ -1323,11 +1355,11 @@
     "contact_periods": null,
     "credits": 0.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 5, students take the course Audit Course-3. This is a Audit Course (AU) category course worth 0 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 5, students take the course Audit Course-3. This is a Audit Course (AU) category course worth 0 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1336,11 +1368,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3122: Machinery Dynamics. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3122: Machinery Dynamics. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1349,11 +1381,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3222: I.C. Engines. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3222: I.C. Engines. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1362,11 +1394,11 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3252: Automotive Emission & Control. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3252: Automotive Emission & Control. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1375,11 +1407,11 @@
     "contact_periods": "3-1-0",
     "credits": 4.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3342: Automotive Hydraulic Pneumatic. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3342: Automotive Hydraulic Pneumatic. This is a Programme Core (PC) category course worth 4 credits with contact periods 3-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1388,11 +1420,11 @@
     "contact_periods": "0-1-2",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3932: Manufacturing Technology Lab-II. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3932: Manufacturing Technology Lab-II. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1401,11 +1433,11 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3942: Solid Modeling & Analysis Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3942: Solid Modeling & Analysis Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1414,11 +1446,11 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3952: Kinematics & Stress Analysis Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3952: Kinematics & Stress Analysis Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1427,11 +1459,11 @@
     "contact_periods": "0-1-2",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course AEC3972: Fuel Testing Lab. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course AEC3972: Fuel Testing Lab. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 6,
     "course_category": "HM",
     "course_category_full": "Humanities & Management",
@@ -1440,11 +1472,11 @@
     "contact_periods": "2-1-0",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 6, students take the course MEH3452: Engineering Economy & Management. This is a Humanities & Management (HM) category course worth 3 credits with contact periods 2-1-0."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 6, students take the course MEH3452: Engineering Economy & Management. This is a Humanities & Management (HM) category course worth 3 credits with contact periods 2-1-0."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1453,11 +1485,11 @@
     "contact_periods": "2-0-1",
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course AEC4212: Automotive System. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-0-1."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course AEC4212: Automotive System. This is a Programme Core (PC) category course worth 3 credits with contact periods 2-0-1."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1466,11 +1498,11 @@
     "contact_periods": "0-1-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course AEC4952: Energy Conversion Systems Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course AEC4952: Energy Conversion Systems Lab. This is a Programme Core (PC) category course worth 2 credits with contact periods 0-1-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "PC",
     "course_category_full": "Programme Core",
@@ -1479,11 +1511,11 @@
     "contact_periods": "0-0-3",
     "credits": 1.5,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course AEC4962: Thermal System Lab II. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course AEC4962: Thermal System Lab II. This is a Programme Core (PC) category course worth 1.5 credits with contact periods 0-0-3."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "PSI",
     "course_category_full": "Project, Seminar, Internship",
@@ -1492,11 +1524,11 @@
     "contact_periods": "0-0-2",
     "credits": 2.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course AEP4812: Colloquium. This is a Project, Seminar, Internship (PSI) category course worth 2 credits with contact periods 0-0-2."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course AEP4812: Colloquium. This is a Project, Seminar, Internship (PSI) category course worth 2 credits with contact periods 0-0-2."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "PSI",
     "course_category_full": "Project, Seminar, Internship",
@@ -1505,11 +1537,11 @@
     "contact_periods": "0-0-3",
     "credits": 3.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course AEP4912: Project (Phase I). This is a Project, Seminar, Internship (PSI) category course worth 3 credits with contact periods 0-0-3."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course AEP4912: Project (Phase I). This is a Project, Seminar, Internship (PSI) category course worth 3 credits with contact periods 0-0-3."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "PE",
     "course_category_full": "Programme Elective",
@@ -1518,11 +1550,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course Programme Elective-2. This is a Programme Elective (PE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course Programme Elective-2. This is a Programme Elective (PE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 7,
     "course_category": "OE",
     "course_category_full": "Open Elective",
@@ -1531,11 +1563,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 7, students take the course Open Elective-1. This is a Open Elective (OE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 7, students take the course Open Elective-1. This is a Open Elective (OE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 8,
     "course_category": "PSI",
     "course_category_full": "Project, Seminar, Internship",
@@ -1544,11 +1576,11 @@
     "contact_periods": null,
     "credits": 2.0,
     "marks": "100/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 8, students take the course AEP4802: Industrial Training/Internship. This is a Project, Seminar, Internship (PSI) category course worth 2 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 8, students take the course AEP4802: Industrial Training/Internship. This is a Project, Seminar, Internship (PSI) category course worth 2 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 8,
     "course_category": "PSI",
     "course_category_full": "Project, Seminar, Internship",
@@ -1557,11 +1589,11 @@
     "contact_periods": "0-0-4",
     "credits": 4.0,
     "marks": "60/40/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 8, students take the course AEP4922: Project (Phase II). This is a Project, Seminar, Internship (PSI) category course worth 4 credits with contact periods 0-0-4."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 8, students take the course AEP4922: Project (Phase II). This is a Project, Seminar, Internship (PSI) category course worth 4 credits with contact periods 0-0-4."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 8,
     "course_category": "PE",
     "course_category_full": "Programme Elective",
@@ -1570,11 +1602,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 8, students take the course Programme Elective-3. This is a Programme Elective (PE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 8, students take the course Programme Elective-3. This is a Programme Elective (PE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 8,
     "course_category": "PE",
     "course_category_full": "Programme Elective",
@@ -1583,11 +1615,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 8, students take the course Programme Elective-4. This is a Programme Elective (PE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 8, students take the course Programme Elective-4. This is a Programme Elective (PE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 8,
     "course_category": "PE",
     "course_category_full": "Programme Elective",
@@ -1596,11 +1628,11 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 8, students take the course Programme Elective-5. This is a Programme Elective (PE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 8, students take the course Programme Elective-5. This is a Programme Elective (PE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",
-    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES",
+    "branch": "AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES)",
     "semester": 8,
     "course_category": "OE",
     "course_category_full": "Open Elective",
@@ -1609,7 +1641,7 @@
     "contact_periods": null,
     "credits": 3.0,
     "marks": "15/25/60/100",
-    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES, Semester 8, students take the course Open Elective-2. This is a Open Elective (OE) category course worth 3 credits."
+    "searchable_text": "In B.Tech AUTOMOBILE ENGINEERING (ELECTRIC AND HYBRID VEHICLES), Semester 8, students take the course Open Elective-2. This is a Open Elective (OE) category course worth 3 credits."
   },
   {
     "program": "B.Tech",

@@ -45,6 +45,7 @@ function buildGroupMetadata(coursesInGroup) {
         program: first.program,
         branch: first.branch,
         semester: first.semester,
+        section: first.section || null,
         course_count: coursesInGroup.length,
         course_codes: coursesInGroup
             .map(c => c.course_code || 'Elective/TBD')
@@ -78,7 +79,7 @@ async function indexDocuments() {
     // ── Group courses by branch + semester ──────────────────────────────────
     const grouped = {};
     for (const course of courses) {
-        const key = `${course.branch}__${course.semester}`;
+        const key = `${course.branch}__${course.semester}${course.section ? '__' + course.section : ''}`;
         if (!grouped[key]) grouped[key] = [];
         grouped[key].push(course);
     }
@@ -103,6 +104,7 @@ async function indexDocuments() {
                 program: course.program,
                 branch: course.branch,
                 semester: course.semester,
+                section: course.section || null,
                 course_category: course.course_category,
                 course_category_full: course.course_category_full,
                 course_code: course.course_code || 'Elective/TBD',

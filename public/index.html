@@ -7,14 +7,18 @@
     <title>ZHCET Buddy — Your Academic Advisor</title>
     <meta name="description"
         content="ZHCET Buddy - AI Academic Advisor for Zakir Husain College of Engineering & Technology, AMU">
+    <meta name="theme-color" content="#0B0B14">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 </head>
 
 <body>
     <div class="app-container">
+        <!-- Mobile sidebar overlay -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -36,7 +40,7 @@
             <div class="chat-header">
                 <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
                 <div class="header-info">
-                    <h1>🎓 ZHCET Buddy</h1>
+                    <h1>🎓 ZHCET Buddy <span class="status-dot" title="Online"></span></h1>
                     <p>Your friendly Academic Advisor — ZHCET, AMU</p>
                 </div>
             </div>
@@ -69,9 +73,9 @@
 
             <div class="chat-input-area">
                 <form id="chat-form">
-                    <input type="text" id="user-input" placeholder="Ask me anything about ZHCET... 💬"
-                        autocomplete="off">
-                    <button type="submit" id="send-btn">
+                    <textarea id="user-input" placeholder="Ask me anything about ZHCET... 💬" rows="1"
+                        autocomplete="off"></textarea>
+                    <button type="submit" id="send-btn" aria-label="Send message">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -79,9 +83,24 @@
                         </svg>
                     </button>
                 </form>
+                <div class="powered-by">Powered by AI · ZHCET, AMU</div>
             </div>
         </main>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="confirm-modal-overlay" id="confirm-modal-overlay">
+        <div class="confirm-modal">
+            <span class="confirm-modal-icon">🗑️</span>
+            <h3>Delete this chat?</h3>
+            <p>This conversation will be permanently removed. This action cannot be undone.</p>
+            <div class="confirm-modal-actions">
+                <button class="confirm-modal-btn cancel" id="confirm-cancel-btn">Cancel</button>
+                <button class="confirm-modal-btn delete" id="confirm-delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 

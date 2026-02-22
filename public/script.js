@@ -7,8 +7,19 @@ const sessionList = document.getElementById('session-list');
 const newChatBtn = document.getElementById('new-chat-btn');
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const confirmModalOverlay = document.getElementById('confirm-modal-overlay');
+const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
 
 let currentSessionId = localStorage.getItem('currentSessionId') || null;
+let pendingDeleteSessionId = null;
+let pendingDeleteElement = null;
+
+// --- Time Formatting ---
+function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
 // --- UI Helpers ---
 function getWelcomeScreen() {
@@ -22,7 +33,7 @@ function hideWelcomeScreen() {
     }
 }
 
-function addMessage(text, isUser, options = []) {
+function addMessage(text, isUser, options = [], time = null) {
     // Hide welcome screen when first message appears
     hideWelcomeScreen();
 
@@ -32,21 +43,49 @@ function addMessage(text, isUser, options = []) {
 
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('message-content');
+    let copyBtn = null;
 
     if (isUser) {
         contentDiv.textContent = text;
     } else {
         const rawHtml = marked.parse(text, { gfm: true, breaks: true });
         contentDiv.innerHTML = DOMPurify.sanitize(rawHtml);
+
+        // Add copy button for bot messages
+        copyBtn = document.createElement('button');
+        copyBtn.classList.add('copy-btn');
+        copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+        copyBtn.title = 'Copy message';
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.classList.add('copied');
+                copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+                }, 2000);
+            });
+        });
     }
 
     messageDiv.appendChild(contentDiv);
+
+    // Append copy button outside the content card (bot messages only)
+    if (copyBtn) {
+        messageDiv.appendChild(copyBtn);
+    }
 
     // Add option chips if provided (only for bot messages)
     if (!isUser && options.length > 0) {
         const optionsDiv = createOptionChips(options);
         contentDiv.appendChild(optionsDiv);
     }
+
+    // Add timestamp
+    const timeDiv = document.createElement('div');
+    timeDiv.classList.add('message-time');
+    timeDiv.textContent = time || formatTime(new Date());
+    messageDiv.appendChild(timeDiv);
 
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -65,14 +104,14 @@ function createOptionChips(options) {
             // Disable all chips in this group after one is clicked
             container.querySelectorAll('.option-chip').forEach(c => {
                 c.disabled = true;
-                c.style.opacity = '0.5';
+                c.style.opacity = '0.4';
                 c.style.cursor = 'default';
             });
             // Highlight the selected chip
             chip.style.opacity = '1';
             chip.style.background = 'var(--primary-light)';
-            chip.style.borderColor = 'var(--primary-color)';
-            chip.style.color = 'var(--primary-color)';
+            chip.style.borderColor = 'var(--primary)';
+            chip.style.color = 'var(--accent)';
         });
         container.appendChild(chip);
     });
@@ -130,6 +169,13 @@ function bindWelcomeChips() {
     });
 }
 
+// --- Textarea Auto-Resize ---
+function autoResizeTextarea() {
+    userInput.style.height = 'auto';
+    const maxHeight = 150;
+    userInput.style.height = Math.min(userInput.scrollHeight, maxHeight) + 'px';
+}
+
 // --- Session Logic ---
 
 async function loadSessions() {
@@ -149,8 +195,9 @@ async function loadSessions() {
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-session-btn';
             deleteBtn.type = 'button';
-            deleteBtn.textContent = '\u00d7';
-            deleteBtn.addEventListener('click', (e) => deleteSession(e, session.id));
+            deleteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+            deleteBtn.title = 'Delete chat';
+            deleteBtn.addEventListener('click', (e) => requestDeleteSession(e, session.id, div));
 
             div.onclick = (e) => {
                 if (e.target === deleteBtn) return;
@@ -174,7 +221,7 @@ async function loadSession(sessionId) {
     loadSessions();
 
     // Close sidebar on mobile
-    sidebar.classList.remove('open');
+    closeSidebar();
 
     try {
         const res = await fetch(`/api/sessions/${sessionId}`);
@@ -199,9 +246,33 @@ async function loadSession(sessionId) {
     }
 }
 
-async function deleteSession(event, sessionId) {
+// --- Custom Delete Modal ---
+
+function requestDeleteSession(event, sessionId, element) {
     event.stopPropagation();
-    if (!confirm('Delete this chat?')) return;
+    pendingDeleteSessionId = sessionId;
+    pendingDeleteElement = element;
+    confirmModalOverlay.classList.add('visible');
+}
+
+function closeConfirmModal() {
+    confirmModalOverlay.classList.remove('visible');
+    pendingDeleteSessionId = null;
+    pendingDeleteElement = null;
+}
+
+async function executeDelete() {
+    const sessionId = pendingDeleteSessionId;
+    const element = pendingDeleteElement;
+    closeConfirmModal();
+
+    if (!sessionId) return;
+
+    // Animate the session item sliding out
+    if (element) {
+        element.classList.add('deleting');
+        await new Promise(resolve => setTimeout(resolve, 350));
+    }
 
     try {
         await fetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
@@ -220,7 +291,19 @@ function createNewChat() {
     localStorage.removeItem('currentSessionId');
     clearChat();
     loadSessions();
+    closeSidebar();
+}
+
+// --- Sidebar helpers ---
+
+function closeSidebar() {
     sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('visible');
+}
+
+function openSidebar() {
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('visible');
 }
 
 // --- Send Message ---
@@ -231,6 +314,7 @@ async function sendMessage(message) {
     // UI Updates
     addMessage(message, true);
     userInput.value = '';
+    userInput.style.height = 'auto';
     userInput.disabled = true;
     sendBtn.disabled = true;
 
@@ -275,7 +359,27 @@ async function sendMessage(message) {
 newChatBtn.addEventListener('click', createNewChat);
 
 sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+        closeSidebar();
+    } else {
+        openSidebar();
+    }
+});
+
+sidebarOverlay.addEventListener('click', closeSidebar);
+
+// Confirm modal events
+confirmCancelBtn.addEventListener('click', closeConfirmModal);
+confirmDeleteBtn.addEventListener('click', executeDelete);
+confirmModalOverlay.addEventListener('click', (e) => {
+    if (e.target === confirmModalOverlay) closeConfirmModal();
+});
+
+// Escape key closes modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && confirmModalOverlay.classList.contains('visible')) {
+        closeConfirmModal();
+    }
 });
 
 chatForm.addEventListener('submit', async (e) => {
@@ -284,21 +388,39 @@ chatForm.addEventListener('submit', async (e) => {
     if (message) sendMessage(message);
 });
 
-// Allow Shift+Enter for newlines (future textarea upgrade)
+// Textarea: Enter to send, Shift+Enter for newline
 userInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-        // Default submit behavior via form
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (message) sendMessage(message);
     }
 });
+
+// Auto-resize textarea on input
+userInput.addEventListener('input', autoResizeTextarea);
 
 // Close sidebar when clicking outside on mobile
 document.addEventListener('click', (e) => {
     if (window.innerWidth <= 768 &&
         sidebar.classList.contains('open') &&
         !sidebar.contains(e.target) &&
-        e.target !== sidebarToggle) {
-        sidebar.classList.remove('open');
+        e.target !== sidebarToggle &&
+        e.target !== sidebarOverlay) {
+        closeSidebar();
     }
+});
+
+// Chip hover glow tracking
+document.addEventListener('mousemove', (e) => {
+    const chips = document.querySelectorAll('.option-chip');
+    chips.forEach(chip => {
+        const rect = chip.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        chip.style.setProperty('--mouse-x', x + '%');
+        chip.style.setProperty('--mouse-y', y + '%');
+    });
 });
 
 // --- Initial Load ---

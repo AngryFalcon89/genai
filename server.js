@@ -116,8 +116,19 @@ function loadSessions() {
         try {
             const data = fs.readFileSync(SESSIONS_FILE, 'utf8');
             const parsed = JSON.parse(data);
-            // Convert Object back to Map
-            Sessions = new Map(Object.entries(parsed));
+            // Convert Object back to Map and migrate old flat-array format
+            Sessions = new Map(
+                Object.entries(parsed).map(([id, val]) => {
+                    // Migrate old sessions (plain arrays) to {context, messages}
+                    if (Array.isArray(val)) {
+                        return [id, {
+                            context: { branch: null, semester: null, section: null, categories: [], intent: 'other' },
+                            messages: val
+                        }];
+                    }
+                    return [id, val];
+                })
+            );
             console.log(`Loaded ${Sessions.size} chat sessions.`);
         } catch (e) {
             console.error("Error loading sessions:", e);
@@ -812,6 +823,8 @@ async function maybeLlmRerankCandidates(question, queryPlan, candidates) {
         });
 
         const parsed = extractFirstJsonObject(response.choices[0].message.content || '');
+        const rerankerUsage = response.usage || {};
+        console.log(`🔢 Reranker tokens — prompt: ${rerankerUsage.prompt_tokens || 0}, completion: ${rerankerUsage.completion_tokens || 0}, total: ${rerankerUsage.total_tokens || 0}`);
         const rankedIds = Array.isArray(parsed?.ranked_ids)
             ? parsed.ranked_ids.map(id => Number(id)).filter(id => Number.isInteger(id))
             : [];
@@ -854,48 +867,43 @@ async function selectRelevantResults(store, question, queryPlan) {
 }
 
 // --- Chat Logic ---
-async function transformQuery(history, question) {
-    // Use only recent history for rewriting to save tokens
-    const recentHistory = history.slice(-MAX_HISTORY_MESSAGES);
+async function transformQuery(currentContext, question) {
     const branchOptions = Object.values(BRANCHES).join(', ');
-    const messages = [
-        {
-            role: 'system',
-            content: `You are a query planning expert for a university RAG system.
-Return ONLY valid JSON using this schema:
-{
-  "rewritten_query": "string",
-  "intent": "course_list|course_detail|registration_rule|general_info|comparison|other",
-  "branch": "string|null",
-  "semester": "number|null",
-  "categories": ["PC|PE|OE|AU|BS|ESA|HM|PSI"],
-  "confidence": 0.0
-}
+    const prompt = `You are a state tracker and intent extractor for a university chatbot.
+Update the user's context based on their NEW QUESTION.
 
-Rules:
-- Preserve branch/semester/category constraints from chat context.
-- Expand abbreviations (CE/ECE/EE/ME/AI) when possible.
-- branch must be one of: ${branchOptions}
-- Use null for unknown values.
-- categories must be an EMPTY array [] unless the user explicitly asks for a specific course type (e.g. "core courses", "electives", "PC", "PE"). Do NOT guess or populate categories for general queries.
-- Output JSON only. No markdown.`
-        },
-        ...recentHistory,
-        { role: 'user', content: question }
-    ];
+CURRENT USER CONTEXT:
+${JSON.stringify(currentContext, null, 2)}
+
+NEW QUESTION: "${question}"
+
+RULES:
+1. If the new question mentions a branch, semester, or section, update the context.
+2. If the new question relies on previous context (e.g. "What about semester 6?"), KEEP the old branch but update the semester.
+3. categories must be an EMPTY array [] unless the user explicitly asks for a specific course type in the CURRENT question. Do NOT carry over categories from the old context if the user changes the branch or semester.
+4. Expand abbreviations (CE/ECE/EE/ME/AI).
+5. Output ONLY valid JSON using this schema:
+{
+  "rewritten_query": "string (the user's question expanded with current context)",
+  "intent": "course_list|course_detail|registration_rule|general_info|comparison|other",
+  "branch": "string|null (must be one of: ${branchOptions})",
+  "semester": "number|null",
+  "section": "string|null",
+  "categories": ["PC|PE|OE|AU|BS|ESA|HM|PSI"]
+}`;
 
     const response = await groq.chat.completions.create({
-        model: MODEL,
-        messages: messages,
+        model: "llama-3.1-8b-instant",
+        messages: [{ role: 'system', content: prompt }],
         temperature: 0.0,
-        max_tokens: 320,
+        response_format: { type: "json_object" },
     });
+    const stateUsage = response.usage || {};
+    console.log(`🔢 State tracker tokens — prompt: ${stateUsage.prompt_tokens || 0}, completion: ${stateUsage.completion_tokens || 0}, total: ${stateUsage.total_tokens || 0}`);
 
     const raw = response.choices[0].message.content || '';
     const parsed = extractFirstJsonObject(raw);
-    if (!parsed) {
-        throw new Error('Could not parse structured rewrite JSON');
-    }
+    if (!parsed) throw new Error('Could not parse state JSON');
     return parsed;
 }
 
@@ -916,25 +924,41 @@ function parseOptions(text) {
 }
 
 async function getChatResponse(sessionId, question) {
-    // 1. Get or Create Session
+    // 1. Get or Create Session with state context
     if (!Sessions.has(sessionId)) {
-        Sessions.set(sessionId, []);
+        Sessions.set(sessionId, {
+            context: { branch: null, semester: null, section: null, categories: [], intent: 'other' },
+            messages: []
+        });
     }
-    const history = Sessions.get(sessionId);
+    const sessionData = Sessions.get(sessionId);
+    const history = sessionData.messages;
+    let currentContext = sessionData.context;
 
-    // 2. Build structured query plan (rewrite + intent + metadata constraints)
+    // 2. Build structured query plan (state-tracking rewrite + intent + metadata)
     let structuredRewrite = {
         rewritten_query: question,
         intent: 'other',
         branch: null,
         semester: null,
+        section: null,
         categories: [],
         confidence: null,
     };
     try {
-        structuredRewrite = await transformQuery(history, question);
+        structuredRewrite = await transformQuery(currentContext, question);
+        // Update the active context state
+        sessionData.context = {
+            branch: structuredRewrite.branch || currentContext.branch,
+            semester: structuredRewrite.semester ?? currentContext.semester,
+            section: structuredRewrite.section || currentContext.section,
+            categories: (structuredRewrite.categories && structuredRewrite.categories.length > 0)
+                ? structuredRewrite.categories : currentContext.categories,
+            intent: structuredRewrite.intent || currentContext.intent
+        };
+        currentContext = sessionData.context;
     } catch (error) {
-        console.error('Query planning failed, using heuristic fallback:', error.message);
+        console.error('State tracking failed, using heuristic fallback:', error.message);
     }
     const queryPlan = parseQueryPlan(question, structuredRewrite);
     console.log('🧭 Query plan:', queryPlan);
@@ -950,7 +974,7 @@ async function getChatResponse(sessionId, question) {
         history.push({ role: 'user', content: question });
         history.push({ role: 'assistant', content: cleanText });
         Sessions.delete(sessionId);
-        Sessions.set(sessionId, history);
+        Sessions.set(sessionId, sessionData);
         saveSessions();
 
         return { text: cleanText, options };
@@ -973,7 +997,7 @@ async function getChatResponse(sessionId, question) {
             history.push({ role: 'user', content: question });
             history.push({ role: 'assistant', content: cleanText });
             Sessions.delete(sessionId);
-            Sessions.set(sessionId, history);
+            Sessions.set(sessionId, sessionData);
             saveSessions();
 
             return { text: cleanText, options };
@@ -1000,6 +1024,13 @@ async function getChatResponse(sessionId, question) {
 If the user's situation is ambiguous, do not answer immediately. Instead, reply with a short clarifying question and use the exact \`<<OPTIONS: ...>>\` format to guide them.
 Example: "Are you registering for a regular semester, or repeating a backlog?" <<OPTIONS: Regular Semester | Repeating Backlog | Improving Grade>>
 
+### ATTENDANCE DECISION TREE (follow EXACTLY for attendance queries):
+When a student provides their attendance percentage, compare it step by step:
+1. If attendance **>= 75%** → Student meets the requirement. No issue.
+2. If attendance **>= 65% AND < 75%** → This is the **condonation range**. Student may apply for condonation.
+3. If attendance **< 65%** → Student is **detained** and awarded grade 'F'.
+⚠️ CRITICAL: Double-check your numerical comparison. 68% is >= 65%, so it falls in condonation range, NOT detained.
+
 ### OUTPUT FORMATTING:
 - Be concise, professional, and empathetic. 
 - Use bullet points for multiple conditions.
@@ -1018,6 +1049,8 @@ ${JSON.stringify(REGISTRATION_RULES, null, 2)}`
             temperature: 0.0,
             max_tokens: 1024,
         });
+        const regUsage = regResponse.usage || {};
+        console.log(`🔢 Registration tokens — prompt: ${regUsage.prompt_tokens || 0}, completion: ${regUsage.completion_tokens || 0}, total: ${regUsage.total_tokens || 0}`);
 
         const rawMessage = regResponse.choices[0].message.content;
         const { cleanText, options } = parseOptions(rawMessage);
@@ -1025,7 +1058,7 @@ ${JSON.stringify(REGISTRATION_RULES, null, 2)}`
         history.push({ role: 'user', content: question });
         history.push({ role: 'assistant', content: cleanText });
         Sessions.delete(sessionId);
-        Sessions.set(sessionId, history);
+        Sessions.set(sessionId, sessionData);
         saveSessions();
 
         return { text: cleanText, options };
@@ -1068,31 +1101,21 @@ ${JSON.stringify(REGISTRATION_RULES, null, 2)}`
 
     const context = contextChunks.join("\n\n");
 
-    // 5. Generate Response (trim history to last 8 messages for token efficiency)
-    const recentHistory = history.slice(-MAX_HISTORY_MESSAGES);
-    const currentHistory = [...recentHistory, { role: 'user', content: question }];
-
+    // 5. Generate Response — inject currentContext instead of full message history
     const messages = [
         {
             role: 'system',
             content: `You are **ZHCET Buddy** 🎓, a highly accurate academic advisor for **Zakir Husain College of Engineering & Technology (ZHCET), Aligarh Muslim University**.
 
-### STRICT ACCURACY RULES (NON-NEGOTIABLE):
-- Use **ONLY** the retrieved context below to answer. Do not rely on prior knowledge for course data.
-- If the exact answer is **not present** in the context, reply: "I cannot find this exact information in the official curriculum."
-- **NEVER fabricate or hallucinate** course codes, course names, credits, or any academic data.
-- Include ALL courses from the retrieved context for the requested branch/semester, even if their code prefix differs (e.g., project courses like COP, shared courses like AMS/ELA/HMC, and audit courses are valid).
+CURRENT USER STATE:
+${JSON.stringify(currentContext, null, 2)}
 
-### THINK BEFORE ANSWERING (follow these steps internally):
-1. Identify which **branch** and **semester** the user is asking about.
-2. Look for a "SEMESTER COURSE GROUP" block in the context that matches that exact branch and semester.
-3. If a group block is found, use ALL courses from that block — do not omit any.
-4. Include ALL courses from that block — projects, shared courses, and audit courses belong to the semester even if their code prefix differs.
-5. If the context has fewer results than expected, say so honestly with a disclaimer.
-
-### MISSING DATA GUARDRAIL:
-- If the context explicitly states a total course count that differs from what you listed, add a disclaimer.
-- NEVER say "there are only X courses" unless the context explicitly confirms the total count.
+### STRICT ACCURACY RULES & MISSING DATA GUARDRAIL (NON-NEGOTIABLE):
+1. **Source Dependency:** Use ONLY the retrieved context below to answer. Do not rely on prior knowledge. NEVER fabricate or hallucinate course codes, names, or credits.
+2. **Complete Context:** Include ALL courses from the retrieved context for the requested branch/semester.
+3. **Missing Category (CRITICAL):** If the user asks for a specific category (e.g., "Programme Electives", "Open Electives", "PE", "OE") BUT the retrieved context does not explicitly list any courses matching that category, YOU MUST reply EXACTLY with: "There are no [Category Name] courses offered for this specific branch and semester." Do not include partial matches or audit courses.
+4. **General Missing Data:** If no specific category was requested, but you still cannot answer the query using the context, reply EXACTLY with: "I cannot find this exact information in the official curriculum."
+5. **Count Discrepancy:** NEVER say "there are only X courses" unless the context explicitly confirms the total count.
 
 ### Your Personality:
 - Friendly and warm — like a helpful senior who cares about students.
@@ -1128,7 +1151,8 @@ Here are the courses for **B.Tech Computer Engineering — Semester 5** 📚
 ### Retrieved Context:
 ${context || 'No relevant context found for this query.'}`
         },
-        ...currentHistory
+        ...history.slice(-2),
+        { role: 'user', content: question }
     ];
 
     const response = await groq.chat.completions.create({
@@ -1137,6 +1161,8 @@ ${context || 'No relevant context found for this query.'}`
         temperature: 0.0,
         max_tokens: 2048,
     });
+    const responseUsage = response.usage || {};
+    console.log(`🔢 Response tokens — prompt: ${responseUsage.prompt_tokens || 0}, completion: ${responseUsage.completion_tokens || 0}, total: ${responseUsage.total_tokens || 0}`);
 
     const rawMessage = response.choices[0].message.content;
     const { cleanText, options } = parseOptions(rawMessage);
@@ -1146,7 +1172,7 @@ ${context || 'No relevant context found for this query.'}`
     history.push({ role: 'assistant', content: cleanText });
     // Refresh insertion order so session list reflects most recently active chats.
     Sessions.delete(sessionId);
-    Sessions.set(sessionId, history);
+    Sessions.set(sessionId, sessionData);
     saveSessions();
 
     return { text: cleanText, options };
@@ -1157,15 +1183,16 @@ ${context || 'No relevant context found for this query.'}`
 // Get all sessions (lightweight list)
 app.get('/api/sessions', (req, res) => {
     const list = Array.from(Sessions.keys()).map(id => {
-        const history = Sessions.get(id);
-        const firstMsg = history.find(m => m.role === 'user')?.content || 'New Chat';
+        const sessionData = Sessions.get(id);
+        const history = sessionData.messages || sessionData; // backward compat
+        const firstMsg = (Array.isArray(history) ? history : []).find(m => m.role === 'user')?.content || 'New Chat';
         return {
             id,
             title: firstMsg.substring(0, 30) + (firstMsg.length > 30 ? '...' : ''),
-            count: history.length
+            count: Array.isArray(history) ? history.length : 0
         };
     });
-    res.json(list.reverse()); // Newest first (if keys are ordered by insertion)
+    res.json(list.reverse());
 });
 
 // Get specific session history
@@ -1175,7 +1202,8 @@ app.get('/api/sessions/:id', (req, res) => {
         return res.status(400).json({ error: 'Invalid session id' });
     }
     if (Sessions.has(id)) {
-        res.json(Sessions.get(id));
+        const sessionData = Sessions.get(id);
+        res.json(sessionData.messages || sessionData);
     } else {
         res.status(404).json({ error: 'Session not found' });
     }

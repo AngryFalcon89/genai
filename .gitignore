@@ -7,3 +7,4 @@ sessions.json
 vector_store/
 uploads/
 active_timetable.json
+server.log

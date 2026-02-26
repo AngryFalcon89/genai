@@ -1,32 +1,51 @@
 {
     "registration_modes": {
-        "mode_a": "Regular registration. Fulfill class attendance requirement and appear in all components of evaluation.",
-        "mode_b": "Appear in all components of evaluation (not applicable for laboratory courses). Requires fulfilling attendance in an earlier semester.",
-        "mode_c": "Appear in end semester exam only. Previous sessional marks will be considered. Requires fulfilling attendance in an earlier semester."
+        "mode_a": "Fulfill class attendance requirement and appear in all components of evaluation.",
+        "mode_b": "Appear in all components of evaluation (not applicable for laboratory courses). Permissible only if the student had registered in mode 'a' and fulfilled attendance requirement in an earlier semester.",
+        "mode_c": "Appear in end semester exam only. Previous sessional marks will be considered. Permissible only if the student had registered in mode 'a' and fulfilled attendance requirement in an earlier semester."
     },
     "credit_limits": {
         "maximum_credits_per_semester": 40
     },
     "attendance_rules": {
-        "minimum_required": "75%",
-        "condonation_range": "65% to less than 75%",
-        "detained": "Less than 65% (Awarded grade 'F')",
-        "repeating_students": "If a student already fulfilled attendance in a previous attempt, they will not be detained due to attendance again."
+        "minimum_required": "75% or more to be eligible for End-Semester Examination.",
+        "condonation_range": "65% or more but less than 75% (subject to approval by condonation committee).",
+        "detained": "Less than 65% or unapproved condonation. Awarded grade 'F' and all marks stand cancelled.",
+        "repeating_students_exemption": "If a student is repeating a course and already fulfilled the attendance requirement previously, they will not be detained due to attendance in the repeating semester."
     },
     "repetition_and_backlog_rules": {
-        "failed_due_to_attendance": "Must register again in Mode 'a'.",
-        "failed_theory_but_completed_attendance": "Can register again in Mode 'b' or Mode 'c'.",
-        "failed_lab_but_completed_attendance": "Can register again in Mode 'a' or Mode 'c'.",
-        "improving_passed_course": "Allowed only ONCE if the course was passed in a single attempt. Must register in Mode 'b' or 'c'. For CGPA, the better grade is counted."
+        "failed_due_to_attendance": "Must register the course again in mode 'a'.",
+        "failed_theory_but_completed_attendance": "Can register the course again in either mode 'b' or mode 'c'.",
+        "failed_lab_but_completed_attendance": "Can register the course again in either mode 'a' or mode 'c'.",
+        "improving_passed_course": "Allowed only ONCE if the course was passed in a single attempt. Must register in mode 'b' or 'c'. For SGPA, the recent grade is counted; for CGPA, the better of the two grades is counted.",
+        "uncleared_previous_courses": "A student must normally register for un-cleared courses of previous semesters (especially first two semesters) before registering for higher semester courses."
     },
-    "promotion_criteria": {
-        "to_semester_3_or_4": "Minimum 16 earned credits by end of Semester II.",
-        "to_semester_5_or_6": "Minimum 60 earned credits (including at least 36 credits from first two semesters) by end of Semester IV.",
-        "to_semester_7_or_8": "Minimum 108 earned credits (including at least 80 credits from first four semesters) by end of Semester VI.",
-        "penalty": "If 'Not Promoted' more than three times, admission is cancelled."
+    "promotion_and_continuation_criteria": {
+        "to_semester_3_or_4": "Minimum 16 earned credits by the end of Semester II.",
+        "to_semester_5_or_6": "Minimum 60 earned credits, including at least 36 credits from the first two semesters, by the end of Semester IV.",
+        "to_semester_7_or_8": "Minimum 108 earned credits, including at least 80 credits from the first four semesters, by the end of Semester VI.",
+        "penalty": "If 'Not Promoted' more than three times, admission is cancelled and name is removed from the rolls.",
+        "mercy_appeal": "A student whose name is removed can appeal to the Vice-Chancellor. If allowed, the total duration of the program can be extended by a maximum of two semesters (beyond 14 semesters)."
     },
     "special_registrations": {
-        "graduating_course": "Max 1 course of <= 4 credits allowed if it enables graduation. Evaluated on End-Semester Exam only.",
-        "minor_degree": "Requires CGPA >= 7.5 at the end of second semester with no backlogs."
-    }
+        "graduating_course": "A student may register for 1 course (max 4 credits) if passing it enables graduation, even if not offered in the current semester. Must have fulfilled attendance earlier (E or I grade). Evaluated ONLY on End-Semester Exam (needs >=35% for theory to get Grade D, >=45% for lab to get Grade C).",
+        "minor_degree": "Requires CGPA >= 7.5 at the end of the second semester with no backlogs. Subject to merit and availability of seats.",
+        "final_year_exception": "A final year student may register up to 3 courses not running in the current semester in mode 'c', but only if without it, graduation is delayed by at least one semester.",
+        "third_year_early_registration": "A III-year student can register for a final year level theory course if: CGPA >= 7.5, no backlog courses, and pre-requisite courses are cleared.",
+        "open_elective_allotment": "Open-Elective (OE) courses are allotted strictly on merit by the Chief Coordinator."
+    },
+    "add_drop_and_failure_to_register": {
+        "course_modification": "A student can add/delete/alter courses within a week of registration.",
+        "dropping_a_course": "A student can drop a course up to a specified date. However, the registered course will still count as an attempt even if absent in the exam.",
+        "failure_to_register": "Failing to register in two consecutive semesters without permission leads to removal from faculty rolls."
+    },
+    "program_duration_limits": {
+        "minimum_duration": "8 consecutive semesters.",
+        "maximum_duration": "14 consecutive semesters (Absolute maximum of 16 semesters if Mercy Appeal is granted)."
+    },
+    "branch_change_rules": {
+        "eligibility": "Allowed after the first year depending on seat availability and merit (CGPA at the end of II Semester).",
+        "restrictions": "Not permissible if: the student has not passed all courses of the first two semesters, CGPA is less than 7.5, or if the transfer causes the original branch's student count to fall below 70% of approved intake."
+    },
+    "odd_even_semester_availability": "Normally, students can only register for backlog courses in their respective semesters (Odd semester backlogs in Odd semesters, Even semester backlogs in Even semesters) because the course must be actively running. **CRITICAL EXCEPTIONS:** 1) First-Year Courses (Semester 1 and Semester 2): Because these are common courses that run section-wise, they are offered in BOTH Odd and Even semesters. Therefore, a 1st or 2nd-semester backlog can be taken in ANY semester. 2) The department makes a special exception to run a course out-of-schedule. 3) The student qualifies for the 'Final Year Exception' (Mode 'c' only) or 'Graduating Course' rule."
 }

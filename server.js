@@ -585,6 +585,7 @@ async function getChatResponse(sessionId, question) {
 ### Format style:
 - Friendly, warm tone.
 - Format course returns as nice Markdown tables with columns: Code, Title, Category, Credits, LTP.
+- If returning a timetable schedule, include these columns: Time, Course Code, Title, Professor, Room, Type.
 - You may dynamically append interactive options to the very end of your final response using EXACTLY this format if helpful: <<OPTIONS: Option 1 | Option 2>>`;
 
     // Ensure session isn't too huge before appending new questions

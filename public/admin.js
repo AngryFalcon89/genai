@@ -308,7 +308,18 @@ function buildWeeklyGrid(entries, isEditing = false, onChange = null) {
 
     const grid = document.createElement('div');
     grid.className = 'weekly-grid';
-    grid.style.gridTemplateColumns = `90px repeat(${numPeriods}, minmax(80px, 1fr))`;
+    // Duration-proportional columns: wider slots for longer periods
+    const durations = [];
+    for (let i = 0; i < numPeriods; i++) {
+        durations.push(boundaries[i + 1] - boundaries[i]);
+    }
+    const minDuration = Math.min(...durations);
+    const colDefs = durations.map(d => {
+        const ratio = d / minDuration;
+        const minPx = Math.round(80 * ratio);
+        return `minmax(${minPx}px, ${ratio}fr)`;
+    }).join(' ');
+    grid.style.gridTemplateColumns = `90px ${colDefs}`;
 
     // Header row
     grid.innerHTML = '<div class="grid-header day-col">Day</div>';
@@ -339,43 +350,47 @@ function buildWeeklyGrid(entries, isEditing = false, onChange = null) {
             for (let c = colStart; c < colEnd; c++) occupied[c] = true;
         }
 
+        // Group overlapping placements by their column range
+        const slotGroups = {};
+        for (const p of placements) {
+            const key = `${p.colStart}-${p.colEnd}`;
+            if (!slotGroups[key]) slotGroups[key] = [];
+            slotGroups[key].push(p);
+        }
+
         const dayRow = document.createElement('div');
         dayRow.className = 'grid-day-row';
         if (isEditing) dayRow.classList.add('editing');
         dayRow.style.gridColumn = `2 / ${numPeriods + 2}`;
         dayRow.style.display = 'grid';
-        dayRow.style.gridTemplateColumns = `repeat(${numPeriods}, minmax(80px, 1fr))`;
+        dayRow.style.gridTemplateColumns = colDefs;
         dayRow.style.gap = '1px';
 
-        for (const { entry, colStart, colEnd } of placements) {
+        for (const [slotKey, group] of Object.entries(slotGroups)) {
+            const { colStart, colEnd } = group[0];
             const span = colEnd - colStart;
-            const tc = getTypeClass(entry.type);
-            const ev = document.createElement('div');
-            ev.className = `grid-event ${tc}`;
-            ev.style.gridColumn = `${colStart + 1} / ${colEnd + 1}`;
-            ev.innerHTML = `<span class="event-code">${esc(entry.course_code) || ''}</span><span class="event-title">${esc(entry.course_title) || ''}</span>`;
-            if (!isEditing) ev.title = `${entry.course_code} — ${entry.course_title}\n${entry.start_time} – ${entry.end_time}\n${entry.type}`;
 
-            if (isEditing) {
-                ev.classList.add('editing');
+            if (group.length === 1) {
+                // Single entry — render normally
+                const { entry } = group[0];
+                const ev = buildEventEl(entry, colStart, colEnd, span, isEditing, entries, boundaries, numPeriods, onChange);
+                dayRow.appendChild(ev);
+            } else {
+                // Multiple overlapping entries — stack them vertically
+                const wrapper = document.createElement('div');
+                wrapper.className = 'grid-event-stack';
+                wrapper.style.gridColumn = `${colStart + 1} / ${colEnd + 1}`;
+                wrapper.style.gridRow = '1';
+                wrapper.style.display = 'flex';
+                wrapper.style.flexDirection = 'column';
+                wrapper.style.gap = '2px';
 
-                const handleLeft = document.createElement('div');
-                handleLeft.className = 'resize-handle left';
-                handleLeft.onmousedown = (e) => startResize(e, handleLeft, ev, entry, colStart, colEnd, boundaries, numPeriods, entries, onChange, true);
-                ev.appendChild(handleLeft);
-
-                const handleRight = document.createElement('div');
-                handleRight.className = 'resize-handle';
-                handleRight.onmousedown = (e) => startResize(e, handleRight, ev, entry, colStart, colEnd, boundaries, numPeriods, entries, onChange, false);
-                ev.appendChild(handleRight);
-
-                ev.onclick = (e) => {
-                    if (e.target === handleRight || handleRight.contains(e.target) || e.target === handleLeft || handleLeft.contains(e.target)) return;
-                    showGridPopover(entry, ev, entries, onChange);
-                };
+                for (const { entry } of group) {
+                    const ev = buildEventEl(entry, colStart, colEnd, span, isEditing, entries, boundaries, numPeriods, onChange, true);
+                    wrapper.appendChild(ev);
+                }
+                dayRow.appendChild(wrapper);
             }
-            if (span > 1) ev.classList.add('spanning');
-            dayRow.appendChild(ev);
         }
 
         // Empty cells
@@ -388,13 +403,12 @@ function buildWeeklyGrid(entries, isEditing = false, onChange = null) {
                     empty.classList.add('editing');
                     empty.onclick = () => {
                         const newEntry = {
-                            course_code: '', course_title: '', day: day,
+                            course_code: '', course_title: '', professor: '', group: '', day: day,
                             start_time: minToTimeStr(boundaries[c]),
                             end_time: minToTimeStr(boundaries[c + 1]),
                             type: 'Lecture'
                         };
                         entries.push(newEntry);
-                        // render and show popover on next frame after dom updates
                         onChange(entries, true, newEntry);
                     };
                 }
@@ -404,6 +418,41 @@ function buildWeeklyGrid(entries, isEditing = false, onChange = null) {
         grid.appendChild(dayRow);
     }
     return grid;
+}
+
+// Build a single event element (extracted for reuse in stacked and single modes)
+function buildEventEl(entry, colStart, colEnd, span, isEditing, entries, boundaries, numPeriods, onChange, inStack = false) {
+    const tc = getTypeClass(entry.type);
+    const ev = document.createElement('div');
+    ev.className = `grid-event ${tc}`;
+    if (!inStack) {
+        ev.style.gridColumn = `${colStart + 1} / ${colEnd + 1}`;
+    }
+    // Show group badge if present
+    const groupBadge = entry.group ? `<span class="event-group">${esc(entry.group)}</span>` : '';
+    ev.innerHTML = `<span class="event-code">${esc(entry.course_code) || ''}${groupBadge}</span><span class="event-title">${esc(entry.course_title) || ''}</span><span class="event-professor" style="font-size:11px;opacity:0.8;display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(entry.professor) || ''}</span>`;
+    if (!isEditing) ev.title = `${entry.course_code}${entry.group ? ' ' + entry.group : ''} — ${entry.course_title}\n${entry.start_time} – ${entry.end_time}\n${entry.type}\nProf: ${entry.professor || 'N/A'}`;
+
+    if (isEditing) {
+        ev.classList.add('editing');
+
+        const handleLeft = document.createElement('div');
+        handleLeft.className = 'resize-handle left';
+        handleLeft.onmousedown = (e) => startResize(e, handleLeft, ev, entry, colStart, colEnd, boundaries, numPeriods, entries, onChange, true);
+        ev.appendChild(handleLeft);
+
+        const handleRight = document.createElement('div');
+        handleRight.className = 'resize-handle';
+        handleRight.onmousedown = (e) => startResize(e, handleRight, ev, entry, colStart, colEnd, boundaries, numPeriods, entries, onChange, false);
+        ev.appendChild(handleRight);
+
+        ev.onclick = (e) => {
+            if (e.target === handleRight || handleRight.contains(e.target) || e.target === handleLeft || handleLeft.contains(e.target)) return;
+            showGridPopover(entry, ev, entries, onChange);
+        };
+    }
+    if (span > 1) ev.classList.add('spanning');
+    return ev;
 }
 
 function minToTimeStr(mins) {
@@ -538,10 +587,14 @@ function showGridPopover(entry, targetEl, allEntries, onChange) {
             <button class="close-btn" type="button">&times;</button>
         </div>
         <div class="row">
-            <div class="input-group" style="flex:1">
+            <div class="input-group" style="flex:2">
                 <label>Code</label>
                 <input type="text" id="pop-code" list="${datalistId}" value="${esc(entry.course_code || '')}" placeholder="e.g. CS101" autocomplete="off">
                 <datalist id="${datalistId}">${dlOpts}</datalist>
+            </div>
+            <div class="input-group" style="flex:1">
+                <label>Group</label>
+                <input type="text" id="pop-group" value="${esc(entry.group || '')}" placeholder="e.g. G1">
             </div>
             <div class="input-group" style="flex:1">
                 <label>Type</label>
@@ -555,6 +608,10 @@ function showGridPopover(entry, targetEl, allEntries, onChange) {
         <div class="input-group">
             <label>Title</label>
             <input type="text" id="pop-title" value="${esc(entry.course_title || '')}" placeholder="e.g. Calculus I">
+        </div>
+        <div class="input-group" style="margin-top: 8px;">
+            <label>Professor</label>
+            <input type="text" id="pop-professor" value="${esc(entry.professor || '')}" placeholder="e.g. Dr. A.K. Singh">
         </div>
         <div class="popover-actions">
             <button class="btn-delete" type="button">Delete</button>
@@ -608,8 +665,9 @@ function showGridPopover(entry, targetEl, allEntries, onChange) {
     pop.querySelector('.btn-save').onclick = () => {
         entry.course_code = codeInput.value.trim();
         entry.course_title = titleInput.value.trim();
+        entry.professor = pop.querySelector('#pop-professor').value.trim();
+        entry.group = pop.querySelector('#pop-group').value.trim();
         entry.type = pop.querySelector('#pop-type').value;
-        // Optionally delete entry.room if it existed before
         delete entry.room;
         overlay.click();
         onChange(allEntries);

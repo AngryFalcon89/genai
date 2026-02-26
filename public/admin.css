@@ -6,6 +6,8 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-width: 0;
+    overflow: hidden;
     background: var(--bg-main);
 }
 
@@ -49,9 +51,11 @@
     flex: 1;
     padding: 32px;
     overflow-y: auto;
+    overflow-x: hidden;
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 /* --- Sidebar Admin Nav --- */
@@ -448,6 +452,8 @@
     margin-bottom: 28px;
     overflow: hidden;
     animation: fadeIn 0.3s ease;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .timetable-card-header {
@@ -570,7 +576,30 @@
 /* ========== Weekly Grid (Days as ROWS, Time as COLUMNS) ========== */
 .weekly-grid-wrapper {
     overflow-x: auto;
+    overflow-y: visible;
     padding: 16px 20px 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar styling for the grid wrapper */
+.weekly-grid-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.weekly-grid-wrapper::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.weekly-grid-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(124, 58, 237, 0.3);
+    border-radius: 3px;
+}
+
+.weekly-grid-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(124, 58, 237, 0.5);
 }
 
 .weekly-grid {
@@ -578,9 +607,8 @@
     gap: 1px;
     background: rgba(255, 255, 255, 0.04);
     border-radius: 10px;
-    overflow: hidden;
-    min-width: 750px;
     border: 1px solid var(--border-color);
+    min-width: 100%;
 }
 
 .grid-header {
@@ -712,6 +740,35 @@
 .grid-event.tutorial:hover {
     background: rgba(251, 146, 60, 0.25);
     box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+}
+
+/* --- Stacked overlapping events --- */
+.grid-event-stack {
+    grid-row: 1;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.grid-event-stack .grid-event {
+    border-radius: 4px;
+    height: auto;
+    min-height: 28px;
+    padding: 4px 8px;
+    flex: 1;
+}
+
+/* --- Group Badge --- */
+.event-group {
+    display: inline-block;
+    font-size: 0.55rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
 }
 
 /* --- Grid Legend --- */

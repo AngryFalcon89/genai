@@ -36,7 +36,8 @@ app.use(express.static('public'));
 const upload = multer({ dest: 'uploads/' });
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-const MODEL = 'llama-3.3-70b-versatile';
+const MODEL = 'llama-3.3-70b-versatile'; // Reverted: qwen3-32b causes systematic tool_use_failed errors on Groq
+const FALLBACK_MODEL = 'llama-3.1-8b-instant'; // Task 1: Fallback model used on 429 rate-limit errors
 
 // Groq Vision model for OCR extraction (free tier)
 const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
@@ -50,8 +51,25 @@ let REGISTRATION_RULES = {};
 try {
     REGISTRATION_RULES = JSON.parse(fs.readFileSync('./knowledge_base/zhcet_registration_rules.json', 'utf8'));
 } catch (error) {
-    console.error('[Startup Error] Critical Knowledge Base file (registration_rules.json) missing or corrupt.');
+    console.error('[Startup Error] Critical Knowledge Base file (registration_rules.json) missing or corrupt:', error.message);
+    // Server continues with empty rules — queries will return {} but won't crash
 }
+
+// ── Task 3: Knowledge Base Anchoring — Non-negotiable academic constants ─────
+const CONSTANTS_SUMMARY = `MANDATORY ACADEMIC CONSTANTS (These are non-negotiable facts. You MUST use these exact values and NEVER contradict them):
+• Total Graduation Credits for B.Tech: 180 credits (not 160, not 200 — exactly 180).
+• Maximum Credits per Semester: 40 credits (absolute hard cap, no exceptions).
+• First-Year Backlog Rule: Semester 1 & 2 courses are offered in BOTH Odd and Even semesters. Students can register for first-year backlogs regardless of their current semester parity.
+• B.Tech Duration: 4 years (8 semesters).
+• Semester Parity: Odd semesters (1,3,5,7) and Even semesters (2,4,6,8). Courses from odd semesters cannot be taken in even semesters and vice versa, EXCEPT first-year courses (Sem 1 & 2).
+• CGPA Degree Classification (CRITICAL — do NOT confuse these):
+  - First Division (Honours): A student MUST satisfy BOTH conditions simultaneously:
+      (a) Secure a CGPA of 8.5 or above, AND
+      (b) Pass EVERY single course on the FIRST ATTEMPT — no backlogs, no failures, no repeats.
+      A backlog in ANY semester permanently disqualifies a student from Honours, even if their final CGPA is 9.5.
+  - First Division: CGPA between 6.5 and 8.5 (backlogs do NOT disqualify from this tier).
+  - Branch Change Requirement: CGPA of 7.5 or above AND seat availability. (NOT related to graduation honours)
+  - These three thresholds are DISTINCT. Never substitute one for another.`;
 const MAX_HISTORY_MESSAGES = 8;
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_CONTEXT_CHARS = 12000;
@@ -223,7 +241,7 @@ function saveSessions() {
             const stat = await fs.promises.stat(SESSIONS_FILE_TMP);
             const expectedBytes = Buffer.byteLength(payload, 'utf8');
             if (stat.size !== expectedBytes) {
-                await fs.promises.unlink(SESSIONS_FILE_TMP).catch(() => {});
+                await fs.promises.unlink(SESSIONS_FILE_TMP).catch(() => { });
                 throw new Error(
                     `[Strict Write] Session file integrity check failed: ` +
                     `expected ${expectedBytes} bytes, wrote ${stat.size}.`
@@ -550,12 +568,13 @@ const TOOLS = [
         type: "function",
         function: {
             name: "get_active_timetable",
-            description: "Retrieves uploaded class timetables. Can filter by branch and semester. Returns timetable entries grouped by their metadata (course, branch, semester). The current date is Thursday, April 2, 2026. When a user mentions 'today', 'tomorrow', or a specific day, you must map it correctly: Today is Thursday, Tomorrow is Friday. Query the timetable for the specific day requested.",
+            description: "Retrieves uploaded class timetables. Can filter by branch, semester, and a specific weekday. When a user asks about 'today' or 'tomorrow', derive the exact weekday name first, then call this tool with the day parameter set to that weekday (e.g. 'Friday').",
             parameters: {
                 type: "object",
                 properties: {
                     branch: { type: "string", description: "Optional branch filter (e.g. 'Computer Engineering')" },
-                    semester: { type: "integer", description: "Optional semester number (1-8) to filter" }
+                    semester: { type: "integer", description: "Optional semester number (1-8) to filter" },
+                    day: { type: "string", description: "Optional weekday to filter entries (e.g. 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'). Derive this from 'today' or 'tomorrow' using the current date before calling." }
                 }
             }
         }
@@ -573,12 +592,25 @@ const TOOLS = [
     }
 ];
 
+// ── Task 1: Hard-Coded Tool White-List ───────────────────────────────────────
+// Build a Set of valid tool names from the TOOLS array for O(1) lookup.
+const VALID_TOOL_NAMES = new Set(TOOLS.map(t => t.function.name));
+
 // Load courses into memory once
 const COURSES_DATA = fs.existsSync(COURSES_JSON) ? JSON.parse(fs.readFileSync(COURSES_JSON, 'utf8')) : [];
 
 // --- Tool Implementations ---
 async function executeTool(toolCall) {
     const { name, arguments: argsString } = toolCall.function;
+
+    // ── Task 1: White-List Gate — Block hallucinated tool names at execution level
+    if (!VALID_TOOL_NAMES.has(name)) {
+        console.warn(`🚫 [Tool Guard] LLM tried to call non-existent tool: "${name}". Blocked.`);
+        return JSON.stringify({
+            error: `Error: Tool "${name}" does not exist. Please use search_general_guidelines to find this information instead.`
+        });
+    }
+
     // Guard: JSON.parse(null) returns null — always default to {} for no-param tools
     const args = (argsString ? JSON.parse(argsString) : null) ?? {};
     console.log(`🛠️ Executing tool: ${name}`, args);
@@ -586,8 +618,10 @@ async function executeTool(toolCall) {
     switch (name) {
         case 'get_courses': {
             const sem = Number(args.semester);
+            const branchUpper = (args.branch || '').toUpperCase();
             let filtered = COURSES_DATA.filter(c =>
-                (c.branch === args.branch || (sem <= 2 && c.branch.includes('First Year'))) &&
+                // Task 1: Case-insensitive branch match
+                (c.branch.toUpperCase() === branchUpper || (sem <= 2 && c.branch.toUpperCase().includes('FIRST YEAR'))) &&
                 Number(c.semester) === sem
             );
             if (args.section) {
@@ -597,7 +631,15 @@ async function executeTool(toolCall) {
                 const cat = args.category.toUpperCase();
                 filtered = filtered.filter(c => c.course_category === cat);
             }
-            if (filtered.length === 0) return JSON.stringify({ error: "No courses found matching the criteria." });
+            // Task 3: Descriptive self-correction error — prompts LLM to retry with broader search
+            if (filtered.length === 0) {
+                const branchNote = args.branch
+                    ? `"${args.branch}" (Semester ${args.semester})`
+                    : `Semester ${args.semester}`;
+                return JSON.stringify({
+                    error: `System Note: No courses were found for ${branchNote}. Please verify the branch name is an exact canonical name (e.g., "COMPUTER ENGINEERING", "ARTIFICIAL INTELLIGENCE"). If the user asked about a backlog or elective, check if this course belongs to a different semester or use search_general_guidelines instead.`
+                });
+            }
             return JSON.stringify(filtered.map(c => ({
                 code: c.course_code,
                 title: c.course_title,
@@ -627,7 +669,7 @@ async function executeTool(toolCall) {
 
                 if (isCurrentEven !== isCourseEven) {
                     if (courseSem <= 2) {
-                        parity_evaluation = `SYSTEM VERIFIED: Parity Mismatch (Sem ${currentSem} vs Sem ${courseSem}), HOWEVER this is a FIRST-YEAR COURSE (Sem <= 2). First-Year courses are offered in ALL semesters. Registration is PERMITTED. Ignore odd/even rules for this specific course.`;
+                        parity_evaluation = `SYSTEM VERIFIED: Parity Mismatch (Sem ${currentSem} vs Sem ${courseSem}), HOWEVER this is a FIRST-YEAR COURSE (Sem <= 2). First-Year courses are offered in ALL semesters. Registration is PERMITTED. You MUST explain this specific ZHCET ordinance to the user as a "Special Exception". Ignore odd/even rules for this specific course.`;
                     } else {
                         parity_evaluation = `SYSTEM VERIFIED: CRITICAL PARITY MISMATCH. Student is in Sem ${currentSem} (${isCurrentEven ? 'Even' : 'Odd'}) but course is Sem ${courseSem} (${isCourseEven ? 'Even' : 'Odd'}). Registration is STRICTLY FORBIDDEN. You MUST tell the user they cannot register due to parity mismatch.`;
                     }
@@ -648,8 +690,60 @@ async function executeTool(toolCall) {
         }
         case 'search_general_guidelines': {
             const store = await getVectorStore();
-            const results = await store.similaritySearch(args.query, 4);
-            return JSON.stringify(results.map(r => r.pageContent));
+            // Fetch a wider pool for reranking (ENABLE_LLM_RERANK) or fall back to top 4
+            const kFetch = ENABLE_LLM_RERANK ? LLM_RERANK_LIMIT : 4;
+            const results = await store.similaritySearch(args.query, kFetch);
+
+            if (results.length === 0) {
+                return JSON.stringify({
+                    note: 'System Note: No relevant documents found in the knowledge base for this query. Try rephrasing the query with different keywords, or inform the user that this information is not available.'
+                });
+            }
+
+            // Task 2: LLM Mini-Rerank — ask the model to pick the top 3 most relevant snippets
+            if (ENABLE_LLM_RERANK && results.length > 3) {
+                console.log(`[LLM Rerank] Reranking ${results.length} chunks for query: "${args.query}"`);
+                try {
+                    const candidatesText = results
+                        .map((r, i) => `[${i + 1}] ${r.pageContent.slice(0, 400)}`)
+                        .join('\n\n');
+
+                    const rerankPrompt = `You are a relevance judge. Given the user's query and a list of candidate text snippets, return ONLY a JSON array of the 3 most relevant snippet numbers (1-indexed integers), ordered from most to least relevant. No explanation.
+
+Query: "${args.query}"
+
+Candidates:
+${candidatesText}
+
+Reply with ONLY a JSON array, e.g.: [3, 1, 5]`;
+
+                    const rerankResp = await groq.chat.completions.create({
+                        model: FALLBACK_MODEL, // Use the lighter model for reranking to save quota
+                        messages: [{ role: 'user', content: rerankPrompt }],
+                        temperature: 0,
+                        max_tokens: 64,
+                    });
+
+                    const rerankText = (rerankResp.choices[0]?.message?.content || '').trim();
+                    const arrMatch = rerankText.match(/\[([\d,\s]+)\]/);
+                    if (arrMatch) {
+                        const indices = JSON.parse(arrMatch[0]);
+                        const reranked = indices
+                            .map(i => results[i - 1])
+                            .filter(Boolean)
+                            .slice(0, 3);
+                        if (reranked.length > 0) {
+                            console.log(`[LLM Rerank] Selected indices: ${indices.join(', ')} → ${reranked.length} snippets returned.`);
+                            return JSON.stringify(reranked.map(r => r.pageContent));
+                        }
+                    }
+                    console.warn('[LLM Rerank] Could not parse rerank response, falling back to top-4 results.');
+                } catch (rerankErr) {
+                    console.warn(`[LLM Rerank] Rerank failed (${rerankErr.message}), falling back to top-4 results.`);
+                }
+            }
+
+            return JSON.stringify(results.slice(0, 4).map(r => r.pageContent));
         }
         case 'get_active_timetable': {
             const activeTimetable = TimetableManager.getActiveTimetable({
@@ -657,13 +751,39 @@ async function executeTool(toolCall) {
                 semester: args.semester
             });
             if (!activeTimetable) return JSON.stringify({ message: "No active timetable found." });
+
+            // Task 2: Server-side day filtering — narrow entries to the requested day
+            if (args.day) {
+                const dayFilter = args.day.trim().toLowerCase();
+                if (Array.isArray(activeTimetable)) {
+                    // activeTimetable is an array of timetable objects
+                    const filtered = activeTimetable.map(tt => ({
+                        ...tt,
+                        entries: (tt.entries || []).filter(e =>
+                            (e.day || '').toLowerCase() === dayFilter
+                        )
+                    }));
+                    const hasEntries = filtered.some(tt => tt.entries.length > 0);
+                    if (!hasEntries) {
+                        return JSON.stringify({
+                            day: args.day,
+                            message: `No classes scheduled for ${args.day}.`,
+                            timetables: filtered
+                        });
+                    }
+                    return JSON.stringify({ day: args.day, timetables: filtered });
+                }
+            }
+
             return JSON.stringify(activeTimetable);
         }
         case 'validate_registration_card': {
             return JSON.stringify(validateRegistrationCard(toolCall._sessionId));
         }
         default:
-            return JSON.stringify({ error: "Unknown tool" });
+            // This should never be reached due to the white-list gate above,
+            // but kept as a safety net.
+            return JSON.stringify({ error: `Error: Tool "${name}" does not exist. Please use search_general_guidelines to find this information instead.` });
     }
 }
 
@@ -1009,12 +1129,22 @@ async function getChatResponse(sessionId, question) {
     const history = Array.isArray(sessionData.messages) ? sessionData.messages :
         Array.isArray(sessionData) ? sessionData : [];
 
+    // ── Task 2: Dynamic Date & Day Injection ─────────────────────────────────
+    // Generate real-time date context instead of hard-coding.
+    const now = new Date();
+    const todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+    const tomorrowDate = new Date(now);
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    const tomorrowName = tomorrowDate.toLocaleDateString('en-US', { weekday: 'long' });
+    const dateContext = `Current Date: ${now.toDateString()}. Today is ${todayName}. Tomorrow is ${tomorrowName}.`;
+
     const systemPrompt = `You are **ZHCET Buddy** 🎓, a highly accurate academic advisor for **Zakir Husain College of Engineering & Technology (ZHCET), Aligarh Muslim University**.
 
 ### STRICT RULES:
 1. **Never Hallucinate:** Use the provided tools to retrieve real data. Do not guess course codes, credits, or registration policies. Strictly adhere to the defined toolset. You ONLY have the tools listed in the code. If you need credit or graduation info, you MUST use search_general_guidelines or get_registration_rules. If a tool is not in your definition, it does not exist.
-2. **Missing Category:** If you use tools to find PE/OE/AU courses and none are returned, say explicitly: "There are no [Category] courses offered for this branch and semester."
+2. **Missing Category:** Only use the 'No [Category] courses offered' message for the student's CURRENT semester registration. If the query is about a backlog or a course from a different semester, ignore this fallback and explain why the course might not be visible (e.g., parity rules or search failure).
 3. **Registration Queries ("Mode A/B/C", backlogs, attendance, promotion):** ALWAYS call \`get_registration_rules\` to verify the policy. ALWAYS call \`get_course_details\` if the user asks about a specific course.
+   **CRITICAL EXCEPTION:** First-year courses (Semester 1 and 2) like Applied Physics, Applied Maths, etc., are offered in BOTH Odd and Even semesters. If a student asks about a backlog from Semester 1 or 2, you MUST inform them that registration is permitted regardless of current semester parity. Do not ask for a course code if the user provides the course name; use search_general_guidelines to retrieve the code.
    **Odd/Even Semester Parity (CRITICAL):** When assessing if a student can take a course, you MUST check the \`parity_evaluation\` field returned by \`get_course_details\`. If it says "Registration is PERMITTED", do NOT invent rules forbidding it. If it says "Registration is STRICTLY FORBIDDEN", do not allow it. Follow the \`parity_evaluation\` verbatim.
 4. **General Info:** If the user asks about library, placements, scholarships, etc., use \`search_general_guidelines\`.
 5. **Interactive Flow:** If a user asks "What courses are in my semester?", ask them for their Branch and Semester instead of assuming.
@@ -1027,20 +1157,38 @@ async function getChatResponse(sessionId, question) {
    - ⚠️ Missing courses (expected in the curriculum but absent from the card)
    - 📋 Extra courses (on the card but not in the official curriculum for that branch+semester)
    - Summary: semester type (odd/even), total credits, overall verdict
-10. **Fact Check Totals:** The total credit requirement for B.Tech is 180. If you ever find yourself about to say a different number, stop and re-read zhcet_general_info.md. You must cite the 180-credit requirement specifically from the CURRICULUM SUMMARY section.
+10. **Fact Check Totals & Thresholds:** You must strictly distinguish between CGPA requirements — they are NOT interchangeable:
+    - **7.5 CGPA** → Branch Change eligibility (seat-dependent). Use this ONLY when a student asks about changing their branch.
+    - **8.5 CGPA + Zero Backlogs** → First Division (Honours). BOTH conditions are mandatory. A CGPA ≥ 8.5 earns Honours ONLY if the student has NEVER had a backlog or failure. A CGPA between 6.5 and 8.5 earns First Division (without Honours).
+    - **Never suggest 7.5 for graduation honours.** If a student asks "What CGPA do I need for Honours?", the answer is 8.5 AND first-attempt in all courses.
+    - The total credit requirement for B.Tech is 180. If you find yourself about to say a different number, stop — the correct value is 180.
+11. **Credit Limits:** The absolute maximum credit limit for any semester is 40 credits. This is a hard rule found in zhcet_registration_rules.json. Never suggest a lower 'typical' limit like 24 or 26. If a student asks to register for more than 40, tell them it is strictly forbidden by the ordinances. When a student asks about finishing early, correctly reference the 180-credit total requirement and suggest they can register for up to 40 credits per semester to accelerate, provided they meet the promotion criteria.
+12. **No Invented Conditions:** Do not invent academic conditions for registration limits (like CGPA or attendance) unless they are explicitly stated in zhcet_registration_rules.json. If the document only mentions a flat 40-credit limit, stick to that.
+13. **Branch Change Context Gate:** The 7.5 CGPA threshold applies ONLY to branch change requests. Do not mention it in any other context. If a student asks about branch changes, reference the 7.5 CGPA requirement and inform them it is also subject to seat availability in the desired branch.
+14. **Honours Backlog Disqualification (Hard Rule):** If a user asks about Honours AND mentions a backlog, failure, supplementary exam, re-appear, or repeating any course — you MUST immediately inform them they are permanently ineligible for Honours. Do NOT suggest exceptions, workarounds, or offer false hope. Do NOT say "it depends" or "check with the university". The rule is absolute: any backlog = no Honours, regardless of final CGPA.
+
+### Output Policy:
+- Provide ONLY the final student-facing answer. You are prohibited from using introductory phrases about your internal process or tools.
+- NEVER say: "I will check", "Let me look that up", "I need to verify", "After checking", "According to the rules", "Based on my search", "I found that", "Let me search", "According to my hard-coded rules", "I am checking the constants", "As per my instructions", or any similar phrase.
+- If you use a tool, act as if the information is part of your inherent knowledge. Present results directly.
+- Start every response with the actual answer, never with a preamble about what you are about to do.
+- **Firmness on Hard Rules:** When a rule is absolute (e.g., Honours disqualification due to backlogs), be clear and direct. Do NOT soften the message with phrases like "you might still have a chance" or "it's worth checking" — if the ordinance has no exception, your answer must have none either. Being genuinely helpful means being accurate, not encouraging.
 
 ### Communication Style:
-- Never mention tool names, function calls, or the process of retrieving data to the user. Do not say 'I am looking this up' or 'According to the tool.' Just provide the final answer naturally as if you already knew it.
+- If a user names a common course (e.g., 'Applied Physics') but doesn't provide the code, proactively use search_general_guidelines to find the code and then call get_course_details. Never ask the user for information that is likely present in your knowledge base.
 - Friendly, warm tone.
 
 ### Date Context:
-- The current date is Thursday, April 2, 2026. When a user mentions 'today', 'tomorrow', or a specific day, you must map it correctly: Today is Thursday, Tomorrow is Friday. Query the timetable for the specific day requested.
+- ${dateContext}
+- **Timetable Day Mapping (CRITICAL):** When a user asks about 'today', 'tomorrow', or a named day, you MUST first derive the exact weekday name using the current date above (e.g. if today is Thursday, tomorrow is Friday). Then call \`get_active_timetable\` with the \`day\` parameter set to that exact weekday string (e.g. \`day: "Friday"\`). Never call \`get_active_timetable\` without the \`day\` parameter when the user is asking about a specific day.
 
 ### Format style:
 - Ensure that all course and timetable data is returned in clean Markdown tables.
 - Format course returns as nice Markdown tables with columns: Code, Title, Category, Credits, LTP.
 - If returning a timetable schedule, include these columns: Time, Course Code, Title, Professor, Room, Type.
+- **Timetable Citations (MANDATORY):** When providing a timetable, you MUST explicitly state the day at the top of your response (e.g. "Here is your schedule for **Friday**:"). If the tool returns no entries for that day, you MUST explicitly state: "There are no classes scheduled for [Day]."
 - You may dynamically append interactive options to the very end of your final response using EXACTLY this format if helpful: <<OPTIONS: Option 1 | Option 2>>`;
+
 
     // ── Fix 3.1 — Summarize-on-the-fly context pruning ───────────────────────
     // If the conversation is longer than the window, compress the oldest messages
@@ -1089,8 +1237,10 @@ async function getChatResponse(sessionId, question) {
     }
 
     // Convert generic local history formats if necessary, ensuring proper roles
+    // ── Task 3: Inject CONSTANTS_SUMMARY as a separate, non-prunable system message
     const groqMessages = [
         { role: 'system', content: systemPrompt },
+        { role: 'system', content: CONSTANTS_SUMMARY },
         ...contextMessages
             .filter(m => !m._isSummary || m.role === 'system') // keep summary as system message
             .map(m => ({
@@ -1114,10 +1264,12 @@ async function getChatResponse(sessionId, question) {
         // When llama-3.3-70b generates a broken function call (XML instead of JSON),
         // Groq returns a 400 tool_use_failed. We detect it and retry immediately
         // with tool_choice:"none" to force a plain-text answer instead of crashing.
+        // Task 1: Dynamic Model Fallback — try primary model, retry with fallback on 429
         let llmCallSucceeded = false;
+        let activeModel = MODEL;
         try {
             currentResponse = await groq.chat.completions.create({
-                model: MODEL,
+                model: activeModel,
                 messages: groqMessages,
                 temperature: 0.1,
                 max_tokens: 2048,
@@ -1126,36 +1278,65 @@ async function getChatResponse(sessionId, question) {
             });
             llmCallSucceeded = true;
         } catch (llmErr) {
-            const isToolUseFailed =
-                llmErr?.status === 400 &&
-                (llmErr?.error?.error?.code === 'tool_use_failed' ||
-                 llmErr?.message?.includes('tool_use_failed'));
-
-            if (isToolUseFailed) {
+            // ── 429 Rate-Limit Fallback ───────────────────────────────────────
+            if (llmErr?.status === 429) {
                 console.warn(
-                    `[Self-Heal] Groq tool_use_failed on iteration ${iterations}. ` +
-                    `Retrying without tools to get a plain-text response...`
+                    `[Task 1 Fallback] Primary model "${MODEL}" hit rate limit (429). ` +
+                    `Retrying once with fallback model "${FALLBACK_MODEL}"...`
                 );
                 try {
-                    // Retry without any tool definitions so the model must answer in plain text
+                    activeModel = FALLBACK_MODEL;
                     currentResponse = await groq.chat.completions.create({
-                        model: MODEL,
+                        model: activeModel,
                         messages: groqMessages,
                         temperature: 0.1,
                         max_tokens: 2048,
-                        // No tools — forces plain text response
+                        tools: TOOLS,
+                        tool_choice: "auto"
                     });
-                    const recoveryMsg = currentResponse.choices[0].message;
-                    groqMessages.push(recoveryMsg);
-                    console.log('[Self-Heal] Recovery succeeded — plain-text response obtained.');
-                    break; // Exit the loop with the plain-text response
-                } catch (recoveryErr) {
-                    console.error(`[Self-Heal] Recovery attempt also failed: ${recoveryErr.message}`);
-                    throw recoveryErr;
+                    llmCallSucceeded = true;
+                    console.log(`[Task 1 Fallback] Fallback model "${FALLBACK_MODEL}" responded successfully.`);
+                } catch (fallbackErr) {
+                    console.error(`[Task 1 Fallback] Fallback model also failed: ${fallbackErr.message}`);
+                    throw fallbackErr;
                 }
             }
-            // Not a tool_use_failed error — re-throw
-            throw llmErr;
+
+            // ── 400 tool_use_failed Self-Heal ─────────────────────────────────
+            if (!llmCallSucceeded) {
+                const isToolUseFailed =
+                    llmErr?.status === 400 &&
+                    (llmErr?.error?.error?.code === 'tool_use_failed' ||
+                        llmErr?.message?.includes('tool_use_failed'));
+
+                if (isToolUseFailed) {
+                    console.warn(
+                        `[Self-Heal] Groq tool_use_failed on iteration ${iterations}. ` +
+                        `Retrying without tools to get a plain-text response...`
+                    );
+                    try {
+                        currentResponse = await groq.chat.completions.create({
+                            model: MODEL,
+                            messages: groqMessages,
+                            temperature: 0.1,
+                            max_tokens: 2048,
+                            // No tools — forces plain text response
+                        });
+                        const recoveryMsg = currentResponse.choices[0].message;
+                        groqMessages.push(recoveryMsg);
+                        console.log('[Self-Heal] Recovery succeeded — plain-text response obtained.');
+                        break; // Exit the loop with the plain-text response
+                    } catch (recoveryErr) {
+                        console.error(`[Self-Heal] Recovery attempt also failed: ${recoveryErr.message}`);
+                        throw recoveryErr;
+                    }
+                }
+
+                if (!llmCallSucceeded) {
+                    // Not a handled error — re-throw
+                    throw llmErr;
+                }
+            }
         }
 
         if (!llmCallSucceeded) break;

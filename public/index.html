@@ -77,6 +77,8 @@
                                 Rules</button>
                             <button class="option-chip" data-message="📚 Tell me about the library">📚 Library
                                 Info</button>
+                            <button class="option-chip upload-chip" id="welcome-upload-chip">📄 Upload Registration
+                                Card</button>
                         </div>
                     </div>
                 </div>
@@ -84,6 +86,15 @@
 
             <div class="chat-input-area">
                 <form id="chat-form">
+                    <input type="file" id="file-upload-input" accept="image/*,.pdf,application/pdf" hidden>
+                    <button type="button" id="upload-btn" class="upload-btn" aria-label="Upload registration card"
+                        title="Upload registration card">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+                        </svg>
+                    </button>
                     <textarea id="user-input" placeholder="Ask me anything about ZHCET... 💬" rows="1"
                         autocomplete="off"></textarea>
                     <button type="submit" id="send-btn" aria-label="Send message">

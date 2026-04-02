@@ -12,7 +12,6 @@
   "type": "module",
   "description": "",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "@langchain/community": "^1.0.3",
     "@langchain/core": "^1.0.5",
     "@langchain/textsplitters": "^1.0.0",

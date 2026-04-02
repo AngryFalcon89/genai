@@ -1289,3 +1289,111 @@ body {
 .confirm-modal-btn.delete:active {
     transform: translateY(0);
 }
+
+/* ========== Upload Button ========== */
+
+.upload-btn {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.upload-btn:hover {
+    color: var(--accent);
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.2);
+}
+
+.upload-btn:active {
+    transform: translateY(0);
+}
+
+.upload-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ========== Upload Preview in Chat ========== */
+
+.upload-message {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px !important;
+}
+
+.upload-preview {
+    max-width: 260px;
+    max-height: 200px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.upload-filename {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    padding: 0 4px;
+}
+
+.upload-pdf-icon {
+    font-size: 3rem;
+    text-align: center;
+    padding: 16px 0 4px;
+    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3));
+}
+
+/* ========== Upload Welcome Chip ========== */
+
+.upload-chip {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(52, 211, 153, 0.08) 100%) !important;
+    border-color: rgba(52, 211, 153, 0.25) !important;
+}
+
+.upload-chip:hover {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(52, 211, 153, 0.14) 100%) !important;
+    border-color: rgba(52, 211, 153, 0.45) !important;
+    color: #34D399 !important;
+}
+
+/* ========== Drag and Drop Overlay ========== */
+
+.chat-container.drag-over {
+    position: relative;
+}
+
+.chat-container.drag-over::after {
+    content: '📄 Drop your registration card here';
+    position: absolute;
+    inset: 0;
+    background: rgba(124, 58, 237, 0.15);
+    backdrop-filter: blur(4px);
+    border: 3px dashed var(--accent);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+    pointer-events: none;
+}

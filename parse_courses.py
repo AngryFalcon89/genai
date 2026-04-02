@@ -12,6 +12,8 @@ Usage:
 
 import re
 import json
+import os
+import sys
 
 INPUT_FILE = "document.md"
 COURSES_OUTPUT = "zhcet_courses.json"
@@ -31,6 +33,53 @@ CATEGORY_MAP = {
 
 # ── Heading where curriculum tables begin ────────────────────────────────────
 COURSE_STRUCTURE_HEADING = "COURSE STRUCTURE"
+
+
+def atomic_write_json(path: str, data: list, min_records: int = 1) -> None:
+    """Write a JSON file atomically (tmp → verify → rename).
+
+    Refuses to overwrite if the extracted record count is below *min_records*,
+    preventing a bad parse run from destroying previously-good output.
+    """
+    if len(data) < min_records:
+        raise ValueError(
+            f"[Logic Gate] Refusing to write '{path}': only {len(data)} record(s) "
+            f"found (minimum required: {min_records}). "
+            "Check document structure or COURSE_STRUCTURE_HEADING."
+        )
+    tmp_path = path + ".tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        # ── Integrity check: verify the file round-trips correctly ────────────
+        with open(tmp_path, "r", encoding="utf-8") as f:
+            verify = json.load(f)
+        if len(verify) != len(data):
+            raise RuntimeError(
+                f"[Logic Gate] Write verification failed for '{path}': "
+                f"wrote {len(data)} records but read back {len(verify)}."
+            )
+        # Atomic promotion (rename is atomic on POSIX)
+        os.replace(tmp_path, path)
+        print(f"✅ Atomically saved {len(data)} records → {path}")
+    except Exception:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+        raise
+
+
+def atomic_write_text(path: str, lines: list) -> None:
+    """Write a text file atomically (tmp → rename)."""
+    tmp_path = path + ".tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+        os.replace(tmp_path, path)
+        print(f"✅ Atomically saved general info → {path}")
+    except Exception:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+        raise
 
 
 def clean_cell(cell: str) -> str:
@@ -250,12 +299,26 @@ def main():
         else:
             inside_table = False
 
-    # ── Write outputs ────────────────────────────────────────────────────────
-    with open(COURSES_OUTPUT, "w", encoding="utf-8") as f:
-        json.dump(courses, f, indent=2, ensure_ascii=False)
+    # ── Logic Gate: refuse to overwrite good data with empty output ─────────
+    if len(courses) == 0:
+        print(
+            "❌ No courses were extracted. Aborting write to prevent overwriting "
+            "existing data. Check that the COURSE STRUCTURE heading exists in "
+            f"{INPUT_FILE} and that the table format matches the parser.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    with open(GENERAL_INFO_OUTPUT, "w", encoding="utf-8") as f:
-        f.writelines(general_info_lines)
+    # ── Write outputs (atomic: write to .tmp, verify, then rename) ───────────
+    atomic_write_json(COURSES_OUTPUT, courses, min_records=50)
+
+    general_content = "".join(general_info_lines)
+    if len(general_content) < 500:
+        print(
+            "⚠️  Warning: zhcet_general_info.md content is suspiciously short "
+            f"({len(general_content)} chars). Check COURSE_STRUCTURE_HEADING match."
+        )
+    atomic_write_text(GENERAL_INFO_OUTPUT, general_info_lines)
 
     # ── Summary stats ────────────────────────────────────────────────────────
     branches = sorted(set(c["branch"] for c in courses))

@@ -5,8 +5,10 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
+import path from 'path';
 import Groq from 'groq-sdk';
 import multer from 'multer';
+// Groq vision model is used for OCR (free tier, no Gemini dependency)
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import { LocalEmbeddings } from './utils/LocalEmbeddings.js';
 import { TimetableManager } from './timetableManager.js';
@@ -35,11 +37,21 @@ const upload = multer({ dest: 'uploads/' });
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const MODEL = 'llama-3.3-70b-versatile';
+
+// Groq Vision model for OCR extraction (free tier)
+const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 const VECTOR_STORE_PATH = './vector_store';
 const SESSIONS_FILE = './sessions.json';
-const COURSES_JSON = './zhcet_courses.json';
-const GENERAL_INFO_MD = './zhcet_general_info.md';
-const REGISTRATION_RULES = JSON.parse(fs.readFileSync('./zhcet_registration_rules.json', 'utf8'));
+const SESSIONS_FILE_TMP = './sessions.json.tmp';
+const SESSIONS_FILE_BAK = './sessions.json.bak';
+const COURSES_JSON = './knowledge_base/zhcet_courses.json';
+const GENERAL_INFO_MD = './knowledge_base/zhcet_general_info.md';
+let REGISTRATION_RULES = {};
+try {
+    REGISTRATION_RULES = JSON.parse(fs.readFileSync('./knowledge_base/zhcet_registration_rules.json', 'utf8'));
+} catch (error) {
+    console.error('[Startup Error] Critical Knowledge Base file (registration_rules.json) missing or corrupt.');
+}
 const MAX_HISTORY_MESSAGES = 8;
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_CONTEXT_CHARS = 12000;
@@ -47,6 +59,9 @@ const VECTOR_K_PER_QUERY = Number(process.env.VECTOR_K_PER_QUERY || 24);
 const LEXICAL_K_PER_QUERY = Number(process.env.LEXICAL_K_PER_QUERY || 40);
 const ENABLE_LLM_RERANK = (process.env.ENABLE_LLM_RERANK || 'false').toLowerCase() === 'true';
 const LLM_RERANK_LIMIT = Number(process.env.LLM_RERANK_LIMIT || 10);
+/// Session eviction policy
+const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;  // 7 days
+const MAX_SESSIONS = 200;
 
 const BRANCHES = {
     AI: 'ARTIFICIAL INTELLIGENCE',
@@ -116,37 +131,109 @@ let sessionSaveQueue = Promise.resolve();
 let lexicalIndex = null;
 
 // --- Session Management ---
+
+/**
+ * Migrate a raw session value from older formats to the canonical shape
+ * { context, messages }.
+ */
+function migrateSession(id, val) {
+    if (Array.isArray(val)) {
+        return [id, {
+            context: { branch: null, semester: null, section: null, categories: [], intent: 'other' },
+            messages: val
+        }];
+    }
+    return [id, val];
+}
+
+/**
+ * Fix 2.3 — Resilient loadSessions.
+ * Tries the primary sessions.json first. If that is corrupt or missing it falls
+ * back to sessions.json.bak. Creates a fresh .bak on every successful load so
+ * a good copy is always available.
+ */
 function loadSessions() {
+    const tryParse = (filePath) => {
+        const data = fs.readFileSync(filePath, 'utf8');
+        const parsed = JSON.parse(data);
+        return new Map(Object.entries(parsed).map(([id, val]) => migrateSession(id, val)));
+    };
+
     if (fs.existsSync(SESSIONS_FILE)) {
         try {
-            const data = fs.readFileSync(SESSIONS_FILE, 'utf8');
-            const parsed = JSON.parse(data);
-            // Convert Object back to Map and migrate old flat-array format
-            Sessions = new Map(
-                Object.entries(parsed).map(([id, val]) => {
-                    // Migrate old sessions (plain arrays) to {context, messages}
-                    if (Array.isArray(val)) {
-                        return [id, {
-                            context: { branch: null, semester: null, section: null, categories: [], intent: 'other' },
-                            messages: val
-                        }];
-                    }
-                    return [id, val];
-                })
-            );
-            console.log(`Loaded ${Sessions.size} chat sessions.`);
+            Sessions = tryParse(SESSIONS_FILE);
+            // Save a known-good backup
+            fs.copyFileSync(SESSIONS_FILE, SESSIONS_FILE_BAK);
+            console.log(`✅ Loaded ${Sessions.size} chat sessions from primary file.`);
+            return;
         } catch (e) {
-            console.error("Error loading sessions:", e);
+            console.error(`[Resilient Load] Primary ${SESSIONS_FILE} is corrupt: ${e.message}`);
         }
+    }
+
+    if (fs.existsSync(SESSIONS_FILE_BAK)) {
+        try {
+            Sessions = tryParse(SESSIONS_FILE_BAK);
+            console.warn(`⚠️  Loaded ${Sessions.size} sessions from BACKUP (primary was corrupt/missing).`);
+            return;
+        } catch (e) {
+            console.error(`[Resilient Load] Backup ${SESSIONS_FILE_BAK} is also corrupt: ${e.message}`);
+        }
+    }
+
+    console.warn('[Resilient Load] Starting with empty session store.');
+    Sessions = new Map();
+}
+
+/**
+ * Fix 3.2 — Evict stale sessions before saving.
+ * Removes sessions older than SESSION_TTL_MS and caps the store at MAX_SESSIONS
+ * (keeping the most recently accessed).
+ */
+function evictStaleSessions() {
+    const now = Date.now();
+    let entries = Array.from(Sessions.entries())
+        .filter(([_, v]) => !v.lastAccessed || (now - v.lastAccessed) < SESSION_TTL_MS)
+        .sort((a, b) => (b[1].lastAccessed || 0) - (a[1].lastAccessed || 0))
+        .slice(0, MAX_SESSIONS);
+
+    const before = Sessions.size;
+    Sessions = new Map(entries);
+    if (Sessions.size < before) {
+        console.log(`[Session Eviction] Retained ${Sessions.size}/${before} sessions (TTL=${SESSION_TTL_MS / 86400000}d, cap=${MAX_SESSIONS}).`);
     }
 }
 
+/**
+ * Fix 2.1 — Atomic saveSessions.
+ * Writes to a .tmp file, checks byte-count integrity, then renames atomically.
+ * The rename is a POSIX atomic operation — readers always see a complete file.
+ */
 function saveSessions() {
+    evictStaleSessions();
     const obj = Object.fromEntries(Sessions);
+    const payload = JSON.stringify(obj, null, 2);
+
     sessionSaveQueue = sessionSaveQueue
         .catch(() => { })
-        .then(() => fs.promises.writeFile(SESSIONS_FILE, JSON.stringify(obj, null, 2)))
-        .catch((e) => console.error("Error saving sessions:", e));
+        .then(async () => {
+            await fs.promises.writeFile(SESSIONS_FILE_TMP, payload, 'utf8');
+
+            // ── Logic Gate: verify the write was not truncated ────────────
+            const stat = await fs.promises.stat(SESSIONS_FILE_TMP);
+            const expectedBytes = Buffer.byteLength(payload, 'utf8');
+            if (stat.size !== expectedBytes) {
+                await fs.promises.unlink(SESSIONS_FILE_TMP).catch(() => {});
+                throw new Error(
+                    `[Strict Write] Session file integrity check failed: ` +
+                    `expected ${expectedBytes} bytes, wrote ${stat.size}.`
+                );
+            }
+
+            // Atomic promotion
+            await fs.promises.rename(SESSIONS_FILE_TMP, SESSIONS_FILE);
+        })
+        .catch((e) => console.error('[Strict Write] Error saving sessions:', e));
 }
 
 // Load sessions on startup
@@ -308,6 +395,24 @@ function buildLexicalDocuments() {
     return docs;
 }
 
+function uniqueResultKey(doc) {
+    const meta = doc.metadata || {};
+    let parts = [meta.source || 'unknown', meta.type || 'unknown'];
+    if (meta.course_code) parts.push(meta.course_code);
+    if (meta.branch) parts.push(meta.branch.replace(/\s+/g, ''));
+    if (meta.semester) parts.push(meta.semester);
+    if (meta.section) parts.push(meta.section);
+    if (meta.type === 'general_info' && doc.pageContent) {
+        let hash = 0;
+        for (let i = 0; i < doc.pageContent.length; i++) {
+            hash = ((hash << 5) - hash) + doc.pageContent.charCodeAt(i);
+            hash |= 0;
+        }
+        parts.push(Math.abs(hash).toString(16));
+    }
+    return parts.join('_').replace(/[^a-zA-Z0-9_]/g, '');
+}
+
 function buildLexicalIndex() {
     const docs = buildLexicalDocuments();
     const docFreq = new Map();
@@ -445,7 +550,21 @@ const TOOLS = [
         type: "function",
         function: {
             name: "get_active_timetable",
-            description: "Retrieves the currently active class timetable for schedule or clash checks.",
+            description: "Retrieves uploaded class timetables. Can filter by branch and semester. Returns timetable entries grouped by their metadata (course, branch, semester). The current date is Thursday, April 2, 2026. When a user mentions 'today', 'tomorrow', or a specific day, you must map it correctly: Today is Thursday, Tomorrow is Friday. Query the timetable for the specific day requested.",
+            parameters: {
+                type: "object",
+                properties: {
+                    branch: { type: "string", description: "Optional branch filter (e.g. 'Computer Engineering')" },
+                    semester: { type: "integer", description: "Optional semester number (1-8) to filter" }
+                }
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "validate_registration_card",
+            description: "Validates the registration card/result that the student has uploaded in this chat session. Cross-references every course on the card against the official ZHCET curriculum. Call this tool ONLY when the student has uploaded a registration card image in this chat and asks to verify/validate it, or immediately after the system notifies you that a card was uploaded.",
             parameters: {
                 type: "object",
                 properties: {}
@@ -460,7 +579,8 @@ const COURSES_DATA = fs.existsSync(COURSES_JSON) ? JSON.parse(fs.readFileSync(CO
 // --- Tool Implementations ---
 async function executeTool(toolCall) {
     const { name, arguments: argsString } = toolCall.function;
-    const args = JSON.parse(argsString);
+    // Guard: JSON.parse(null) returns null — always default to {} for no-param tools
+    const args = (argsString ? JSON.parse(argsString) : null) ?? {};
     console.log(`🛠️ Executing tool: ${name}`, args);
 
     switch (name) {
@@ -532,13 +652,330 @@ async function executeTool(toolCall) {
             return JSON.stringify(results.map(r => r.pageContent));
         }
         case 'get_active_timetable': {
-            const activeTimetable = TimetableManager.getActiveTimetable();
+            const activeTimetable = TimetableManager.getActiveTimetable({
+                branch: args.branch,
+                semester: args.semester
+            });
             if (!activeTimetable) return JSON.stringify({ message: "No active timetable found." });
             return JSON.stringify(activeTimetable);
+        }
+        case 'validate_registration_card': {
+            return JSON.stringify(validateRegistrationCard(toolCall._sessionId));
         }
         default:
             return JSON.stringify({ error: "Unknown tool" });
     }
+}
+
+// --- Registration Card OCR & Validation ---
+
+async function extractRegistrationCardData(filePath, mimeType) {
+    const fileBuffer = fs.readFileSync(filePath);
+    const base64Data = fileBuffer.toString('base64');
+    const resolvedMimeType = mimeType || 'image/jpeg';
+
+    // ── Step 1: Groq Vision — Simple OCR (extract raw text) ─────────────
+    console.log('🔍 Step 1: Groq Vision OCR...');
+
+    const ocrPrompt = `Extract ALL text visible in this document/image exactly as it appears. Include every course code, course title, credit value, student name, enrollment number, branch, semester, year, and any other text. Preserve the layout structure as much as possible. Do not interpret or summarize — just extract the raw text.`;
+
+    const groqVisionResult = await groq.chat.completions.create({
+        model: GROQ_VISION_MODEL,
+        messages: [
+            {
+                role: 'user',
+                content: [
+                    { type: 'text', text: ocrPrompt },
+                    {
+                        type: 'image_url',
+                        image_url: {
+                            url: `data:${resolvedMimeType};base64,${base64Data}`
+                        }
+                    }
+                ]
+            }
+        ],
+        temperature: 0,
+        max_tokens: 4096
+    });
+
+    const rawOcrText = (groqVisionResult.choices[0]?.message?.content || '').trim();
+    console.log(`📝 OCR extracted ${rawOcrText.length} characters`);
+
+    if (!rawOcrText || rawOcrText.length < 20) {
+        throw new Error('Could not extract meaningful text from the uploaded file. Please try a clearer image or PDF.');
+    }
+
+    // ── Step 2: Groq LLM — Parse raw text into structured JSON ────────
+    console.log('🧠 Step 2: Groq structured parsing...');
+
+    const parsingPrompt = `You are a data extraction expert. Below is raw OCR text extracted from a ZHCET (Zakir Husain College of Engineering & Technology) registration card or academic result.
+
+Parse this text and return ONLY valid JSON (no markdown, no code fences) with this exact structure:
+{
+    "student_name": "Full Name or null if not found",
+    "enrollment_no": "Enrollment/Faculty number or null",
+    "branch": "Branch/Department name (e.g., COMPUTER ENGINEERING, ARTIFICIAL INTELLIGENCE)",
+    "semester": <semester number as integer, e.g., 3>,
+    "year_of_study": "<e.g., 2nd Year, 3rd Year, or null>",
+    "semester_type": "<Odd or Even based on semester number>",
+    "academic_year": "<e.g., 2024-25 or null>",
+    "courses": [
+        {
+            "course_code": "e.g., COC2142",
+            "course_title": "Full course title",
+            "credits": <number>,
+            "contact_periods": "L-T-P format if visible, else null",
+            "category": "PC/PE/OE/BS/ESA/HM/AU/PSI if visible, else null"
+        }
+    ],
+    "total_credits": <total if visible, else null>,
+    "additional_info": "Any other relevant info found in the text"
+}
+
+RULES:
+- Extract EVERY course from the text
+- Course codes follow patterns like COC2142, AIC3072, ELA2412, AMS2612
+- Credits are numbers like 2, 3, 4, or 1.5
+- semester_type: Odd for semesters 1,3,5,7 and Even for 2,4,6,8
+- Return ONLY the JSON object, nothing else
+
+RAW OCR TEXT:
+${rawOcrText}`;
+
+    const groqResult = await groq.chat.completions.create({
+        model: MODEL,
+        messages: [
+            { role: 'system', content: 'You are a precise data extraction system. Return only valid JSON.' },
+            { role: 'user', content: parsingPrompt }
+        ],
+        temperature: 0,
+        max_tokens: 2048
+    });
+
+    const responseText = (groqResult.choices[0]?.message?.content || '').trim();
+
+    // ── Fix 1.1 — Self-Healing JSON parse (2-pass with error-fed re-prompt) ──
+    const tryParseJson = (text) => {
+        let jsonText = text.trim();
+        const fenceMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (fenceMatch) jsonText = fenceMatch[1].trim();
+        return JSON.parse(jsonText); // throws if not valid JSON
+    };
+
+    // Pass 1 — try what we got
+    // Hoist the error message so it is accessible outside the catch block
+    let firstErrMessage = 'JSON parse error';
+    try {
+        return tryParseJson(responseText);
+    } catch (firstErr) {
+        firstErrMessage = firstErr.message;
+        console.warn(`[Self-Heal] OCR: First JSON parse attempt failed: ${firstErrMessage}`);
+    }
+
+    // Pass 2 — feed the error back to the LLM for self-correction
+    console.log('[Self-Heal] OCR: Retrying with error-augmented correction prompt...');
+    const correctionPrompt = `Your previous response could not be parsed as JSON.
+Parse error: ${firstErrMessage}
+
+Your previous response was:
+---
+${responseText}
+---
+
+Return ONLY the corrected, valid JSON object. No markdown, no explanation, no code fences.`;
+
+    const retryResult = await groq.chat.completions.create({
+        model: MODEL,
+        messages: [
+            { role: 'system', content: 'You are a precise data extraction system. Return only valid JSON.' },
+            { role: 'user', content: correctionPrompt }
+        ],
+        temperature: 0,
+        max_tokens: 2048
+    });
+
+    const retryText = (retryResult.choices[0]?.message?.content || '').trim();
+    try {
+        return tryParseJson(retryText);
+    } catch (secondErr) {
+        console.error('[Self-Heal] OCR: Both JSON parse attempts failed.', retryText);
+        throw new Error(
+            'Could not parse the registration card data after two attempts. ' +
+            'Please try uploading a clearer image.'
+        );
+    }
+}
+
+function validateRegistrationCard(sessionId) {
+    if (!Sessions.has(sessionId)) {
+        return { error: 'Session not found.' };
+    }
+
+    const sessionData = Sessions.get(sessionId);
+    const cardData = sessionData.uploadedCard;
+
+    if (!cardData) {
+        return { error: 'No registration card has been uploaded in this chat session. Please upload an image of your registration card first.' };
+    }
+
+    const extracted = cardData;
+    const branch = extracted.branch;
+    const semester = Number(extracted.semester);
+    const semesterType = semester % 2 === 0 ? 'Even' : 'Odd';
+
+    // Find all official courses for this branch + semester
+    const officialCourses = COURSES_DATA.filter(c => {
+        const matchBranch = c.branch === branch ||
+            (semester <= 2 && c.branch.includes('First Year'));
+        return matchBranch && Number(c.semester) === semester;
+    });
+
+    // Build a lookup map for official courses
+    const officialByCode = new Map();
+    for (const c of officialCourses) {
+        if (c.course_code) {
+            officialByCode.set(c.course_code, c);
+        }
+    }
+
+    // Also build a reverse lookup across ALL courses for codes not in this branch/sem
+    const allCoursesByCode = new Map();
+    for (const c of COURSES_DATA) {
+        if (c.course_code) {
+            allCoursesByCode.set(c.course_code, c);
+        }
+    }
+
+    const validationResults = {
+        student_info: {
+            name: extracted.student_name,
+            enrollment_no: extracted.enrollment_no,
+            branch: branch,
+            semester: semester,
+            semester_type: semesterType,
+            year_of_study: extracted.year_of_study,
+            academic_year: extracted.academic_year
+        },
+        correct_courses: [],
+        incorrect_courses: [],
+        extra_courses: [],
+        missing_courses: [],
+        total_extracted_credits: 0,
+        total_expected_credits: 0,
+        summary: ''
+    };
+
+    const matchedOfficialCodes = new Set();
+
+    // Validate each extracted course
+    for (const extractedCourse of (extracted.courses || [])) {
+        const code = extractedCourse.course_code;
+        const extractedCredits = Number(extractedCourse.credits);
+        validationResults.total_extracted_credits += extractedCredits || 0;
+
+        // Check if this course code exists in official curriculum for this branch+sem
+        if (officialByCode.has(code)) {
+            const official = officialByCode.get(code);
+            matchedOfficialCodes.add(code);
+
+            const issues = [];
+
+            // Check credits
+            if (extractedCredits !== Number(official.credits)) {
+                issues.push(`Credits mismatch: card says ${extractedCredits}, official is ${official.credits}`);
+            }
+
+            // Check course title similarity (fuzzy)
+            const officialTitle = (official.course_title || '').toLowerCase().trim();
+            const extractedTitle = (extractedCourse.course_title || '').toLowerCase().trim();
+            if (officialTitle && extractedTitle && !officialTitle.includes(extractedTitle.slice(0, 10)) && !extractedTitle.includes(officialTitle.slice(0, 10))) {
+                issues.push(`Title may differ: card says "${extractedCourse.course_title}", official is "${official.course_title}"`);
+            }
+
+            if (issues.length > 0) {
+                validationResults.incorrect_courses.push({
+                    course_code: code,
+                    extracted_title: extractedCourse.course_title,
+                    official_title: official.course_title,
+                    extracted_credits: extractedCredits,
+                    official_credits: official.credits,
+                    category: official.course_category,
+                    issues: issues
+                });
+            } else {
+                validationResults.correct_courses.push({
+                    course_code: code,
+                    course_title: official.course_title,
+                    credits: official.credits,
+                    category: official.course_category,
+                    contact_periods: official.contact_periods
+                });
+            }
+        } else if (allCoursesByCode.has(code)) {
+            // Course exists but NOT for this branch/semester
+            const actual = allCoursesByCode.get(code);
+            const courseSem = Number(actual.semester);
+            const courseSemType = courseSem % 2 === 0 ? 'Even' : 'Odd';
+
+            const issues = [`This course belongs to ${actual.branch}, Semester ${actual.semester} (${courseSemType}), not ${branch}, Semester ${semester}`];
+
+            // Check parity
+            if ((semester % 2) !== (courseSem % 2) && courseSem > 2) {
+                issues.push(`Semester parity mismatch: student is in ${semesterType} semester, course is from ${courseSemType} semester`);
+            }
+
+            validationResults.extra_courses.push({
+                course_code: code,
+                extracted_title: extractedCourse.course_title,
+                actual_branch: actual.branch,
+                actual_semester: actual.semester,
+                credits: actual.credits,
+                issues: issues
+            });
+        } else {
+            // Course code not found at all
+            validationResults.extra_courses.push({
+                course_code: code,
+                extracted_title: extractedCourse.course_title,
+                extracted_credits: extractedCredits,
+                issues: [`Course code "${code}" was not found in the ZHCET course database`]
+            });
+        }
+    }
+
+    // Find missing courses (in official curriculum but not on the card)
+    for (const [code, official] of officialByCode) {
+        if (!matchedOfficialCodes.has(code)) {
+            // Skip electives (null course codes) from missing list
+            if (!code || code === 'Elective/TBD') continue;
+            validationResults.missing_courses.push({
+                course_code: code,
+                course_title: official.course_title,
+                credits: official.credits,
+                category: official.course_category
+            });
+        }
+    }
+
+    // Calculate expected credits
+    validationResults.total_expected_credits = officialCourses.reduce((sum, c) => sum + Number(c.credits || 0), 0);
+
+    // Build summary
+    const totalCorrect = validationResults.correct_courses.length;
+    const totalIncorrect = validationResults.incorrect_courses.length;
+    const totalExtra = validationResults.extra_courses.length;
+    const totalMissing = validationResults.missing_courses.length;
+    const totalOnCard = (extracted.courses || []).length;
+
+    let verdict = 'VALID';
+    if (totalIncorrect > 0 || totalExtra > 0 || totalMissing > 0) {
+        verdict = 'ISSUES FOUND';
+    }
+
+    validationResults.summary = `Semester ${semester} (${semesterType}) | ${totalOnCard} courses on card | ${totalCorrect} correct, ${totalIncorrect} incorrect, ${totalExtra} extra, ${totalMissing} missing | Credits: ${validationResults.total_extracted_credits} on card vs ${validationResults.total_expected_credits} expected | Verdict: ${verdict}`;
+
+    return validationResults;
 }
 
 // --- Chat Logic ---
@@ -565,6 +1002,9 @@ async function getChatResponse(sessionId, question) {
         Sessions.set(sessionId, { messages: [] });
     }
     const sessionData = Sessions.get(sessionId);
+    // Stamp last-access time for the eviction policy
+    sessionData.lastAccessed = Date.now();
+
     // Backward compatibility for old format
     const history = Array.isArray(sessionData.messages) ? sessionData.messages :
         Array.isArray(sessionData) ? sessionData : [];
@@ -572,7 +1012,7 @@ async function getChatResponse(sessionId, question) {
     const systemPrompt = `You are **ZHCET Buddy** 🎓, a highly accurate academic advisor for **Zakir Husain College of Engineering & Technology (ZHCET), Aligarh Muslim University**.
 
 ### STRICT RULES:
-1. **Never Hallucinate:** Use the provided tools to retrieve real data. Do not guess course codes, credits, or registration policies.
+1. **Never Hallucinate:** Use the provided tools to retrieve real data. Do not guess course codes, credits, or registration policies. Strictly adhere to the defined toolset. You ONLY have the tools listed in the code. If you need credit or graduation info, you MUST use search_general_guidelines or get_registration_rules. If a tool is not in your definition, it does not exist.
 2. **Missing Category:** If you use tools to find PE/OE/AU courses and none are returned, say explicitly: "There are no [Category] courses offered for this branch and semester."
 3. **Registration Queries ("Mode A/B/C", backlogs, attendance, promotion):** ALWAYS call \`get_registration_rules\` to verify the policy. ALWAYS call \`get_course_details\` if the user asks about a specific course.
    **Odd/Even Semester Parity (CRITICAL):** When assessing if a student can take a course, you MUST check the \`parity_evaluation\` field returned by \`get_course_details\`. If it says "Registration is PERMITTED", do NOT invent rules forbidding it. If it says "Registration is STRICTLY FORBIDDEN", do not allow it. Follow the \`parity_evaluation\` verbatim.
@@ -581,25 +1021,84 @@ async function getChatResponse(sessionId, question) {
 6. **Final Semester:** Translate "final semester" to semester 8 for B.Tech, or 4 for M.Tech/MCA.
 7. **First Year Sections:** If they ask for 1st or 2nd semester courses, ask for their section group (A1A/A1B/A1C vs A1D/A1E/A1F) if they haven't provided it, because first-year courses swap between groups.
 8. **LTP Formatting:** 'L-T-P' means Lecture-Tutorial-Practical. A Practical (P) > 0 means it has a lab component. If P=0 (e.g., 3-1-0), it is a Theory course, NOT a lab.
+9. **Registration Card Upload:** If a student uploads a registration card image, the system will automatically extract its data. You should then call \`validate_registration_card\` to verify the extracted courses. Present the validation results in a clear, structured report with:
+   - ✅ Correct courses (code, title, credits all match)
+   - ❌ Incorrect courses (wrong credits, wrong course code, or course not found)
+   - ⚠️ Missing courses (expected in the curriculum but absent from the card)
+   - 📋 Extra courses (on the card but not in the official curriculum for that branch+semester)
+   - Summary: semester type (odd/even), total credits, overall verdict
+10. **Fact Check Totals:** The total credit requirement for B.Tech is 180. If you ever find yourself about to say a different number, stop and re-read zhcet_general_info.md. You must cite the 180-credit requirement specifically from the CURRICULUM SUMMARY section.
+
+### Communication Style:
+- Never mention tool names, function calls, or the process of retrieving data to the user. Do not say 'I am looking this up' or 'According to the tool.' Just provide the final answer naturally as if you already knew it.
+- Friendly, warm tone.
+
+### Date Context:
+- The current date is Thursday, April 2, 2026. When a user mentions 'today', 'tomorrow', or a specific day, you must map it correctly: Today is Thursday, Tomorrow is Friday. Query the timetable for the specific day requested.
 
 ### Format style:
-- Friendly, warm tone.
+- Ensure that all course and timetable data is returned in clean Markdown tables.
 - Format course returns as nice Markdown tables with columns: Code, Title, Category, Credits, LTP.
 - If returning a timetable schedule, include these columns: Time, Course Code, Title, Professor, Room, Type.
 - You may dynamically append interactive options to the very end of your final response using EXACTLY this format if helpful: <<OPTIONS: Option 1 | Option 2>>`;
 
-    // Ensure session isn't too huge before appending new questions
-    let contextMessages = [...history].slice(-MAX_HISTORY_MESSAGES);
+    // ── Fix 3.1 — Summarize-on-the-fly context pruning ───────────────────────
+    // If the conversation is longer than the window, compress the oldest messages
+    // into a pinned intent-summary block so the LLM never forgets branch/semester.
+    let contextMessages;
+    if (history.length <= MAX_HISTORY_MESSAGES) {
+        contextMessages = [...history];
+    } else {
+        const toSummarize = history.slice(0, history.length - MAX_HISTORY_MESSAGES);
+        const recent = history.slice(-MAX_HISTORY_MESSAGES);
+        const alreadySummarized = recent.some(m => m._isSummary);
+
+        if (alreadySummarized) {
+            contextMessages = recent;
+        } else {
+            console.log(`[Context Pruning] Summarizing ${toSummarize.length} old messages...`);
+            try {
+                const sumResult = await groq.chat.completions.create({
+                    model: MODEL,
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are a context distillation assistant. Extract and preserve the ACTIVE USER PROFILE (branch, semester, section). These MUST be at the top of your summary if known.'
+                        },
+                        {
+                            role: 'user',
+                            content: 'Summarize the key academic context from this conversation:\n\n' +
+                                toSummarize.map(m => `${m.role.toUpperCase()}: ${m.content || ''}`).join('\n')
+                        }
+                    ],
+                    temperature: 0,
+                    max_tokens: 256,
+                });
+                const summary = sumResult.choices[0]?.message?.content || '';
+                console.log(`[Context Pruning] Summary: ${summary}`);
+                contextMessages = [
+                    { role: 'system', content: `[ACTIVE USER PROFILE]:\n${summary}`, _isSummary: true },
+                    ...recent
+                ];
+            } catch (sumErr) {
+                // Summarization failed — fall back to a hard slice (safe degradation)
+                console.warn(`[Context Pruning] Summarization failed: ${sumErr.message}. Falling back to hard slice.`);
+                contextMessages = recent;
+            }
+        }
+    }
 
     // Convert generic local history formats if necessary, ensuring proper roles
     const groqMessages = [
         { role: 'system', content: systemPrompt },
-        ...contextMessages.map(m => ({
-            role: m.role || 'user',
-            content: m.content || '',
-            ...(m.tool_calls ? { tool_calls: m.tool_calls } : {}),
-            ...(m.tool_call_id ? { tool_call_id: m.tool_call_id, name: m.name } : {})
-        })),
+        ...contextMessages
+            .filter(m => !m._isSummary || m.role === 'system') // keep summary as system message
+            .map(m => ({
+                role: m.role || 'user',
+                content: m.content || '',
+                ...(m.tool_calls ? { tool_calls: m.tool_calls } : {}),
+                ...(m.tool_call_id ? { tool_call_id: m.tool_call_id, name: m.name } : {})
+            })),
         { role: 'user', content: question }
     ];
 
@@ -611,14 +1110,55 @@ async function getChatResponse(sessionId, question) {
         iterations++;
         console.log("LLM Call Iteration " + iterations + "...");
 
-        currentResponse = await groq.chat.completions.create({
-            model: MODEL,
-            messages: groqMessages,
-            temperature: 0.1,
-            max_tokens: 2048,
-            tools: TOOLS,
-            tool_choice: "auto"
-        });
+        // ── Self-Heal: catch Groq tool_use_failed (malformed XML-style function call) ─
+        // When llama-3.3-70b generates a broken function call (XML instead of JSON),
+        // Groq returns a 400 tool_use_failed. We detect it and retry immediately
+        // with tool_choice:"none" to force a plain-text answer instead of crashing.
+        let llmCallSucceeded = false;
+        try {
+            currentResponse = await groq.chat.completions.create({
+                model: MODEL,
+                messages: groqMessages,
+                temperature: 0.1,
+                max_tokens: 2048,
+                tools: TOOLS,
+                tool_choice: "auto"
+            });
+            llmCallSucceeded = true;
+        } catch (llmErr) {
+            const isToolUseFailed =
+                llmErr?.status === 400 &&
+                (llmErr?.error?.error?.code === 'tool_use_failed' ||
+                 llmErr?.message?.includes('tool_use_failed'));
+
+            if (isToolUseFailed) {
+                console.warn(
+                    `[Self-Heal] Groq tool_use_failed on iteration ${iterations}. ` +
+                    `Retrying without tools to get a plain-text response...`
+                );
+                try {
+                    // Retry without any tool definitions so the model must answer in plain text
+                    currentResponse = await groq.chat.completions.create({
+                        model: MODEL,
+                        messages: groqMessages,
+                        temperature: 0.1,
+                        max_tokens: 2048,
+                        // No tools — forces plain text response
+                    });
+                    const recoveryMsg = currentResponse.choices[0].message;
+                    groqMessages.push(recoveryMsg);
+                    console.log('[Self-Heal] Recovery succeeded — plain-text response obtained.');
+                    break; // Exit the loop with the plain-text response
+                } catch (recoveryErr) {
+                    console.error(`[Self-Heal] Recovery attempt also failed: ${recoveryErr.message}`);
+                    throw recoveryErr;
+                }
+            }
+            // Not a tool_use_failed error — re-throw
+            throw llmErr;
+        }
+
+        if (!llmCallSucceeded) break;
 
         const msg = currentResponse.choices[0].message;
         groqMessages.push(msg); // Append LLM's raw response (which may just be a tool call)
@@ -626,7 +1166,38 @@ async function getChatResponse(sessionId, question) {
         if (msg.tool_calls && msg.tool_calls.length > 0) {
             // LLM decided to call tools
             for (const toolCall of msg.tool_calls) {
-                const toolResult = await executeTool(toolCall);
+                // Attach sessionId for tools that need session context
+                toolCall._sessionId = sessionId;
+
+                // ── Fix 1.2 — Self-Healing Tool Loop ─────────────────────────
+                // Wrap executeTool so a crash is converted into a structured JSON
+                // error message that the LLM can handle gracefully, rather than
+                // bubbling up and killing the entire request.
+                let toolResult;
+                try {
+                    toolResult = await executeTool(toolCall);
+
+                    // Logic Gate: check for soft errors inside the result
+                    try {
+                        const parsed = JSON.parse(toolResult);
+                        if (parsed && typeof parsed === 'object' && 'error' in parsed) {
+                            console.warn(
+                                `[Logic Gate] Tool "${toolCall.function.name}" returned soft error: ${parsed.error}`
+                            );
+                        }
+                    } catch (_) { /* result wasn't JSON — that's fine */ }
+
+                } catch (toolErr) {
+                    console.error(
+                        `[Self-Heal] Tool "${toolCall.function.name}" threw an exception: ${toolErr.message}`
+                    );
+                    // Feed the error back to the LLM so it can recover
+                    toolResult = JSON.stringify({
+                        error: `Tool execution failed: ${toolErr.message}`,
+                        recovery_suggestion: 'Try reformulating the query or ask the user for more information.'
+                    });
+                }
+
                 groqMessages.push({
                     role: "tool",
                     tool_call_id: toolCall.id,
@@ -650,9 +1221,11 @@ async function getChatResponse(sessionId, question) {
 
     // Update store
     if (!Sessions.has(sessionId)) {
-        Sessions.set(sessionId, { messages: history });
+        Sessions.set(sessionId, { messages: history, lastAccessed: Date.now() });
     } else {
-        Sessions.get(sessionId).messages = history;
+        const sd = Sessions.get(sessionId);
+        sd.messages = history;
+        sd.lastAccessed = Date.now();
     }
     saveSessions();
 
@@ -766,6 +1339,79 @@ app.patch('/api/admin/timetable/:id/entries', (req, res) => {
     }
 });
 
+// Upload registration card endpoint (chat-specific)
+app.post('/api/chat/upload', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'application/pdf'];
+        if (!allowedTypes.includes(req.file.mimetype)) {
+            // Clean up temp file
+            try { fs.unlinkSync(req.file.path); } catch (_) { }
+            return res.status(400).json({ error: 'Only image files (JPEG, PNG, WebP) and PDFs are supported. Please upload a photo, scan, or PDF of your registration card.' });
+        }
+
+        const sessionId = req.body.sessionId ? sanitizeSessionId(req.body.sessionId) : null;
+        const finalSessionId = sessionId || `session_${Date.now()}`;
+
+        console.log(`📄 Processing registration card upload for session: ${finalSessionId}`);
+
+        // Extract data using Gemini Vision
+        const extractedData = await extractRegistrationCardData(req.file.path, req.file.mimetype);
+
+        // Clean up temp file
+        try { fs.unlinkSync(req.file.path); } catch (_) { }
+
+        // Store extracted data in session
+        if (!Sessions.has(finalSessionId)) {
+            Sessions.set(finalSessionId, { messages: [] });
+        }
+        const sessionData = Sessions.get(finalSessionId);
+        sessionData.uploadedCard = extractedData;
+        saveSessions();
+
+        console.log(`✅ Extracted ${(extractedData.courses || []).length} courses from registration card`);
+
+        // Build a summary for the user
+        const courseSummary = (extractedData.courses || []).map(c =>
+            `• ${c.course_code}: ${c.course_title} (${c.credits} credits)`
+        ).join('\n');
+
+        const extractionSummary = [
+            `**Student:** ${extractedData.student_name || 'Not detected'}`,
+            `**Enrollment:** ${extractedData.enrollment_no || 'Not detected'}`,
+            `**Branch:** ${extractedData.branch || 'Not detected'}`,
+            `**Semester:** ${extractedData.semester || 'Not detected'} (${extractedData.semester_type || 'N/A'})`,
+            `**Year:** ${extractedData.year_of_study || 'Not detected'}`,
+            '',
+            `**Courses Found (${(extractedData.courses || []).length}):**`,
+            courseSummary
+        ].join('\n');
+
+        // Auto-trigger validation via chat
+        const validationPrompt = `[SYSTEM: A registration card image has been uploaded and processed. The extracted data has been stored in this session. Here is what was extracted:\n\n${extractionSummary}\n\nPlease call the validate_registration_card tool to verify this data against the official ZHCET curriculum, then present the validation report to the student.]`;
+
+        const { text, options } = await getChatResponse(finalSessionId, validationPrompt);
+
+        res.json({
+            success: true,
+            sessionId: finalSessionId,
+            extractedData,
+            extractionSummary,
+            validationResponse: text,
+            options
+        });
+    } catch (error) {
+        // Clean up temp file on error
+        if (req.file) {
+            try { fs.unlinkSync(req.file.path); } catch (_) { }
+        }
+        console.error('Error processing registration card:', error);
+        res.status(500).json({ error: error.message || 'Failed to process registration card. Please try again with a clearer image.' });
+    }
+});
+
 // Chat endpoint
 app.post('/api/chat', async (req, res) => {
     try {
@@ -781,7 +1427,7 @@ app.post('/api/chat', async (req, res) => {
         if (sessionId && !safeSessionId) {
             return res.status(400).json({ error: 'Invalid session id' });
         }
-        const finalSessionId = safeSessionId || `session_${Date.now()} `;
+        const finalSessionId = safeSessionId || `session_${Date.now()}`;
 
         const { text, options } = await getChatResponse(finalSessionId, message.trim());
         res.json({ response: text, options, sessionId: finalSessionId });
@@ -798,4 +1444,6 @@ app.listen(port, async () => {
     } catch (e) {
         console.log("Warning: Vector store not found. Please run 'node index.js' to create it.");
     }
+    // Pre-warm the lexical index
+    getLexicalIndex();
 });

@@ -25,9 +25,21 @@ class LocalEmbeddings {
     async embedDocuments(documents) {
         await this.ensurePipeline();
         const embeddings = [];
-        for (const doc of documents) {
-            const output = await this.pipeline(doc, { pooling: 'mean', normalize: true });
-            embeddings.push(Array.from(output.data));
+        for (let i = 0; i < documents.length; i++) {
+            try {
+                const output = await this.pipeline(documents[i], { pooling: 'mean', normalize: true });
+                embeddings.push(Array.from(output.data));
+            } catch (err) {
+                console.error(
+                    `[Self-Heal] Embedding failed for doc[${i}] ` +
+                    `(len=${documents[i]?.length ?? 0}): ${err.message}`
+                );
+                // Push a zero-vector to keep index alignment with the document list.
+                // Dimension defaults to 768 (bge-base-en-v1.5 / mpnet) or from first
+                // successful embedding if available.
+                const dim = embeddings[0]?.length ?? 768;
+                embeddings.push(new Array(dim).fill(0));
+            }
         }
         return embeddings;
     }

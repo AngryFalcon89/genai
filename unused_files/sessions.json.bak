@@ -1,0 +1,74 @@
+{
+  "session_1775048053656 ": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "🎓 What are the promotion rules?"
+      },
+      {
+        "role": "assistant",
+        "content": "The promotion rules are as follows:\n- A student must have a minimum of 16 earned credits by the end of Semester II to be promoted to Semester III or IV.\n- A student must have a minimum of 60 earned credits, including at least 36 credits from the first two semesters, by the end of Semester IV to be promoted to Semester V or VI.\n- A student must have a minimum of 108 earned credits, including at least 80 credits from the first four semesters, by the end of Semester VI to be promoted to Semester VII or VIII.\n- If a student is not promoted more than three times, their admission will be cancelled and their name will be removed from the rolls.\n- A student whose name is removed can appeal to the Vice-Chancellor, and if allowed, the total duration of the program can be extended by a maximum of two semesters (beyond 14 semesters)."
+      }
+    ],
+    "lastAccessed": 1775048059506
+  },
+  "session_1775048042706 ": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "📋 Show me course structures"
+      },
+      {
+        "role": "assistant",
+        "content": "Here are the course structures for the first semester of Computer Engineering:\n| Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| AMS1112 | Applied Mathematics-I | BS | 4 | 3-1-0 |\n| APS1112 | Applied Physics | BS | 4 | 3-1-0 |\n| ELA1112 | Principles of Electronics Engg | ESA | 3 | 2-1-0 |\n| MEA1122 | Engineering Mechanics | ESA | 3 | 2-1-0 |\n| EZH1112 | English | HM | 3 | 2-1-0 |\n| APS1912 | Applied Physics Lab | BS | 1.5 | 0-0-3 |\n| MEA1922 | Engineering Workshop | ESA | 2 | 0-1-2 |\n| EZH1912 | Communication Skills Lab | HM | 2 | 0-1-2 |\n| AMS1112 | Applied Mathematics-II | BS | 4 | 3-1-0 |\n| ACS1112 | Applied Chemistry | BS | 4 | 3-1-0 |\n| EEA1112 | Principles of Electrical Engg | ESA | 3 | 2-1-0 |\n| CEU1112 | Environmental Studies (Audit) | AU | 0 | 3-0-0 |\n| MEA1112 | Thermal Sciences | ESA | 4 | 3-1-0 |\n| ACS1912 | Applied Chemistry Lab | BS | 1.5 | 0-0-3 |\n| COA1912 | Computer Programming Lab | ESA | 2 | 0-1-2 |\n| MEA1912 | Engineering Graphics Lab | ESA | 2 | 1-0-2 |"
+      }
+    ],
+    "lastAccessed": 1775048044455
+  },
+  "session_1775048031727 ": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "📚 Tell me about the library"
+      },
+      {
+        "role": "assistant",
+        "content": "The library information could not be found using the provided tools. For more information on the library, I recommend checking the official ZHCET website or contacting the college administration directly."
+      }
+    ],
+    "lastAccessed": 1775048033455
+  },
+  "debug_test_2": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Explain the grading system"
+      },
+      {
+        "role": "assistant",
+        "content": "The grading system at Zakir Husain College of Engineering & Technology (ZHCET) is based on a 10-point scale. Here's a breakdown of the system:\n\n* **Letter Grades:**\n\t+ O (Outstanding): 90-100%\n\t+ E (Excellent): 80-89%\n\t+ A (Very Good): 70-79%\n\t+ B (Good): 60-69%\n\t+ C (Fair): 50-59%\n\t+ D (Pass): 40-49%\n\t+ F (Fail): Below 40%\n* **Grade Points:**\n\t+ O: 10\n\t+ E: 9\n\t+ A: 8\n\t+ B: 7\n\t+ C: 6\n\t+ D: 5\n\t+ F: 0\n* **CGPA (Cumulative Grade Point Average) Calculation:**\n\t+ The CGPA is calculated by dividing the total grade points earned by the total number of credits attempted.\n\t+ The CGPA is used to evaluate a student's overall academic performance.\n\nFor example, if a student earns the following grades in a semester:\n\n| Course | Credits | Grade | Grade Points |\n| --- | --- | --- | --- |\n| Math | 3 | A | 8 |\n| Science | 4 | B | 7 |\n| English | 2 | C | 6 |\n\nThe total grade points earned would be: (3 x 8) + (4 x 7) + (2 x 6) = 24 + 28 + 12 = 64\n\nThe total credits attempted would be: 3 + 4 + 2 = 9\n\nThe CGPA would be: 64 / 9 = 7.11\n\nNote that the grading system and CGPA calculation may be subject to change, and it's always best to consult the official ZHCET website or academic regulations for the most up-to-date information."
+      },
+      {
+        "role": "user",
+        "content": "Explain the grading system"
+      },
+      {
+        "role": "assistant",
+        "content": "The grading system at Zakir Husain College of Engineering & Technology (ZHCET) is based on a 10-point scale. To provide a detailed explanation, I'll break it down into the following components:\n\n### Letter Grades and Grade Points\nThe college uses the following letter grades and corresponding grade points:\n\n* **O (Outstanding)**: 90-100% - 10 grade points\n* **E (Excellent)**: 80-89% - 9 grade points\n* **A (Very Good)**: 70-79% - 8 grade points\n* **B (Good)**: 60-69% - 7 grade points\n* **C (Fair)**: 50-59% - 6 grade points\n* **D (Pass)**: 40-49% - 5 grade points\n* **F (Fail)**: Below 40% - 0 grade points\n\n### CGPA Calculation\nThe Cumulative Grade Point Average (CGPA) is calculated by dividing the total grade points earned by the total number of credits attempted.\n\n### Example\nTo illustrate this, let's consider a student who earns the following grades in a semester:\n\n| Course | Credits | Grade | Grade Points |\n| --- | --- | --- | --- |\n| Math | 3 | A | 8 |\n| Science | 4 | B | 7 |\n| English | 2 | C | 6 |\n\nThe total grade points earned would be: (3 x 8) + (4 x 7) + (2 x 6) = 24 + 28 + 12 = 64\n\nThe total credits attempted would be: 3 + 4 + 2 = 9\n\nThe CGPA would be: 64 / 9 = 7.11\n\n### Important Notes\nPlease note that the grading system and CGPA calculation may be subject to change. For the most up-to-date information, it's always best to consult the official ZHCET website or academic regulations.\n\nIf you have any further questions or would like more information on the grading system, feel free to ask."
+      }
+    ],
+    "lastAccessed": 1775047901364
+  },
+  "session_1772103078057 ": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "can you show me the time table for btech computer engineering 2nd year odd sem"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is the timetable for B.Tech Computer Engineering 2nd year odd semester:\n| Time | Course Code | Title | Professor | Room | Type |\n| --- | --- | --- | --- | --- | --- |\n| 08:50 AM - 09:40 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2922 | Digital Design & Simulation Lab | Prof. M. M. S. Beg, Prof Izharuddin, Mr. M. A. Qadeer, Dr. Mohd. Shoaib |  | Lab |\n| 02:00 PM - 04:30 PM | ELA2902 | Electronics Laboratory |  |  | Lab |\n| 08:50 AM - 09:40 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2922 | Digital Design & Simulation Lab | Prof. M. M. S. Beg, Prof Izharuddin, Mr. M. A. Qadeer, Dr. Mohd. Shoaib |  | Lab |\n| 02:00 PM - 04:30 PM | ELA2902 | Electronics Laboratory |  |  | Lab |\n| 08:50 AM - 09:40 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | AMS2622 | Numerical Analysis & Probability |  | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2942 | Data Structure Lab | Prof. Saiful Islam, Dr. Tameem Ahmad, Dr. Faisal Alam |  | Lab |\n| 08:00 AM - 08:50 AM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 08:50 AM - 09:40 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 12:10 PM - 01:00 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2942 | Data Structure Lab | Prof. Saiful Islam, Dr. Tameem Ahmad, Dr. Faisal Alam, Dr. Muhammad Inamullah |  | Lab |\n| 08:50 AM - 09:40 AM | AMS2622 | Numerical Analysis & Probability |  | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2942 | Data Structure Lab | Prof. Saiful Islam, Dr. Tameem Ahmad, Dr. Faisal Alam |  | Lab |\n| 08:50 AM - 09:40 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2942 | Data Structure Lab | Prof. Saiful Islam, Dr. Tameem Ahmad, Dr. Faisal Alam, Dr. Muhammad Inamullah |  | Lab |\n| 08:50 AM - 09:40 AM | AMS2622 | Numerical Analysis & Probability |  | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2942 | Data Structure Lab | Prof. Saiful Islam, Dr. Tameem Ahmad, Dr. Faisal Alam |  | Lab |"
+      }
+    ]
+  }
+}

@@ -8,8 +8,8 @@ import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import { LocalEmbeddings } from './utils/LocalEmbeddings.js';
 
 const VECTOR_STORE_PATH = './vector_store';
-const COURSES_JSON = './zhcet_courses.json';
-const GENERAL_INFO_MD = './zhcet_general_info.md';
+const COURSES_JSON = './knowledge_base/zhcet_courses.json';
+const GENERAL_INFO_MD = './knowledge_base/zhcet_general_info.md';
 
 /**
  * Build a rich, searchable text block for a group of courses

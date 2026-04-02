@@ -1,9 +1,25 @@
 import fs from 'fs';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GoogleAIFileManager } from '@google/generative-ai/server';
+import Groq from 'groq-sdk';
 
-const TIMETABLE_FILE = './active_timetable.json';
-const COURSES_JSON = './zhcet_courses.json';
+const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
+// Lazy Groq client — only instantiated on first use so that dotenv.config()
+// in server.js has already populated process.env before this runs.
+// (ESM static imports are hoisted and execute before any top-level statements,
+//  so a top-level `new Groq()` would fire before dotenv is ready.)
+let _groq = null;
+function getGroq() {
+    if (!_groq) {
+        if (!process.env.GROQ_API_KEY) {
+            throw new Error('GROQ_API_KEY is not set. Check your .env file.');
+        }
+        _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    }
+    return _groq;
+}
+
+const TIMETABLE_FILE = './knowledge_base/active_timetable.json';
+const TIMETABLE_FILE_TMP = './knowledge_base/active_timetable.json.tmp';
+const COURSES_JSON = './knowledge_base/zhcet_courses.json';
 
 // Cache courses DB in memory so we don't re-read the file on every call
 let _coursesDbCache = null;
@@ -151,23 +167,8 @@ function snapTimesToStandardSlots(entries) {
     });
 }
 
-export const TimetableManager = {
-    async processAndSaveTimetable(filePath, mimeType, fallbackCourse = '', fallbackBranch = '', fallbackSemester = '') {
-        try {
-            if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in .env");
-
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-            const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
-
-            console.log("📤 Uploading timetable to Gemini...");
-            const uploadResponse = await fileManager.uploadFile(filePath, {
-                mimeType: mimeType,
-                displayName: "Semester Timetable",
-            });
-
-            console.log("🧠 Processing timetable with Gemini...");
-            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-            const prompt = `You are an expert data extractor for ZHCET (Zakir Husain College of Engineering & Technology) university timetables.
+// ── Reusable timetable extraction prompt ──────────────────────────────────────
+const TIMETABLE_PROMPT = `You are an expert data extractor for ZHCET (Zakir Husain College of Engineering & Technology) university timetables.
 Extract the class schedule into a structured JSON object.
 OUTPUT ONLY VALID JSON. Do not include markdown formatting like \`\`\`json.
 
@@ -214,108 +215,289 @@ The JSON object must have this shape:
     ]
 }`;
 
-            const result = await model.generateContent([
-                { fileData: { mimeType: uploadResponse.file.mimeType, fileUri: uploadResponse.file.uri } },
-                { text: prompt }
-            ]);
+// ── Decomposed pipeline steps ─────────────────────────────────────────────────
 
-            let jsonText = result.response.text().trim();
-            jsonText = jsonText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+/**
+ * Step 1 — Read the local file and convert to base64 for Groq Vision.
+ * Logic Gate: verifies the file exists and is non-empty before returning.
+ */
+async function step1_readFileAsBase64(filePath, mimeType) {
+    console.log("📤 [Step 1] Reading timetable file for Groq Vision...");
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`[Step 1] File not found: ${filePath}`);
+    }
+    const fileBuffer = fs.readFileSync(filePath);
+    if (!fileBuffer || fileBuffer.length === 0) {
+        throw new Error('[Step 1] Uploaded file is empty. Cannot proceed.');
+    }
+    const base64Data = fileBuffer.toString('base64');
+    console.log(`   ✅ File read OK — ${(fileBuffer.length / 1024).toFixed(1)} KB`);
+    return { base64Data, mimeType: mimeType || 'image/jpeg' };
+}
 
-            const parsed = JSON.parse(jsonText);
+/**
+ * Step 2 — Send the image to Groq Vision for structured JSON extraction.
+ * Self-Healing: if the first response isn't valid JSON, a second attempt is
+ * made with the parse error injected into the prompt for self-correction.
+ */
+async function step2_extractTimetableJson(base64Data, mimeType) {
+    console.log("🧠 [Step 2] Extracting timetable data with Groq Vision...");
 
-            // Handle both old flat-array response and new object response
-            let entries, extractedCourse, extractedBranch, extractedSemester, extractedYear, semesterParity;
-            if (Array.isArray(parsed)) {
-                entries = parsed;
-                extractedCourse = ''; extractedBranch = ''; extractedSemester = ''; extractedYear = ''; semesterParity = '';
-            } else {
-                entries = parsed.entries || [];
-                const fallbackName = parsed.extracted_name || '';
-                extractedCourse = parsed.extracted_course || '';
-                extractedBranch = parsed.extracted_branch || fallbackName;
-                extractedSemester = parsed.extracted_semester || '';
-                extractedYear = parsed.extracted_year || '';
-                semesterParity = parsed.semester_parity || '';
-            }
+    const attemptExtract = async (extraInstruction = '') => {
+        const promptText = TIMETABLE_PROMPT +
+            (extraInstruction ? `\n\nCORRECTION REQUIRED: ${extraInstruction}` : '');
 
-            // Smart semester resolution logic
-            let finalSemesterNum = extractedSemester.trim();
-            if (!finalSemesterNum && extractedYear && semesterParity) {
-                let yrMatch = extractedYear.match(/\d+/);
-                if (yrMatch) {
-                    let yr = parseInt(yrMatch[0], 10);
-                    let isEven = semesterParity.toLowerCase().includes('even');
-                    if (yr > 0) {
-                        finalSemesterNum = ((yr - 1) * 2 + (isEven ? 2 : 1)).toString();
-                    }
+        const result = await getGroq().chat.completions.create({
+            model: GROQ_VISION_MODEL,
+            messages: [
+                {
+                    role: 'user',
+                    content: [
+                        { type: 'text', text: promptText },
+                        {
+                            type: 'image_url',
+                            image_url: {
+                                url: `data:${mimeType};base64,${base64Data}`
+                            }
+                        }
+                    ]
                 }
-            }
+            ],
+            temperature: 0,
+            max_tokens: 4096
+        });
 
-            const finalCourse = fallbackCourse || extractedCourse || '';
-            const finalBranch = fallbackBranch || extractedBranch || 'Untitled Timetable';
-            const finalSemester = fallbackSemester || finalSemesterNum || '';
+        const raw = (result.choices[0]?.message?.content || '').trim()
+            .replace(/^```(?:json)?\s*/i, '')
+            .replace(/\s*```$/i, '')
+            .trim();
+        return { raw, parsed: JSON.parse(raw) }; // throws if not valid JSON
+    };
 
-            // Auto-fill missing course titles and snap times to standard slots
-            entries = autoFillCourseTitles(entries);
-            entries = snapTimesToStandardSlots(entries);
+    // First attempt
+    let firstErr;
+    try {
+        const { parsed } = await attemptExtract();
+        console.log('   ✅ JSON extraction OK on first attempt.');
+        return parsed;
+    } catch (err) {
+        firstErr = err;
+        console.warn(`[Self-Heal] [Step 2] First Groq response was not valid JSON: ${err.message}`);
+    }
 
-            // Load existing timetables or start fresh
+    // Second attempt — feed the parse error back to the model
+    console.log('[Self-Heal] [Step 2] Retrying with error-augmented correction prompt...');
+    try {
+        const { parsed } = await attemptExtract(
+            `Your previous response could not be parsed as JSON. ` +
+            `Error: "${firstErr?.message ?? 'JSON parse error'}". ` +
+            `Output ONLY the valid JSON object — no prose, no markdown fences, no extra text.`
+        );
+        console.log('   ✅ JSON extraction OK on second attempt.');
+        return parsed;
+    } catch (secondErr) {
+        throw new Error(
+            `[Step 2] Could not parse timetable document after two attempts. ` +
+            `Last error: ${secondErr.message}`
+        );
+    }
+}
+
+/**
+ * Step 3 — Resolve final metadata (branch, semester, course) from the extracted
+ * data and any admin-supplied fallbacks.
+ * Logic Gate: requires at least one entry to be present.
+ */
+function step3_resolveMetadata(parsed, fallbackCourse, fallbackBranch, fallbackSemester) {
+    console.log('📋 [Step 3] Resolving timetable metadata...');
+
+    let entries, extractedCourse, extractedBranch, extractedSemester, extractedYear, semesterParity;
+
+    if (Array.isArray(parsed)) {
+        entries = parsed;
+        extractedCourse = ''; extractedBranch = ''; extractedSemester = '';
+        extractedYear = ''; semesterParity = '';
+    } else {
+        entries = parsed.entries || [];
+        extractedCourse = parsed.extracted_course || '';
+        extractedBranch = parsed.extracted_branch || parsed.extracted_name || '';
+        extractedSemester = parsed.extracted_semester || '';
+        extractedYear = parsed.extracted_year || '';
+        semesterParity = parsed.semester_parity || '';
+    }
+
+    // ── Logic Gate: must have at least one entry ─────────────────────────────
+    if (!Array.isArray(entries) || entries.length === 0) {
+        throw new Error('[Step 3] No timetable entries found in extracted data. Check the uploaded file.');
+    }
+
+    // Smart semester resolution
+    let finalSemesterNum = extractedSemester.trim();
+    if (!finalSemesterNum && extractedYear && semesterParity) {
+        const yrMatch = extractedYear.match(/\d+/);
+        if (yrMatch) {
+            const yr = parseInt(yrMatch[0], 10);
+            const isEven = semesterParity.toLowerCase().includes('even');
+            if (yr > 0) finalSemesterNum = ((yr - 1) * 2 + (isEven ? 2 : 1)).toString();
+        }
+    }
+
+    const result = {
+        finalCourse: fallbackCourse || extractedCourse || '',
+        finalBranch: fallbackBranch || extractedBranch || 'Untitled Timetable',
+        finalSemester: fallbackSemester || finalSemesterNum || '',
+        entries,
+    };
+    console.log(`   ✅ Branch: "${result.finalBranch}" | Semester: "${result.finalSemester}" | ${entries.length} raw entries`);
+    return result;
+}
+
+/**
+ * Step 4 — Enrich entries: auto-fill missing course titles and snap times to
+ * standard ZHCET period boundaries.
+ */
+function step4_enrichEntries(entries) {
+    console.log('✨ [Step 4] Enriching entries (title fill + time snap)...');
+    const enriched = snapTimesToStandardSlots(autoFillCourseTitles(entries));
+    console.log(`   ✅ ${enriched.length} entries enriched.`);
+    return enriched;
+}
+
+/**
+ * Step 5 — Save the updated timetable list atomically.
+ * Strict Write: writes to a .tmp file, verifies integrity, then renames.
+ * Logic Gate: refuses to proceed if the written byte count doesn't match.
+ */
+function step5_saveAtomically(allTimetables) {
+    console.log('💾 [Step 5] Saving timetable atomically...');
+    const payload = JSON.stringify(allTimetables, null, 2);
+
+    fs.writeFileSync(TIMETABLE_FILE_TMP, payload, 'utf8');
+
+    // ── Integrity check ───────────────────────────────────────────────────────
+    const writtenBytes = fs.statSync(TIMETABLE_FILE_TMP).size;
+    const expectedBytes = Buffer.byteLength(payload, 'utf8');
+    if (writtenBytes !== expectedBytes) {
+        fs.unlinkSync(TIMETABLE_FILE_TMP);
+        throw new Error(
+            `[Step 5] Atomic write integrity check failed: ` +
+            `expected ${expectedBytes} bytes, got ${writtenBytes}.`
+        );
+    }
+
+    // Rename is atomic on POSIX (Linux/macOS)
+    fs.renameSync(TIMETABLE_FILE_TMP, TIMETABLE_FILE);
+    console.log(`   ✅ Timetable saved to ${TIMETABLE_FILE}.`);
+}
+
+// ── TimetableManager (public API) ─────────────────────────────────────────────
+export const TimetableManager = {
+    /**
+     * Main orchestration pipeline — thin wrapper that chains the 5 steps.
+     * Source files are only cleaned up after a confirmed atomic save.
+     */
+    async processAndSaveTimetable(filePath, mimeType, fallbackCourse = '', fallbackBranch = '', fallbackSemester = '') {
+        try {
+            // Step 1 — Read file as base64 (replaces Gemini File API upload)
+            const { base64Data, mimeType: resolvedMime } = await step1_readFileAsBase64(filePath, mimeType);
+
+            // Step 2 — Extract JSON via Groq Vision (with self-healing retry)
+            const parsed = await step2_extractTimetableJson(base64Data, resolvedMime);
+
+            // Step 3 — Resolve metadata (with logic gate)
+            const { entries, finalCourse, finalBranch, finalSemester } =
+                step3_resolveMetadata(parsed, fallbackCourse, fallbackBranch, fallbackSemester);
+
+            // Step 4 — Enrich
+            const enrichedEntries = step4_enrichEntries(entries);
+
+            // Step 5 — Atomic save (with integrity check)
             const allTimetables = this.getAllTimetables();
             const newTimetable = {
                 id: Date.now().toString(36),
                 course: finalCourse,
                 branch: finalBranch,
                 semester: finalSemester,
-                entries: entries,
+                entries: enrichedEntries,
                 uploadedAt: new Date().toISOString(),
             };
             allTimetables.push(newTimetable);
+            step5_saveAtomically(allTimetables);
 
-            fs.writeFileSync(TIMETABLE_FILE, JSON.stringify(allTimetables, null, 2));
-            console.log(`💾 Timetable "${finalBranch}" saved locally (${entries.length} entries).`);
-
-            // Cleanup
-            await fileManager.deleteFile(uploadResponse.file.name);
-            fs.unlinkSync(filePath);
-
-            return newTimetable;
-        } catch (error) {
-            console.error("❌ Failed to process timetable:", error);
+            // ── Clean up local temp file AFTER confirmed save ──────────────────────
+            console.log('🧹 [Cleanup] Removing temp files after confirmed save...');
             if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-            throw new Error("Could not parse timetable document.");
+
+            console.log(`✅ Timetable "${finalBranch}" pipeline complete (${enrichedEntries.length} entries).`);
+            return newTimetable;
+
+        } catch (error) {
+            console.error(`❌ Timetable pipeline failed: ${error.message}`);
+            // Clean up the local upload on any error
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            if (fs.existsSync(TIMETABLE_FILE_TMP)) fs.unlinkSync(TIMETABLE_FILE_TMP);
+            throw error; // surface the step-specific error message
         }
     },
 
     getAllTimetables() {
         if (fs.existsSync(TIMETABLE_FILE)) {
-            const data = JSON.parse(fs.readFileSync(TIMETABLE_FILE, 'utf8'));
-            // Migrate: if it's a flat array of entries (old format), wrap it
-            if (Array.isArray(data) && data.length > 0 && data[0].course_code) {
-                return [{ id: 'migrated', course: '', branch: 'Imported Timetable', semester: '', entries: data, uploadedAt: new Date().toISOString() }];
+            try {
+                const data = JSON.parse(fs.readFileSync(TIMETABLE_FILE, 'utf8'));
+                // Migrate: if it's a flat array of entries (old format), wrap it
+                if (Array.isArray(data) && data.length > 0 && data[0].course_code) {
+                    return [{ id: 'migrated', course: '', branch: 'Imported Timetable', semester: '', entries: data, uploadedAt: new Date().toISOString() }];
+                }
+                return Array.isArray(data) ? data.map(t => {
+                    if (t.name !== undefined && t.course === undefined && t.branch === undefined && t.semester === undefined) {
+                        t.branch = t.name;
+                        t.course = '';
+                        t.semester = '';
+                        delete t.name;
+                    }
+                    // Auto-fill course titles on read for any entries still missing them
+                    if (t.entries) {
+                        t.entries = autoFillCourseTitles(t.entries);
+                        t.entries = snapTimesToStandardSlots(t.entries);
+                    }
+                    return t;
+                }) : [];
+            } catch (e) {
+                console.error('[TimetableManager] Failed to parse knowledge_base/active_timetable.json:', e.message);
+                return [];
             }
-            return Array.isArray(data) ? data.map(t => {
-                if (t.name !== undefined && t.course === undefined && t.branch === undefined && t.semester === undefined) {
-                    t.branch = t.name;
-                    t.course = '';
-                    t.semester = '';
-                    delete t.name;
-                }
-                // Auto-fill course titles on read for any entries still missing them
-                if (t.entries) {
-                    t.entries = autoFillCourseTitles(t.entries);
-                    t.entries = snapTimesToStandardSlots(t.entries);
-                }
-                return t;
-            }) : [];
         }
         return [];
     },
 
-    getActiveTimetable() {
+    getActiveTimetable({ branch, semester } = {}) {
         const all = this.getAllTimetables();
         if (all.length === 0) return null;
-        return all.flatMap(t => t.entries);
+
+        const toSummary = t => ({
+            course: t.course, branch: t.branch,
+            semester: t.semester, entries: t.entries
+        });
+
+        // If filters provided, narrow down
+        if (branch || semester) {
+            const filtered = all.filter(t => {
+                const branchMatch = !branch || t.branch?.toLowerCase().includes(branch.toLowerCase());
+                const semMatch = !semester || String(t.semester) === String(semester);
+                return branchMatch && semMatch;
+            });
+            if (filtered.length > 0) {
+                return filtered.map(toSummary);
+            }
+            // No match — return null with available timetable summary
+            return {
+                message: `No timetable found for the requested filters (branch: ${branch || 'any'}, semester: ${semester || 'any'}).`,
+                available: all.map(t => ({ course: t.course, branch: t.branch, semester: t.semester }))
+            };
+        }
+
+        // No filter: return all with metadata
+        return all.map(toSummary);
     },
 
     updateTimetableMetadata(id, { course, branch, semester }) {
@@ -325,7 +507,7 @@ The JSON object must have this shape:
         if (course !== undefined) tt.course = course;
         if (branch !== undefined) tt.branch = branch;
         if (semester !== undefined) tt.semester = semester;
-        fs.writeFileSync(TIMETABLE_FILE, JSON.stringify(all, null, 2));
+        step5_saveAtomically(all);
         return tt;
     },
 
@@ -334,7 +516,7 @@ The JSON object must have this shape:
         const tt = all.find(t => t.id === id);
         if (!tt) return null;
         tt.entries = newEntries;
-        fs.writeFileSync(TIMETABLE_FILE, JSON.stringify(all, null, 2));
+        step5_saveAtomically(all);
         return tt;
     },
 
@@ -342,7 +524,7 @@ The JSON object must have this shape:
         const all = this.getAllTimetables();
         const filtered = all.filter(t => t.id !== id);
         if (filtered.length === all.length) return false;
-        fs.writeFileSync(TIMETABLE_FILE, JSON.stringify(filtered, null, 2));
+        step5_saveAtomically(filtered);
         return true;
     },
 

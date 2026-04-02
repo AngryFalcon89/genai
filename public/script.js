@@ -11,6 +11,8 @@ const sidebarOverlay = document.getElementById('sidebar-overlay');
 const confirmModalOverlay = document.getElementById('confirm-modal-overlay');
 const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
 const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+const uploadBtn = document.getElementById('upload-btn');
+const fileUploadInput = document.getElementById('file-upload-input');
 
 let currentSessionId = localStorage.getItem('currentSessionId') || null;
 let pendingDeleteSessionId = null;
@@ -153,18 +155,28 @@ function clearChat() {
                 <button class="option-chip" data-message="🏫 Tell me about ZHCET">🏫 About ZHCET</button>
                 <button class="option-chip" data-message="🎓 What are the promotion rules?">🎓 Promotion Rules</button>
                 <button class="option-chip" data-message="📚 Tell me about the library">📚 Library Info</button>
+                <button class="option-chip upload-chip" id="welcome-upload-chip">📄 Upload Registration Card</button>
             </div>
         </div>
     `;
     chatMessages.appendChild(welcome);
     bindWelcomeChips();
+    bindWelcomeUploadChip();
 }
 
 function bindWelcomeChips() {
-    document.querySelectorAll('#welcome-chips .option-chip, #welcome-screen .option-chip').forEach(chip => {
+    document.querySelectorAll('#welcome-chips .option-chip:not(.upload-chip), #welcome-screen .option-chip:not(.upload-chip)').forEach(chip => {
         chip.addEventListener('click', () => {
             const message = chip.getAttribute('data-message');
             if (message) sendMessage(message);
+        });
+    });
+}
+
+function bindWelcomeUploadChip() {
+    document.querySelectorAll('#welcome-upload-chip, .welcome-upload-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            fileUploadInput.click();
         });
     });
 }
@@ -350,7 +362,116 @@ async function sendMessage(message) {
     } finally {
         userInput.disabled = false;
         sendBtn.disabled = false;
+        uploadBtn.disabled = false;
         userInput.focus();
+    }
+}
+
+// --- File Upload ---
+
+function addImageMessage(file) {
+    hideWelcomeScreen();
+
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', 'user-message');
+
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('message-content', 'upload-message');
+
+    const isPdf = file.type === 'application/pdf';
+
+    if (isPdf) {
+        const pdfIcon = document.createElement('div');
+        pdfIcon.classList.add('upload-pdf-icon');
+        pdfIcon.textContent = '📑';
+        contentDiv.appendChild(pdfIcon);
+    } else {
+        const imgPreview = document.createElement('img');
+        imgPreview.classList.add('upload-preview');
+        imgPreview.src = URL.createObjectURL(file);
+        imgPreview.alt = 'Registration Card';
+        contentDiv.appendChild(imgPreview);
+    }
+
+    const fileName = document.createElement('span');
+    fileName.classList.add('upload-filename');
+    fileName.textContent = `📄 ${file.name}`;
+
+    contentDiv.appendChild(fileName);
+    messageDiv.appendChild(contentDiv);
+
+    const timeDiv = document.createElement('div');
+    timeDiv.classList.add('message-time');
+    timeDiv.textContent = formatTime(new Date());
+    messageDiv.appendChild(timeDiv);
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function handleFileUpload(file) {
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+        addMessage('Please upload an image (JPEG, PNG, WebP) or PDF of your registration card. 📸', false);
+        return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        addMessage('File is too large. Please upload an image under 10MB. 📏', false);
+        return;
+    }
+
+    // Show image preview
+    addImageMessage(file);
+
+    // Disable inputs
+    userInput.disabled = true;
+    sendBtn.disabled = true;
+    uploadBtn.disabled = true;
+
+    const typingIndicator = showTypingIndicator();
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (currentSessionId) {
+            formData.append('sessionId', currentSessionId);
+        }
+
+        const res = await fetch('/api/chat/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json().catch(() => ({ error: 'Invalid server response' }));
+        typingIndicator.remove();
+
+        if (!res.ok || data.error) {
+            addMessage(data.error || 'Failed to process the registration card. Please try again. 😅', false);
+        } else {
+            // Show the validation response from the LLM
+            addMessage(data.validationResponse, false, data.options || []);
+
+            if (!currentSessionId && data.sessionId) {
+                currentSessionId = data.sessionId;
+                localStorage.setItem('currentSessionId', currentSessionId);
+                loadSessions();
+            }
+        }
+    } catch (error) {
+        typingIndicator.remove();
+        addMessage('Oops! Something went wrong processing your registration card. Please try again. 😅', false);
+    } finally {
+        userInput.disabled = false;
+        sendBtn.disabled = false;
+        uploadBtn.disabled = false;
+        userInput.focus();
+        // Reset file input
+        fileUploadInput.value = '';
     }
 }
 
@@ -426,9 +547,42 @@ document.addEventListener('mousemove', (e) => {
 // --- Initial Load ---
 
 bindWelcomeChips();
+bindWelcomeUploadChip();
 
 if (currentSessionId) {
     loadSession(currentSessionId);
 } else {
     loadSessions();
 }
+
+// --- Upload Button Events ---
+
+uploadBtn.addEventListener('click', () => {
+    fileUploadInput.click();
+});
+
+fileUploadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) handleFileUpload(file);
+});
+
+// --- Drag and Drop ---
+
+const chatContainer = document.querySelector('.chat-container');
+
+chatContainer.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    chatContainer.classList.add('drag-over');
+});
+
+chatContainer.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    chatContainer.classList.remove('drag-over');
+});
+
+chatContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    chatContainer.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileUpload(file);
+});

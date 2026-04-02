@@ -1,107 +1,141 @@
 {
-  "session_1775148336775": {
+  "session_1775159139467": {
     "messages": [
       {
         "role": "user",
-        "content": "I want to graduate with Honours. What is the minimum CGPA I need and are there any other restrictions?"
+        "content": "I want to get a Minor Degree in Artificial Intelligence. What is the CGPA requirement to start, and how many 'additional' credits must I earn beyond my major requirements?"
       },
       {
         "role": "assistant",
-        "content": "To graduate with Honours, you must have a CGPA of 8.5 or above AND you must have passed every single course on your first attempt, meaning you cannot have any backlogs or failures in any semester. If you have any backlogs, you are permanently ineligible for Honours, regardless of your final CGPA."
+        "content": "I'm sorry, I couldn't process that request properly."
       },
       {
         "role": "user",
-        "content": "If I failed one elective in my 3rd semester but cleared it in a backlog, can I still get Honours if my final CGPA is 9.0?"
+        "content": "I want to get a Minor Degree in Artificial Intelligence. What is the CGPA requirement to start, and how many 'additional' credits must I earn beyond my major requirements?"
       },
       {
         "role": "assistant",
-        "content": "No, you cannot get Honours. Having a backlog in any semester, even if you cleared it later, permanently disqualifies you from graduating with Honours, regardless of your final CGPA."
+        "content": "I'm sorry, I couldn't process that request properly."
       }
     ],
-    "lastAccessed": 1775148347281
+    "lastAccessed": 1775159444937
   },
-  "session_1775147024612": {
+  "session_1775159321689": {
     "messages": [
       {
         "role": "user",
-        "content": "My attendance in 'Software Engineering' is 68%. Will I be allowed to sit for the exams?"
+        "content": "Look at course code COC3112. Break down what each character represents based on the Regulations. Which department offers it, what is the category, what year is it for, and what type of course (theory/lab) is it?"
       },
       {
         "role": "assistant",
-        "content": "With an attendance of 68% in 'Software Engineering', you are below the 75% required to be eligible for the End-Semester Examination. However, since your attendance is above 65%, you may be eligible for condonation, subject to approval by the condonation committee."
+        "content": "To analyze the course code **COC3112**, I'll retrieve its details using the `get_course_details` tool. Please provide your **current semester number** (e.g., 3 for 3rd semester) to proceed. This is required to validate the course's parity rules and other details."
       },
       {
         "role": "user",
-        "content": "What happens if my attendance drops to 60%?"
+        "content": "I'm in semester 3"
       },
       {
         "role": "assistant",
-        "content": "If your attendance drops to 60%, you will be detained and awarded a grade 'F'. All your marks for the semester will be cancelled, and you will have to repeat the course."
+        "content": "The course code **COC3112** breaks down as follows:  \n\n- **CO**: Department → **Computer Engineering**  \n- **C**: Course type → **Core** (Programme Core, \"PC\" category)  \n- **3**: Year → **Third year** (Semester 6, as confirmed by the data)  \n- **112**: Unique course identifier  \n\n### Full Breakdown:\n- **Department**: Computer Engineering  \n- **Category**: Programme Core (PC)  \n- **Year/Semester**: 3rd Year, 6th Semester (Even semester)  \n- **Course Type**: **Theory** (LTP: 3-1-0, no lab component)  \n\n### Important Note:\nYou are currently in **Semester 3 (Odd)**, but this course is designed for **Semester 6 (Even)**. Due to ZHCET's parity rules, **registration is strictly forbidden** in your current semester. You can only register for this course in an **even-numbered semester** (2, 4, 6, 8).  \n\nLet me know if you'd like alternatives for your current semester!"
       }
     ],
-    "lastAccessed": 1775147098066
+    "lastAccessed": 1775159382939
   },
-  "session_1775146829234": {
+  "session_1775159163718": {
     "messages": [
       {
         "role": "user",
-        "content": "Look at the Monday schedule for Computer Engineering Semester 4. Who is teaching at 11:20 AM and in which room?"
+        "content": "I am a B.Tech student and I need a full set of textbooks. How much do I have to pay as a hire charge, and where exactly do I deposit the fine if I return them 5 days late?"
       },
       {
         "role": "assistant",
-        "content": "Here is your schedule for **Monday**:\n| Time | Course Code | Title | Professor | Room | Type |\n| ---- | ----------- | ----- | ---------- | ---- | ---- |\n| 08:50 AM - 09:40 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2922 | Digital Design & Simulation Lab | Prof. M. M. S. Beg, Prof Izharuddin, Mr. M. A. Qadeer, Prof. M. S. Umar, Dr. Mohd. Shoaib |  | Lab |\n| 02:00 PM - 04:30 PM | ELA2902 | Electronics Laboratory |  |  | Lab |\nAt 11:20 AM, Dr. Muhammad Inamullah is teaching Computer Architecture in room NL25."
+        "content": "I couldn't find specific information about textbook hire charges or late return fine procedures in the ZHCET guidelines. For such administrative details, I recommend:\n\n1. Checking the official ZHCET library policies (available on their website)\n2. Consulting the college's \"Student Handbook\" \n3. Contacting the library administration directly for exact fee amounts and payment procedures\n\nWould you like me to help you find any other information about courses, registration, or academic policies?"
       },
       {
         "role": "user",
-        "content": "Does the same professor teach me at that same time on Thursday?"
+        "content": "Does the library timing change on Fridays, and can I access IEEE e-journals from my hostel via the LAN?"
       },
       {
         "role": "assistant",
-        "content": "Here is your schedule for **Thursday**:\n| Time | Course Code | Title | Professor | Room | Type |\n| ---- | ----------- | ----- | ---------- | ---- | ---- |\n| 08:00 AM - 08:50 AM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 08:50 AM - 09:40 AM | COC2142 | Design & Analysis of Algorithm | Mr. Muneeb Hasan Khan | NL25 | Lecture |\n| 09:40 AM - 10:30 AM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 10:30 AM - 11:20 AM | AMS2632 | Discrete Structures |  | NL25 | Lecture |\n| 11:20 AM - 12:10 PM | ELA2412 | Fundamentals of Digital Sig Proc |  | NL25 | Lecture |\n| 12:10 PM - 01:00 PM | COC2082 | Computer Architecture | Dr. Muhammad Inamullah | NL25 | Lecture |\n| 02:00 PM - 04:30 PM | COC2942 | Data Structure Lab | Prof. Saiful Islam, Dr. Tameem Ahmad, Dr. Faisal Alam, Dr. Muhammad Inamullah |  | Lab |\nAt 11:20 AM on Thursday, you have Fundamentals of Digital Sig Proc in room NL25, but it is not taught by Dr. Muhammad Inamullah."
+        "content": "To find the library timings for Fridays, I'll check the general guidelines. \nAccording to the library rules, the timings do vary on Fridays. The library is open from 8:30 AM to 4:30 PM on Fridays.\n\nRegarding access to IEEE e-journals, yes, you can access them from your hostel via the LAN. The university provides access to various e-journals, including IEEE, through its intranet. You can use your university credentials to log in and access these resources from your hostel room.\n\nIf you need more information about library resources or e-journal access, feel free to ask."
       }
     ],
-    "lastAccessed": 1775146946905
+    "lastAccessed": 1775159289937
   },
-  "session_1775146656840": {
+  "session_1775159078485": {
     "messages": [
       {
         "role": "user",
-        "content": "I am in an even semester. Can I register for a 3rd-semester (Odd) backlog in Mode 'b' right now?"
+        "content": "A student has finished their 4th semester. They have earned 30 credits from their first year and 25 credits from their second year. Will they be promoted to the 5th semester? Explain the specific credit deficit based on the 108/80/60 rule."
       },
       {
         "role": "assistant",
-        "content": "You are in an even semester and want to register for a 3rd-semester (Odd) backlog in Mode 'b'. According to the registration rules, Mode 'b' is permissible only if the student had registered in mode 'a' and fulfilled attendance requirement in an earlier semester. However, since you didn't provide the course code, I couldn't verify the course details. \n\nTo proceed, please provide the course code of the 3rd-semester backlog you want to register for. I'll then be able to check the course details and provide a more accurate answer."
+        "content": "No. The student will **not be promoted to the 5th semester**.\n\n**Why – based on the 108 / 80 / 60 rule**\n\n| Requirement for promotion to Semester 5/6 | Required | Student’s earned |\n|--------------------------------------------|----------|------------------|\n| **Total earned credits** (by end of Semester IV) | 60 credits | 55 credits |\n| **Credits from the first two semesters** | 36 credits | 30 credits |\n\n- **Total credit deficit:** 5 credits short of the required 60.  \n- **First‑year credit deficit:** 6 credits short of the required 36 from Sem 1 + Sem 2.\n\nBecause both the overall credit minimum (60) **and** the minimum first‑year credit requirement (36) are not met, the student fails the promotion criteria for moving into Semester 5 (or 6).  \n\n(For reference, promotion to Sem 7/8 later requires 108 total credits, with at least 80 from the first four semesters.)"
       },
       {
         "role": "user",
-        "content": "Wait, I have a backlog in 'Applied Mathematics-I' (AMS1112) from my 1st semester. Can I take that one right now?"
+        "content": "If this is their third time being 'Not Promoted,' what is their last resort to stay in the program, and what is the absolute maximum time they have to graduate?"
       },
       {
         "role": "assistant",
-        "content": "Since 'Applied Mathematics-I' (AMS1112) is a first-year course, you can register for it in any semester, regardless of the current semester parity. The registration rules permit the registration of first-year courses in all semesters. Therefore, you can take 'Applied Mathematics-I' (AMS1112) right now."
+        "content": "**Last‑resort option:**  \nAfter the third “Not Promoted” status the student’s name is removed from the faculty rolls. The only way to stay in the program is to file a **Mercy Appeal to the Vice‑Chancellor**. If the appeal is approved, the university may extend the allowed study period.\n\n**Absolute maximum time to graduate:**  \n- Normal ceiling: **14 consecutive semesters** (the standard maximum).  \n- With a successful Mercy Appeal: the period can be stretched by **up to two additional semesters**, giving an **absolute maximum of 16 semesters** (i.e., eight years)."
       }
     ],
-    "lastAccessed": 1775146722897
+    "lastAccessed": 1775159112108
   },
-  "session_1775145596062": {
+  "session_1775159035686": {
     "messages": [
       {
         "role": "user",
-        "content": "I have finished my 4th semester with a total of 62 credits. However, I only earned 34 credits in my first year. Am I eligible for promotion to the 5th semester?"
+        "content": "I am in B.Tech Computer Engineering, Semester 4. Based on my active timetable, I have a lab on Monday from 2:00 PM to 4:30 PM. If I want to register for an extra backlog course from the AI branch (Semester 4), what is the maximum number of total credits I can carry this semester, and what logistical conflict might I face on Mondays?"
       },
       {
         "role": "assistant",
-        "content": "You are not eligible for promotion to the 5th semester because you have not met the required 60 earned credits, including at least 36 credits from the first two semesters, by the end of Semester IV. You have only earned 34 credits in your first year and a total of 62 credits by the end of your 4th semester."
+        "content": "I'm sorry, I couldn't process that request properly."
+      }
+    ],
+    "lastAccessed": 1775159057628
+  },
+  "session_1775158856754": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am repeating a course this semester because I failed the theory exam last year, but I had 80% attendance back then. If my current attendance drops to 40% due to an internship, can the department detain me from the End-Semester exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. Because you already satisfied the attendance requirement (80 %) when you first took the course, the “repeating‑students exemption” applies: you will not be detained for low attendance in the repeat semester, even though your current attendance is only 40 %.  \n\nYou may therefore register the repeated theory course in **Mode B** (appear in all evaluation components) or **Mode C** (appear only for the end‑semester exam), as the repetition rules allow for either mode when the theory exam was failed but attendance was previously completed."
       },
       {
         "role": "user",
-        "content": "What if I take a 4-credit course during a special summer session? Can that count toward my first-year total for promotion?"
+        "content": "Since I'm repeating this theory course and already fulfilled attendance, which registration modes (b or c) are available to me, and how do they differ regarding sessional marks?"
       },
       {
         "role": "assistant",
-        "content": "Taking a 4-credit course during a special summer session does not count toward your first-year total for promotion."
+        "content": "**Registration modes you can use**\n\n| Mode | What you appear in | How sessional marks are treated |\n|------|-------------------|---------------------------------|\n| **Mode B** | All evaluation components (theory‑sessionals, practicals, end‑semester exam). | Sessionals are taken **again**; the new sessional marks replace the previous ones for that attempt. |\n| **Mode C** | End‑semester exam only. | The **previous** sessional marks you earned earlier are retained and counted toward the final grade; you only sit the end‑semester exam again. |\n\nBecause you failed the theory exam but had already satisfied the attendance requirement, you are eligible to register the repeated course in **either Mode B or Mode C**. Choose Mode B if you want a chance to improve the sessional component, or Mode C if you prefer to keep the earlier sessional score and only retake the final exam."
       }
     ],
-    "lastAccessed": 1775146649796
+    "lastAccessed": 1775158880956
+  },
+  "session_1775158781775": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am a first-year student with a CGPA of 7.8. I passed all my exams, but I was absent for one mid-term (Internal Exam). Can I apply for a branch change? What are the specific constraints that might prevent my transfer even if I meet the merit criteria?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes – with a CGPA of 7.8 and having cleared every first‑year course, you satisfy the basic eligibility for a branch change (the rule requires CGPA ≥ 7.5 and all first‑year courses passed).\n\n**Constraints that can still block the transfer**\n\n| Constraint | What it means for you |\n|------------|-----------------------|\n| **Seat availability** | A vacancy must exist in the desired branch; if all seats are filled, the change cannot be granted. |\n| **Original‑branch strength** | The transfer must not reduce the student count in your current branch below 70 % of its approved intake. |\n| **Attendance requirement** | You must have met the minimum attendance (≥ 75 %) for each course, or have obtained a condonation (65‑74 % with committee approval). If the missed mid‑term caused your attendance to fall below the required level and no condonation is granted, the branch‑change request will be rejected. |\n| **Application timing** | Requests are only accepted after the completion of the first two semesters (i.e., after the II‑semester results are declared). |\n| **Academic standing** | Any disciplinary action, detention, or pending fee dues can disqualify you, even if the CGPA and results are satisfactory. |\n| **Merit ranking** | Branch changes are allotted strictly on merit; if other candidates have higher CGPA or better rank, you may not get the desired seat. |\n\nIf you meet all the above conditions—especially the attendance/condonation rule and the availability/strength limits—your branch‑change application can be processed successfully."
+      },
+      {
+        "role": "user",
+        "content": "If the branch I want to join is popular and many people are leaving my current branch, at what point does the University legally have to stop allowing transfers out of my department?"
+      },
+      {
+        "role": "assistant",
+        "content": "The university must stop permitting transfers out of your current branch as soon as the number of students remaining would bring the branch’s strength below **70 % of its approved intake**.  \n\nIn practice, this works like this:\n\n| Situation | Action required |\n|-----------|-----------------|\n| **Current enrollment = X** (approved intake) | The branch can lose up to **30 % × X** students and still stay at the 70 % threshold. |\n| **Students already approved for transfer = Y** | If **Y ≥ 0.30 × X**, the remaining strength would be ≤ 70 % of the intake, so **no further transfers** can be authorized. |\n| **Additional transfer request arrives** | The university checks the projected remaining strength. If granting the request would push the strength **below 70 %**, the request must be **rejected**. |\n\n**Example**  \n- Approved intake for a branch = 100 students.  \n- 30 % of 100 = 30 students can leave.  \n- If 28 students have already transferred out, the branch still has 72 % of its seats (72 students) and can allow up to 2 more transfers.  \n- The 31st transfer would reduce the strength to 69 students (69 % of intake), which is below the legal limit, so the university must stop further transfers at that point.  \n\nThus, the legal stop point is reached **the moment the projected post‑transfer enrollment would fall under 70 % of the branch’s sanctioned intake**."
+      }
+    ],
+    "lastAccessed": 1775158829060
   }
 }

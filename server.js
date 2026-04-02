@@ -36,8 +36,20 @@ app.use(express.static('public'));
 const upload = multer({ dest: 'uploads/' });
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-const MODEL = 'llama-3.3-70b-versatile'; // Reverted: qwen3-32b causes systematic tool_use_failed errors on Groq
-const FALLBACK_MODEL = 'llama-3.1-8b-instant'; // Task 1: Fallback model used on 429 rate-limit errors
+// ── 4-Tier Model Hierarchy ──────────────────────────────────────────────────
+// Router: lightweight classifier — never used for final answers
+const ROUTER_MODEL   = 'llama-3.1-8b-instant';
+// Tier 1 (LOGIC)   : best for complex ordinance / promotion / honours reasoning
+const TIER1_MODEL    = 'openai/gpt-oss-120b';
+// Tier 2 (GENERAL) : versatile catch-all for basic info, greetings, simple facts
+const TIER2_MODEL    = 'llama-3.3-70b-versatile';
+// Tier 3 (DATA)    : 500 K TPD window, ideal for large JSON timetable/course data
+const TIER3_MODEL    = 'qwen/qwen3-32b';
+// Failover chain order (Tier 1 → 2 → 3 → Router as final safety net)
+const FAILOVER_CHAIN = [TIER1_MODEL, TIER2_MODEL, TIER3_MODEL, ROUTER_MODEL];
+// Legacy aliases kept so other parts of the file (OCR parsing, reranking) still work
+const MODEL          = TIER2_MODEL;          // default / OCR parsing model
+const FALLBACK_MODEL = ROUTER_MODEL;         // lightweight fallback for reranking
 
 // Groq Vision model for OCR extraction (free tier)
 const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
@@ -620,7 +632,7 @@ async function executeTool(toolCall) {
             const sem = Number(args.semester);
             const branchUpper = (args.branch || '').toUpperCase();
             let filtered = COURSES_DATA.filter(c =>
-                // Task 1: Case-insensitive branch match
+                // Case-insensitive branch match
                 (c.branch.toUpperCase() === branchUpper || (sem <= 2 && c.branch.toUpperCase().includes('FIRST YEAR'))) &&
                 Number(c.semester) === sem
             );
@@ -631,7 +643,6 @@ async function executeTool(toolCall) {
                 const cat = args.category.toUpperCase();
                 filtered = filtered.filter(c => c.course_category === cat);
             }
-            // Task 3: Descriptive self-correction error — prompts LLM to retry with broader search
             if (filtered.length === 0) {
                 const branchNote = args.branch
                     ? `"${args.branch}" (Semester ${args.semester})`
@@ -640,13 +651,26 @@ async function executeTool(toolCall) {
                     error: `System Note: No courses were found for ${branchNote}. Please verify the branch name is an exact canonical name (e.g., "COMPUTER ENGINEERING", "ARTIFICIAL INTELLIGENCE"). If the user asked about a backlog or elective, check if this course belongs to a different semester or use search_general_guidelines instead.`
                 });
             }
-            return JSON.stringify(filtered.map(c => ({
-                code: c.course_code,
-                title: c.course_title,
+            // ── Task 3: Truncate large result sets to prevent context-window bloat ──
+            // Returning 100+ courses causes 90-second LLM latencies.
+            const COURSE_LIMIT = 20;
+            const truncated = filtered.length > 25;
+            const resultSet = truncated ? filtered.slice(0, COURSE_LIMIT) : filtered;
+            const payload = resultSet.map(c => ({
+                code:     c.course_code,
+                title:    c.course_title,
                 category: c.course_category,
-                credits: c.credits,
-                ltp: c.contact_periods
-            })));
+                credits:  c.credits,
+                ltp:      c.contact_periods
+            }));
+            if (truncated) {
+                console.log(`[get_courses] Truncated ${filtered.length} → ${COURSE_LIMIT} results to prevent context bloat.`);
+                return JSON.stringify({
+                    courses: payload,
+                    system_note: `Showing the first ${COURSE_LIMIT} of ${filtered.length} results. Please specify a semester (e.g., Semester 4) or a category (e.g., PC, PE, OE) to see a focused list.`
+                });
+            }
+            return JSON.stringify(payload);
         }
         case 'get_course_details': {
             const course = COURSES_DATA.find(c => c.course_code === args.course_code);
@@ -662,10 +686,15 @@ async function executeTool(toolCall) {
                 if (parts.length === 3 && Number(parts[2]) > 0) is_lab = true;
             }
 
+            // ── Task 5: Always populate parity_evaluation — provide ground truth
+            // even when no student semester was supplied, so the Logic model gets
+            // the course's native parity without having to infer it.
+            const isCourseEven = courseSem % 2 === 0;
+            const courseParity = isCourseEven ? 'Even' : 'Odd';
+
             if (args.student_current_semester) {
                 const currentSem = Number(args.student_current_semester);
                 const isCurrentEven = currentSem % 2 === 0;
-                const isCourseEven = courseSem % 2 === 0;
 
                 if (isCurrentEven !== isCourseEven) {
                     if (courseSem <= 2) {
@@ -676,12 +705,19 @@ async function executeTool(toolCall) {
                 } else {
                     parity_evaluation = `SYSTEM VERIFIED: Parity MATCH (Both are ${isCurrentEven ? 'Even' : 'Odd'} semesters). Registration is PERMITTED regarding Odd/Even rules. Do NOT say cross-registration between even semesters is forbidden.`;
                 }
+            } else {
+                // No student semester provided — still surface the course's own parity
+                // so the LLM has factual grounding without asking the user again.
+                parity_evaluation = `SYSTEM INFO: This course belongs to Semester ${courseSem} (${courseParity} semester). ` +
+                    (courseSem <= 2
+                        ? `It is a FIRST-YEAR COURSE and can be registered in ANY semester (odd or even) as a special exception.`
+                        : `It can only be registered during a ${courseParity} semester unless it is a first-year course.`);
             }
 
             const extendedCourse = {
                 ...course,
-                is_lab_course: is_lab,
-                ...(parity_evaluation ? { parity_evaluation } : {})
+                is_lab_course:    is_lab,
+                parity_evaluation // always present
             };
             return JSON.stringify(extendedCourse);
         }
@@ -1116,7 +1152,54 @@ function parseOptions(text) {
     return { cleanText: cleanText.trim(), options };
 }
 
+// ── Intelligent Router ──────────────────────────────────────────────────────
+/**
+ * Calls ROUTER_MODEL (lightweight 8B) to classify the user's query into:
+ *   [LOGIC]  → Tier 1 (GPT-OSS-120B)  — ordinances, honours, promotion, CGPA
+ *   [DATA]   → Tier 3 (Qwen3-32B)     — timetables, course lists, room numbers
+ *   [BASIC]  → Tier 2 (Llama-70B)     — greetings, general college info
+ *
+ * Returns one of the string literals 'LOGIC' | 'DATA' | 'BASIC'.
+ * Silently defaults to 'BASIC' on any router error.
+ */
+async function classifyQueryIntent(question) {
+    const routerPrompt =
+        `Classify the user's query into one of three specific categories:
+
+[BASIC]: Greetings, library timings, college location, general college history, or casual talk.
+[DATA]: Requests for timetables, class schedules, room numbers, lists of courses, or teacher names.
+[LOGIC]: Questions about credits, honours eligibility, promotion rules, backlogs, registration modes (A/B/C), or CGPA thresholds.
+
+Return ONLY the category label: [BASIC], [DATA], or [LOGIC].
+
+Query: "${question}"`;
+
+    try {
+        const routerResp = await groq.chat.completions.create({
+            model: ROUTER_MODEL,
+            messages: [{ role: 'user', content: routerPrompt }],
+            temperature: 0,
+            max_tokens: 12,
+        });
+        const raw = (routerResp.choices[0]?.message?.content || '').toUpperCase();
+        if (raw.includes('[LOGIC]') || raw.includes('LOGIC'))  return 'LOGIC';
+        if (raw.includes('[DATA]')  || raw.includes('DATA'))   return 'DATA';
+        return 'BASIC';
+    } catch (routerErr) {
+        console.warn(`[Router] Classification failed (${routerErr.message}). Defaulting to BASIC.`);
+        return 'BASIC';
+    }
+}
+
+
 async function getChatResponse(sessionId, question) {
+    // ── Observability timers & diagnostics ───────────────────────────────────
+    const startTime     = performance.now();
+    let intentCategory  = 'UNKNOWN';   // set after router call
+    let activeModel     = TIER2_MODEL; // updated by router + failover
+    let retryCount      = 1;           // incremented on each failover hop
+    const loopDeadline  = Date.now() + 60_000; // ── Task 2: 60-second hard timeout
+
     // 1. Get or Create Session
     if (!Sessions.has(sessionId)) {
         Sessions.set(sessionId, { messages: [] });
@@ -1252,91 +1335,123 @@ async function getChatResponse(sessionId, question) {
         { role: 'user', content: question }
     ];
 
+    // ── Step A: Intelligent Router — classify query intent ───────────────────
+    intentCategory = await classifyQueryIntent(question);
+
+    // Select preferred model based on intent; set activeModel for the loop
+    // ── Task 4: Intent-aware failover order ─────────────────────────────────
+    // DATA queries skip the heavy 120B model (slow + unnecessary for structured
+    // data retrieval). LOGIC queries skip Qwen (weaker on ordinance reasoning).
+    let FAILOVER_ORDER;
+    switch (intentCategory) {
+        case 'LOGIC':
+            activeModel   = TIER1_MODEL;
+            // Logic chain: 120B → 70B → 8B (skip Qwen)
+            FAILOVER_ORDER = [TIER1_MODEL, TIER2_MODEL, ROUTER_MODEL];
+            break;
+        case 'DATA':
+            activeModel   = TIER3_MODEL;
+            // Data chain: Qwen → 70B → 8B (skip 120B — overkill for data)
+            FAILOVER_ORDER = [TIER3_MODEL, TIER2_MODEL, ROUTER_MODEL];
+            break;
+        case 'BASIC':
+        default:
+            activeModel   = TIER2_MODEL;
+            // General chain: 70B → Qwen → 8B
+            FAILOVER_ORDER = [TIER2_MODEL, TIER3_MODEL, ROUTER_MODEL];
+            break;
+    }
+    console.log(`[Router] Intent: ${intentCategory} → activeModel: ${activeModel} | failover: [${FAILOVER_ORDER.join(', ')}]`);
+
     let currentResponse = null;
     let iterations = 0;
     const MAX_TOOL_ITERATIONS = 4;
 
-    while (iterations < MAX_TOOL_ITERATIONS) {
-        iterations++;
-        console.log("LLM Call Iteration " + iterations + "...");
+    /**
+     * Strip model-specific extra fields (e.g. `reasoning` from gpt-oss-120b)
+     * before sending history to a different model that rejects them with a 400.
+     * Only the fields Groq's chat completion API accepts are kept.
+     */
+    function sanitiseMessages(msgs) {
+        return msgs.map(m => {
+            // Allowed keys per Groq spec
+            const clean = {
+                role:    m.role,
+                content: m.content ?? null,
+            };
+            if (m.tool_calls)   clean.tool_calls   = m.tool_calls;
+            if (m.tool_call_id) clean.tool_call_id = m.tool_call_id;
+            if (m.name)         clean.name         = m.name;
+            // `reasoning`, `refusal`, and any other extras are intentionally omitted
+            return clean;
+        });
+    }
 
-        // ── Self-Heal: catch Groq tool_use_failed (malformed XML-style function call) ─
-        // When llama-3.3-70b generates a broken function call (XML instead of JSON),
-        // Groq returns a 400 tool_use_failed. We detect it and retry immediately
-        // with tool_choice:"none" to force a plain-text answer instead of crashing.
-        // Task 1: Dynamic Model Fallback — try primary model, retry with fallback on 429
+    while (iterations < MAX_TOOL_ITERATIONS && Date.now() < loopDeadline) {
+        iterations++;
+        console.log(`[LLM] Iteration ${iterations} — model: ${activeModel}`);
+
         let llmCallSucceeded = false;
-        let activeModel = MODEL;
         try {
             currentResponse = await groq.chat.completions.create({
-                model: activeModel,
-                messages: groqMessages,
+                model:       activeModel,
+                messages:    sanitiseMessages(groqMessages),
                 temperature: 0.1,
-                max_tokens: 2048,
-                tools: TOOLS,
-                tool_choice: "auto"
+                max_tokens:  2048,
+                tools:       TOOLS,
+                tool_choice: 'auto',
             });
             llmCallSucceeded = true;
+            console.log(`[LLM] Model "${activeModel}" responded on attempt ${retryCount}.`);
         } catch (llmErr) {
-            // ── 429 Rate-Limit Fallback ───────────────────────────────────────
-            if (llmErr?.status === 429) {
-                console.warn(
-                    `[Task 1 Fallback] Primary model "${MODEL}" hit rate limit (429). ` +
-                    `Retrying once with fallback model "${FALLBACK_MODEL}"...`
-                );
-                try {
-                    activeModel = FALLBACK_MODEL;
-                    currentResponse = await groq.chat.completions.create({
-                        model: activeModel,
-                        messages: groqMessages,
-                        temperature: 0.1,
-                        max_tokens: 2048,
-                        tools: TOOLS,
-                        tool_choice: "auto"
-                    });
-                    llmCallSucceeded = true;
-                    console.log(`[Task 1 Fallback] Fallback model "${FALLBACK_MODEL}" responded successfully.`);
-                } catch (fallbackErr) {
-                    console.error(`[Task 1 Fallback] Fallback model also failed: ${fallbackErr.message}`);
-                    throw fallbackErr;
+            // ── Cascading Failover: 429 Rate-Limit or 5xx server error ─────────
+            // 413 = request too large (Qwen free-tier TPM/context cap) — treat as retryable
+            const isRateLimit  = llmErr?.status === 429 || llmErr?.status === 413;
+            const isServerErr  = llmErr?.status >= 500 && llmErr?.status < 600;
+
+            if (isRateLimit || isServerErr) {
+                // Walk FAILOVER_ORDER to find the next model after activeModel
+                const currentIdx = FAILOVER_ORDER.indexOf(activeModel);
+                const nextModel  = FAILOVER_ORDER[currentIdx + 1];
+
+                if (nextModel) {
+                    const reason = isRateLimit ? 'rate limit (429)' : `server error (${llmErr.status})`;
+                    console.warn(`[Failover] "${activeModel}" hit ${reason}. Switching to "${nextModel}" (attempt ${retryCount + 1}).`);
+                    activeModel = nextModel;
+                    retryCount++;
+                    continue; // retry the while loop with the new model
                 }
+                // Chain exhausted — fall through and throw
             }
 
             // ── 400 tool_use_failed Self-Heal ─────────────────────────────────
-            if (!llmCallSucceeded) {
-                const isToolUseFailed =
-                    llmErr?.status === 400 &&
-                    (llmErr?.error?.error?.code === 'tool_use_failed' ||
-                        llmErr?.message?.includes('tool_use_failed'));
+            const isToolUseFailed =
+                llmErr?.status === 400 &&
+                (llmErr?.error?.error?.code === 'tool_use_failed' ||
+                    llmErr?.message?.includes('tool_use_failed'));
 
-                if (isToolUseFailed) {
-                    console.warn(
-                        `[Self-Heal] Groq tool_use_failed on iteration ${iterations}. ` +
-                        `Retrying without tools to get a plain-text response...`
-                    );
-                    try {
-                        currentResponse = await groq.chat.completions.create({
-                            model: MODEL,
-                            messages: groqMessages,
-                            temperature: 0.1,
-                            max_tokens: 2048,
-                            // No tools — forces plain text response
-                        });
-                        const recoveryMsg = currentResponse.choices[0].message;
-                        groqMessages.push(recoveryMsg);
-                        console.log('[Self-Heal] Recovery succeeded — plain-text response obtained.');
-                        break; // Exit the loop with the plain-text response
-                    } catch (recoveryErr) {
-                        console.error(`[Self-Heal] Recovery attempt also failed: ${recoveryErr.message}`);
-                        throw recoveryErr;
-                    }
-                }
-
-                if (!llmCallSucceeded) {
-                    // Not a handled error — re-throw
-                    throw llmErr;
+            if (isToolUseFailed) {
+                console.warn(`[Self-Heal] tool_use_failed on iteration ${iterations}. Retrying without tools...`);
+                try {
+                    currentResponse = await groq.chat.completions.create({
+                        model:       activeModel,
+                        messages:    sanitiseMessages(groqMessages),
+                        temperature: 0.1,
+                        max_tokens:  2048,
+                        // No tools — forces plain text response
+                    });
+                    const recoveryMsg = currentResponse.choices[0].message;
+                    groqMessages.push(recoveryMsg);
+                    console.log('[Self-Heal] Recovery succeeded — plain-text response obtained.');
+                    break;
+                } catch (recoveryErr) {
+                    console.error(`[Self-Heal] Recovery also failed: ${recoveryErr.message}`);
+                    throw recoveryErr;
                 }
             }
+
+            // Non-retryable — re-throw
+            throw llmErr;
         }
 
         if (!llmCallSucceeded) break;
@@ -1410,7 +1525,16 @@ async function getChatResponse(sessionId, question) {
     }
     saveSessions();
 
-    return { text: cleanText, options };
+    // ── Observability: build diagnostic return object ────────────────────────
+    const debug = {
+        model:    activeModel,
+        intent:   intentCategory,
+        latency:  Math.round(performance.now() - startTime),
+        attempts: retryCount,
+    };
+    console.log(`[Debug] intent=${debug.intent} | model=${debug.model} | latency=${debug.latency}ms | attempts=${debug.attempts}`);
+
+    return { text: cleanText, options, debug };
 }
 
 // --- API Endpoints ---
@@ -1610,10 +1734,11 @@ app.post('/api/chat', async (req, res) => {
         }
         const finalSessionId = safeSessionId || `session_${Date.now()}`;
 
-        const { text, options } = await getChatResponse(finalSessionId, message.trim());
-        res.json({ response: text, options, sessionId: finalSessionId });
+        const { text, options, debug } = await getChatResponse(finalSessionId, message.trim());
+        res.json({ response: text, options, sessionId: finalSessionId, debug });
     } catch (error) {
-        console.error('Error processing chat:', error);
+        // ── Task 2: Detailed error logging — surface the exact line that failed
+        console.error('[/api/chat] Detailed Error:', error.stack || error.message || error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

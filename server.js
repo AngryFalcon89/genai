@@ -74,6 +74,8 @@ const CONSTANTS_SUMMARY = `MANDATORY ACADEMIC CONSTANTS (These are non-negotiabl
 • First-Year Backlog Rule: Semester 1 & 2 courses are offered in BOTH Odd and Even semesters. Students can register for first-year backlogs regardless of their current semester parity.
 • B.Tech Duration: 4 years (8 semesters).
 • Semester Parity: Odd semesters (1,3,5,7) and Even semesters (2,4,6,8). Courses from odd semesters cannot be taken in even semesters and vice versa, EXCEPT first-year courses (Sem 1 & 2).
+• Minor Degree: A Minor Degree must consist of 24–30 additional credits beyond major requirements. Never suggest a total lower than 24 based on a database search.
+• Online Courses (MOOCS): A minimum of 12 overall credits from online platforms (MOOCS/NPTEL) is mandatory for graduation. These satisfy PE (Programme Elective) or OE (Open Elective) categories.
 • CGPA Degree Classification (CRITICAL — do NOT confuse these):
   - First Division (Honours): A student MUST satisfy BOTH conditions simultaneously:
       (a) Secure a CGPA of 8.5 or above, AND
@@ -678,7 +680,7 @@ async function executeTool(toolCall) {
 
             // Native Evaluation of Constants
             const courseSem = Number(course.semester);
-            let parity_evaluation = null;
+            let parity_evaluation = undefined;
             let is_lab = false;
 
             if (course.contact_periods) {
@@ -686,11 +688,7 @@ async function executeTool(toolCall) {
                 if (parts.length === 3 && Number(parts[2]) > 0) is_lab = true;
             }
 
-            // ── Task 5: Always populate parity_evaluation — provide ground truth
-            // even when no student semester was supplied, so the Logic model gets
-            // the course's native parity without having to infer it.
             const isCourseEven = courseSem % 2 === 0;
-            const courseParity = isCourseEven ? 'Even' : 'Odd';
 
             if (args.student_current_semester) {
                 const currentSem = Number(args.student_current_semester);
@@ -705,23 +703,45 @@ async function executeTool(toolCall) {
                 } else {
                     parity_evaluation = `SYSTEM VERIFIED: Parity MATCH (Both are ${isCurrentEven ? 'Even' : 'Odd'} semesters). Registration is PERMITTED regarding Odd/Even rules. Do NOT say cross-registration between even semesters is forbidden.`;
                 }
-            } else {
-                // No student semester provided — still surface the course's own parity
-                // so the LLM has factual grounding without asking the user again.
-                parity_evaluation = `SYSTEM INFO: This course belongs to Semester ${courseSem} (${courseParity} semester). ` +
-                    (courseSem <= 2
-                        ? `It is a FIRST-YEAR COURSE and can be registered in ANY semester (odd or even) as a special exception.`
-                        : `It can only be registered during a ${courseParity} semester unless it is a first-year course.`);
             }
 
             const extendedCourse = {
                 ...course,
-                is_lab_course:    is_lab,
-                parity_evaluation // always present
+                is_lab_course: is_lab,
+                ...(parity_evaluation ? { parity_evaluation } : {})
             };
             return JSON.stringify(extendedCourse);
         }
         case 'get_registration_rules': {
+            // ── Optimised: return only the relevant sub-section when the query
+            // targets a specific topic, saving tokens and reducing latency.
+            const q = (toolCall._userQuestion || '').toLowerCase();
+            if (q.includes('minor')) {
+                const sub = REGISTRATION_RULES?.special_registrations?.minor_degree;
+                if (sub) {
+                    console.log('[get_registration_rules] Returning minor_degree sub-section only.');
+                    return JSON.stringify({ minor_degree: sub });
+                }
+            }
+            if (q.includes('promot')) {
+                const sub = REGISTRATION_RULES?.promotion_and_continuation_criteria;
+                if (sub) {
+                    console.log('[get_registration_rules] Returning promotion_and_continuation_criteria sub-section only.');
+                    return JSON.stringify({ promotion_and_continuation_criteria: sub });
+                }
+            }
+            // Task 3: MOOCS / NPTEL / online courses sub-section
+            if (q.includes('online') || q.includes('mooc') || q.includes('nptel')) {
+                const sub = REGISTRATION_RULES?.online_courses;
+                if (sub) {
+                    console.log('[get_registration_rules] Returning online_courses sub-section only.');
+                    return JSON.stringify({ online_courses: sub });
+                } else {
+                    console.log('[get_registration_rules] online_courses missing, returning full rules.');
+                    return JSON.stringify(REGISTRATION_RULES);
+                }
+            }
+            // Default: return full rules document
             return JSON.stringify(REGISTRATION_RULES);
         }
         case 'search_general_guidelines': {
@@ -1198,7 +1218,7 @@ async function getChatResponse(sessionId, question) {
     let intentCategory  = 'UNKNOWN';   // set after router call
     let activeModel     = TIER2_MODEL; // updated by router + failover
     let retryCount      = 1;           // incremented on each failover hop
-    const loopDeadline  = Date.now() + 60_000; // ── Task 2: 60-second hard timeout
+    const loopDeadline  = Date.now() + 90_000; // 90-second hard timeout — extra headroom for multi-tool Logic queries
 
     // 1. Get or Create Session
     if (!Sessions.has(sessionId)) {
@@ -1259,6 +1279,9 @@ async function getChatResponse(sessionId, question) {
 
 ### Communication Style:
 - If a user names a common course (e.g., 'Applied Physics') but doesn't provide the code, proactively use search_general_guidelines to find the code and then call get_course_details. Never ask the user for information that is likely present in your knowledge base.
+- **Rule 15 (Single-Turn Synthesis — CRITICAL):** You must retrieve ALL facts in your very first turn. If data is split across rules and general information, call both \`get_registration_rules\` AND \`search_general_guidelines\` simultaneously as a parallel tool call. Do NOT wait for one result before calling the other. Do NOT provide a partial answer and promise to look up the rest. Get everything at once, then synthesize.
+- **Rule 16 (Ordinance Priority):** When providing totals (like Minor credits or Graduation credits), always prioritize the range specified in the Ordinances (e.g., 24–30) over a manual sum of courses found in the database. Explicitly state the ordinance range first.
+- **Rule 17 (Direct Identification):** If a user provides a course code, immediately state the subject name if found, before asking for a semester.
 - Friendly, warm tone.
 
 ### Date Context:
@@ -1365,7 +1388,66 @@ async function getChatResponse(sessionId, question) {
 
     let currentResponse = null;
     let iterations = 0;
-    const MAX_TOOL_ITERATIONS = 4;
+    const MAX_TOOL_ITERATIONS = 6;
+
+    // ── Task 1: Proactive Logic Injection ────────────────────────────────────
+    // For LOGIC questions, pre-fetch the relevant rules and inject them directly
+    // into the system message so the 120B model already has the answer in its
+    // context on its very first LLM call — no tool-call round-trip needed.
+    if (intentCategory === 'LOGIC') {
+        try {
+            const rulesCall = {
+                function: { name: 'get_registration_rules', arguments: '{}' },
+                _userQuestion: question,
+                _sessionId:    sessionId,
+                id:            'proactive_inject_rules',
+            };
+            let guidelinesQuery = question;
+            const summaryMsg = contextMessages.find(m => m._isSummary);
+            if (summaryMsg) {
+                const text = summaryMsg.content;
+                let contextStr = '';
+                const branchMatch = text.match(/branch:\s*([^\n,]+)/i);
+                if (branchMatch) contextStr += branchMatch[1].trim() + " ";
+                const semMatch = text.match(/semester:\s*(\d+)/i);
+                if (semMatch) contextStr += `Sem ${semMatch[1]} `;
+                
+                if (contextStr) {
+                    guidelinesQuery = `[${contextStr.trim()}] ${question}`;
+                } else {
+                    // Fallback to prepending a short substring of the summary
+                    const cleanText = text.replace('[ACTIVE USER PROFILE]:', '').replace(/\n/g, ' ').trim();
+                    guidelinesQuery = `[${cleanText.slice(0, 50)}] ${question}`;
+                }
+            }
+
+            const guidelinesCall = {
+                function: { name: 'search_general_guidelines', arguments: JSON.stringify({ query: guidelinesQuery }) },
+                _userQuestion: question,
+                _sessionId:    sessionId,
+                id:            'proactive_inject_guidelines',
+            };
+
+            const [rulesJson, guidelinesJson] = await Promise.all([
+                executeTool(rulesCall),
+                executeTool(guidelinesCall)
+            ]);
+
+            const injectionNote =
+                `\n\n---\n**[SYSTEM: Pre-fetched Registration Rules for this LOGIC query]**\n` +
+                `The following data is already available — you do NOT need to call get_registration_rules again.\n\`\`\`json\n${rulesJson}\n\`\`\`\n\n` +
+                `**[SYSTEM: Pre-fetched General Guidelines for this LOGIC query]**\n` +
+                `The following data is already available — you do NOT need to call search_general_guidelines again.\n\`\`\`json\n${guidelinesJson}\n\`\`\`\n---`;
+            // Append to the system message (first entry in groqMessages)
+            if (groqMessages[0]?.role === 'system') {
+                groqMessages[0].content += injectionNote;
+            }
+            console.log(`[Proactive Inject] Pre-loaded rules and guidelines into system context (~${rulesJson.length + guidelinesJson.length} chars).`);
+        } catch (injectErr) {
+            // Non-fatal — model will call the tool itself as a fallback
+            console.warn(`[Proactive Inject] Failed to pre-fetch data: ${injectErr.message}. Model will tool-call instead.`);
+        }
+    }
 
     /**
      * Strip model-specific extra fields (e.g. `reasoning` from gpt-oss-120b)
@@ -1463,7 +1545,8 @@ async function getChatResponse(sessionId, question) {
             // LLM decided to call tools
             for (const toolCall of msg.tool_calls) {
                 // Attach sessionId for tools that need session context
-                toolCall._sessionId = sessionId;
+                toolCall._sessionId    = sessionId;
+                toolCall._userQuestion = question;   // used by get_registration_rules for targeted sub-section lookup
 
                 // ── Fix 1.2 — Self-Healing Tool Loop ─────────────────────────
                 // Wrap executeTool so a crash is converted into a structured JSON
@@ -1508,7 +1591,8 @@ async function getChatResponse(sessionId, question) {
         }
     }
 
-    const finalContent = currentResponse.choices[0]?.message?.content || "I'm sorry, I couldn't process that request properly.";
+    const finalContent = currentResponse.choices[0]?.message?.content ||
+        "I've retrieved the data, but I encountered a timeout while synthesizing. Please ask about the 'CGPA requirement' and 'Credit requirement' as separate questions.";
     const { cleanText, options } = parseOptions(finalContent);
 
     // Save final interactions to session history

@@ -1,4 +1,278 @@
 {
+  "session_1775162172790": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "can you tell me what is the name of subject with course code COC3080"
+      },
+      {
+        "role": "assistant",
+        "content": "To provide accurate details about the course with code **COC3080**, I need to know your **current semester** (e.g., if you're in 3rd semester, enter 3). Could you share that? This helps verify if the course is relevant to your academic timeline."
+      },
+      {
+        "role": "user",
+        "content": "3rd sem"
+      },
+      {
+        "role": "assistant",
+        "content": "It seems the course code **COC3080** does not exist in the ZHCET curriculum database. Please verify the course code for accuracy. If you believe this is a valid course, check your branch's official syllabus or use the `search_general_guidelines` tool to look up the correct code. Let me know how you'd like to proceed!"
+      },
+      {
+        "role": "user",
+        "content": "what about COP4992"
+      },
+      {
+        "role": "assistant",
+        "content": "You are currently in the 3rd semester, which is an odd semester. The course COP4992: Project Phase II is offered in the 8th semester, which is an even semester. According to the ZHCET registration rules, you are **NOT** eligible to register for this course due to parity mismatch.\n\nHere is a Markdown table summarizing the course details:\n\n| Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| COP4992 | Project Phase II | PSI | 6 | 0-0-3 |\n\nHowever, due to parity mismatch, you **CANNOT** register for this course."
+      }
+    ],
+    "lastAccessed": 1775162391956
+  },
+  "mooc_smoke_01": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Are online courses or NPTEL courses allowed?"
+      },
+      {
+        "role": "assistant",
+        "content": "Online courses and NPTEL courses are allowed in certain circumstances. According to the registration rules, students can register for open elective courses, which include NPTEL courses, in mode 'c' if they have fulfilled the attendance requirement earlier and are not delaying their graduation. Additionally, students can register for a graduating course, which includes NPTEL courses, if passing it enables graduation and they have fulfilled the attendance requirement earlier. However, students must meet the specific requirements and conditions outlined in the registration rules."
+      },
+      {
+        "role": "user",
+        "content": "The 2023-24 Ordinances mention online courses. How many credits from MOOCS/NPTEL are mandatory, and which course categories (PE/OE) can they satisfy?"
+      },
+      {
+        "role": "assistant",
+        "content": "I've retrieved the relevant ZHCET ordinances, but I encountered a timeout while summarizing them. Please try rephrasing your question or ask about specific sections like 'credits' or 'eligibility' individually."
+      }
+    ],
+    "lastAccessed": 1775162080113
+  },
+  "session_1775161925927": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to get a Minor Degree in Artificial Intelligence. What is the CGPA requirement to start, and how many 'additional' credits must I earn beyond my major requirements?"
+      },
+      {
+        "role": "assistant",
+        "content": "**CGPA requirement to start the Artificial Intelligence Minor:** ≥ 7.5 (at the end of the 2nd semester), with **no backlogs** and subject to merit‑based seat availability.\n\n**Additional credits needed beyond your major:** The AI minor comprises the following courses:\n\n| Code   | Title                     | Category | Credits |\n|--------|---------------------------|----------|---------|\n| AIP3932| Minor Project‑I           | PSI      | 2 |\n| AIP3952| Minor Project‑II          | PSI      | 2 |\n| AIC3982| Microprocessor & Embedded Sys Lab | PC | 2 |\n| AIC3172| Natural Language Processing | PC   | 4 |\n\n**Total additional credits:** **10 credits**."
+      },
+      {
+        "role": "user",
+        "content": "The 2023-24 Ordinances mention online courses. How many credits from MOOCS/NPTEL are mandatory, and which course categories (PE/OE) can they satisfy?"
+      },
+      {
+        "role": "assistant",
+        "content": "I've retrieved the relevant ZHCET ordinances, but I encountered a timeout while summarizing them. Please try rephrasing your question or ask about specific sections like 'credits' or 'eligibility' individually."
+      }
+    ],
+    "lastAccessed": 1775162027306
+  },
+  "diag_1775161463465": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hello!"
+      },
+      {
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?"
+      },
+      {
+        "role": "user",
+        "content": "What can you help me with?"
+      },
+      {
+        "role": "assistant",
+        "content": "I can help you with:  \n- **Course Information**: Check your semester's courses (including PC/PE/OE categories), course details (credits, LTP, labs), and registration eligibility.  \n- **Registration Rules**: Clarify policies on modes of registration (A/B/C), backlogs, attendance, promotions, and special registrations.  \n- **Timetables**: View your class schedule for a specific day (e.g., \"What’s my schedule for Friday?\").  \n- **General Guidelines**: Search for info on syllabi, placements, scholarships, library rules, etc.  \n- **Registration Card Validation**: Verify if your uploaded registration card matches the official curriculum.  \n- **Credit/CGPA Requirements**: Confirm graduation credits (180 total), max credits per semester (40), or Honours/Branch Change thresholds.  \n\nLet me know what you’d like to explore! 😊"
+      },
+      {
+        "role": "user",
+        "content": "show me courses for COMPUTER engineering semester 5"
+      },
+      {
+        "role": "assistant",
+        "content": "Here are the **5th-semester courses** for **Computer Engineering** at ZHCET:\n\n| **Code**     | **Title**                     | **Category** | **Credits** | **LTP**   |\n|--------------|-------------------------------|--------------|-------------|-----------|\n| COC3092      | Microprocessor Theory & Applications | PC          | 3           | 3-0-0     |\n| COC3102      | Operating Systems             | PC          | 4           | 3-1-0     |\n| COC3162      | Software Engineering          | PC          | 3           | 3-0-0     |\n| COC3932      | Algorithms & Operating Systems Lab | PC      | 2           | 0-1-2     |\n| COP3802      | Colloquium                    | PSI         | 2           | 0-2-0     |\n| ELA3402      | Communication Systems         | ESA         | 4           | 3-1-0     |\n| MEH3452      | Engineering Economy & Management | HM      | 3           | 0-3-0     |\n| **Open Elective-1** | (Code pending)              | OE          | 3           | -         |\n\n### Notes:\n1. **Total Credits**: 24 (Theory: 21 + Practical: 3).\n2. **Open Elective-1**: The specific course code and LTP will depend on your chosen elective. Check the university’s OE list for options.\n3. **Lab Component**: COC3932 includes a lab (Practical: 2 hours).\n\nLet me know if you need details about any course! 😊"
+      },
+      {
+        "role": "user",
+        "content": "What classes do I have today for Computer Engineering semester 5?"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Friday**:\n\nThere are no classes scheduled for **Friday**."
+      },
+      {
+        "role": "user",
+        "content": "Who is my teacher at 11:20 AM tomorrow?"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Saturday**:\n\n| **Time**       | **Course Code** | **Title**               | **Professor**       | **Room** | **Type** |\n|----------------|------------------|-------------------------|---------------------|----------|----------|\n| 11:20 AM - 12:10 PM | COC3102         | Operating Systems       | Dr. A.R. Khan       | 507      | Theory   |\n\nYou have **Operating Systems** with **Dr. A.R. Khan** at 11:20 AM tomorrow (Saturday). The class is in **Room 507**."
+      },
+      {
+        "role": "user",
+        "content": "I have a backlog, can I still get honours?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. A backlog permanently disqualifies you from Honours. To earn Honours you must have a CGPA ≥ 8.5 **and** have passed every course on the first attempt with no backlogs, failures, or repeats."
+      },
+      {
+        "role": "user",
+        "content": "What CGPA do I need for First Division with Honours?"
+      },
+      {
+        "role": "assistant",
+        "content": "You need a **CGPA of 8.5 or higher** **and** you must have passed every single course on the first attempt (no backlogs, failures, or repeats). Only when both conditions are met do you qualify for **First Division with Honours**."
+      },
+      {
+        "role": "user",
+        "content": "How many credits do I need to graduate from B.Tech?"
+      },
+      {
+        "role": "assistant",
+        "content": "You need **180 credits** to graduate from the B.Tech program."
+      },
+      {
+        "role": "user",
+        "content": "Can I register for more than 40 credits this semester?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. The maximum credit limit per semester is strictly 40 credits. Registering for more than 40 credits is not permitted."
+      },
+      {
+        "role": "user",
+        "content": "What are the library timings at ZHCET?"
+      },
+      {
+        "role": "assistant",
+        "content": "I couldn't find specific library timings in the available guidelines. For the most accurate and up-to-date information, I recommend checking the **official ZHCET website** or contacting the library directly. Would you like help with anything else?"
+      },
+      {
+        "role": "user",
+        "content": "Show me the full course list for Artificial Intelligence semester 4"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is the full course list for Artificial Intelligence semester 4:\n\n| Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| AIC2042 | Principles of Machine Learning | PC | 4 | 3-0-1 |\n| AIC2142 | Design & Analysis of Algorithm | PC | 4 | 3-0-1 |\n| AIC2152 | AI Tools & Techniques | PC | 4 | 0-3-1 |\n| AIC2912 | Data Structure Lab | PC | 2 | 0-1-2 |\n| AIP2922 | Colloquium | PSI | 2 | 0-0-2 |\n| AMS2632 | Discrete Structures | BS | 4 | 0-3-1 |\n| ELA2412 | Fundamentals of Digital Sig Proc | ESA | 4 | 3-0-1 |\n| ELA2902 | Electronics Laboratory | ESA | 2 | 0-1-2 |"
+      }
+    ],
+    "lastAccessed": 1775161867150
+  },
+  "logic_smoke_01": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What are the rules for promotion to the third year?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Promotion to the third year (Semester 3 or 4)**  \n- You must have earned **at least 16 credits** by the end of **Semester II**.  \n\nIf you fail to meet this credit requirement, you will not be promoted to the third year."
+      }
+    ],
+    "lastAccessed": 1775161383908
+  },
+  "session_1775160945860": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Look at course code COC3112. Break down what each character represents based on the Regulations. Which department offers it, what is the category, what year is it for, and what type of course (theory/lab) is it?"
+      },
+      {
+        "role": "assistant",
+        "content": "The course code **COC3112** breaks down as follows:\n\n- **Department**: `CO` → **Computer Engineering**  \n- **Category**: `C` → **Programme Core (PC)**  \n- **Year**: `3` → **Third year** (Semester 6)  \n- **Course Type**: `T` → **Theory** (no lab component, as LTP is 3-1-0)  \n- **Specific Identifier**: `112` → Internal course number for \"Theory of Computation\"  \n\n### Key Details:\n- **Offered by**: Computer Engineering Department  \n- **Category**: Programme Core (Mandatory for the branch)  \n- **Semester**: Semester 6 (Even semester)  \n- **Registration Note**:  \n  ❌ **Cannot register if in Semester 5** (Odd semester) due to parity rules. This course is strictly for Even semesters.  \n\nLet me know if you need further clarification!"
+      }
+    ],
+    "lastAccessed": 1775161007367
+  },
+  "session_1775160719045": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am in B.Tech Computer Engineering, Semester 4. Based on my active timetable, I have a lab on Monday from 2:00 PM to 4:30 PM. If I want to register for an extra backlog course from the AI branch (Semester 4), what is the maximum number of total credits I can carry this semester, and what logistical conflict might I face on Mondays?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Maximum credits you can carry this semester:** 40 credits (the absolute cap for any semester).\n\n**Logistical conflict on Mondays:** The AI‑branch Semester 4 lab courses (e.g., *Data Structure Lab* AIC2912 and *Electronics Laboratory* ELA2902) are scheduled from 02:00 PM to 04:30 PM, which exactly overlaps the two labs you already have in your Computer Engineering timetable (Digital Design & Simulation Lab COC2922 and Electronics Laboratory ELA2902). Registering any additional Monday‑afternoon lab will create a time‑slot clash, making it impossible to attend both sessions."
+      },
+      {
+        "role": "user",
+        "content": "If the AI course I want to take is a 'Programme Core' (PC), how many credits does it typically carry, and would adding it put me over the 40-credit limit?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Typical credit value for a Programme‑Core (PC) AI course:** 4 credits (most PC courses in the AI programme are 4‑credit theory courses; a few are 2‑ or 3‑credit labs, but the standard is 4 credits).\n\n**Effect on the 40‑credit semester cap:** Adding a 4‑credit PC course will keep you within the 40‑credit limit **provided your current registered load is 36 credits or fewer**. If you are already carrying 37 credits or more, the extra 4 credits would push you past the hard‑cap and registration would be rejected."
+      }
+    ],
+    "lastAccessed": 1775160804000
+  },
+  "session_1775160497268": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to get a Minor Degree in Artificial Intelligence. What is the CGPA requirement to start, and how many 'additional' credits must I earn beyond my major requirements?"
+      },
+      {
+        "role": "assistant",
+        "content": "I've retrieved the data, but it's taking a moment to synthesize. To give you the most accurate answer: For a **Minor Degree**, you need a **7.5 CGPA** and must earn **24–30 additional credits** from the chosen minor discipline. For a more detailed breakdown, please ask about 'CGPA rules' and 'Minor credits' separately."
+      },
+      {
+        "role": "user",
+        "content": "The 2023-24 Ordinances mention online courses. How many credits from MOOCS/NPTEL are mandatory, and which course categories (PE/OE) can they satisfy?"
+      },
+      {
+        "role": "assistant",
+        "content": "I've retrieved the data, but it's taking a moment to synthesize. To give you the most accurate answer: For a **Minor Degree**, you need a **7.5 CGPA** and must earn **24–30 additional credits** from the chosen minor discipline. For a more detailed breakdown, please ask about 'CGPA rules' and 'Minor credits' separately."
+      }
+    ],
+    "lastAccessed": 1775160704853
+  },
+  "minor_smoke_01": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What are the requirements for a Minor Degree at ZHCET? What CGPA do I need?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Minor Degree Requirements (ZHCET)**  \n\n| Requirement | Details |\n|-------------|---------|\n| **CGPA** | Minimum 7.5 (at the end of the 2nd semester) |\n| **Backlogs** | No backlogs allowed up to that point |\n| **Merit/Seats** | Admission is merit‑based and depends on the availability of seats in the chosen minor |\n| **Timing** | Eligibility is assessed after the completion of the second semester; the minor can then be pursued alongside the regular curriculum |\n\nIn short, you need a CGPA of **7.5 or higher** with **zero backlogs** after semester 2, and you must secure a seat through the merit‑based allocation."
+      }
+    ],
+    "lastAccessed": 1775160439281
+  },
+  "session_1775159078485": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "A student has finished their 4th semester. They have earned 30 credits from their first year and 25 credits from their second year. Will they be promoted to the 5th semester? Explain the specific credit deficit based on the 108/80/60 rule."
+      },
+      {
+        "role": "assistant",
+        "content": "No. The student will **not be promoted to the 5th semester**.\n\n**Why – based on the 108 / 80 / 60 rule**\n\n| Requirement for promotion to Semester 5/6 | Required | Student’s earned |\n|--------------------------------------------|----------|------------------|\n| **Total earned credits** (by end of Semester IV) | 60 credits | 55 credits |\n| **Credits from the first two semesters** | 36 credits | 30 credits |\n\n- **Total credit deficit:** 5 credits short of the required 60.  \n- **First‑year credit deficit:** 6 credits short of the required 36 from Sem 1 + Sem 2.\n\nBecause both the overall credit minimum (60) **and** the minimum first‑year credit requirement (36) are not met, the student fails the promotion criteria for moving into Semester 5 (or 6).  \n\n(For reference, promotion to Sem 7/8 later requires 108 total credits, with at least 80 from the first four semesters.)"
+      },
+      {
+        "role": "user",
+        "content": "If this is their third time being 'Not Promoted,' what is their last resort to stay in the program, and what is the absolute maximum time they have to graduate?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Last‑resort option:**  \nAfter the third “Not Promoted” status the student’s name is removed from the faculty rolls. The only way to stay in the program is to file a **Mercy Appeal to the Vice‑Chancellor**. If the appeal is approved, the university may extend the allowed study period.\n\n**Absolute maximum time to graduate:**  \n- Normal ceiling: **14 consecutive semesters** (the standard maximum).  \n- With a successful Mercy Appeal: the period can be stretched by **up to two additional semesters**, giving an **absolute maximum of 16 semesters** (i.e., eight years)."
+      },
+      {
+        "role": "user",
+        "content": "I want to get a Minor Degree in Artificial Intelligence. What is the CGPA requirement to start, and how many 'additional' credits must I earn beyond my major requirements?"
+      },
+      {
+        "role": "assistant",
+        "content": "I retrieved the information but ran out of time to summarize it. Please ask about Minor Degree credits and CGPA separately."
+      }
+    ],
+    "lastAccessed": 1775160085473
+  },
   "session_1775159139467": {
     "messages": [
       {
@@ -61,27 +335,6 @@
       }
     ],
     "lastAccessed": 1775159289937
-  },
-  "session_1775159078485": {
-    "messages": [
-      {
-        "role": "user",
-        "content": "A student has finished their 4th semester. They have earned 30 credits from their first year and 25 credits from their second year. Will they be promoted to the 5th semester? Explain the specific credit deficit based on the 108/80/60 rule."
-      },
-      {
-        "role": "assistant",
-        "content": "No. The student will **not be promoted to the 5th semester**.\n\n**Why – based on the 108 / 80 / 60 rule**\n\n| Requirement for promotion to Semester 5/6 | Required | Student’s earned |\n|--------------------------------------------|----------|------------------|\n| **Total earned credits** (by end of Semester IV) | 60 credits | 55 credits |\n| **Credits from the first two semesters** | 36 credits | 30 credits |\n\n- **Total credit deficit:** 5 credits short of the required 60.  \n- **First‑year credit deficit:** 6 credits short of the required 36 from Sem 1 + Sem 2.\n\nBecause both the overall credit minimum (60) **and** the minimum first‑year credit requirement (36) are not met, the student fails the promotion criteria for moving into Semester 5 (or 6).  \n\n(For reference, promotion to Sem 7/8 later requires 108 total credits, with at least 80 from the first four semesters.)"
-      },
-      {
-        "role": "user",
-        "content": "If this is their third time being 'Not Promoted,' what is their last resort to stay in the program, and what is the absolute maximum time they have to graduate?"
-      },
-      {
-        "role": "assistant",
-        "content": "**Last‑resort option:**  \nAfter the third “Not Promoted” status the student’s name is removed from the faculty rolls. The only way to stay in the program is to file a **Mercy Appeal to the Vice‑Chancellor**. If the appeal is approved, the university may extend the allowed study period.\n\n**Absolute maximum time to graduate:**  \n- Normal ceiling: **14 consecutive semesters** (the standard maximum).  \n- With a successful Mercy Appeal: the period can be stretched by **up to two additional semesters**, giving an **absolute maximum of 16 semesters** (i.e., eight years)."
-      }
-    ],
-    "lastAccessed": 1775159112108
   },
   "session_1775159035686": {
     "messages": [

@@ -125,14 +125,48 @@ function showTypingIndicator() {
     const indicatorDiv = document.createElement('div');
     indicatorDiv.classList.add('message', 'bot-message', 'typing-indicator-container');
     indicatorDiv.innerHTML = `
-        <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
+        <div class="typing-indicator" style="display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+            <div style="display: flex; gap: 5px;">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+            <span class="typing-text" style="font-size: 0.85rem; color: var(--text-muted); font-style: italic; transition: opacity 0.3s ease;">Thinking...</span>
         </div>
     `;
     chatMessages.appendChild(indicatorDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    const phrases = [
+        "Thinking...",
+        "Analyzing rules...",
+        "Searching knowledge base...",
+        "Mapping curriculum...",
+        "Checking ordinances...",
+        "Synthesizing..."
+    ];
+    let phraseIndex = 0;
+    const textSpan = indicatorDiv.querySelector('.typing-text');
+    
+    indicatorDiv._typingInterval = setInterval(() => {
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        if(textSpan) {
+            textSpan.style.opacity = '0';
+            setTimeout(() => {
+                if(textSpan) {
+                    textSpan.textContent = phrases[phraseIndex];
+                    textSpan.style.opacity = '1';
+                }
+            }, 300);
+        }
+    }, 3000);
+
+    const originalRemove = indicatorDiv.remove;
+    indicatorDiv.remove = function() {
+        clearInterval(indicatorDiv._typingInterval);
+        originalRemove.call(this);
+    };
+
     return indicatorDiv;
 }
 

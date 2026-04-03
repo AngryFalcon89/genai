@@ -1,4 +1,186 @@
 {
+  "test_session_clean_1775194612395_5": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Do NPTEL courses count towards my graduation credits, and how many minimum credits can I take online?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes. NPTEL (and other MOOC/NPTEL) courses are accepted as Programme Elective (PE) or Open Elective (OE) credits toward your B.Tech degree.\n\nA minimum of **12 credits** must be earned through such online platforms to satisfy the graduation requirement."
+      }
+    ],
+    "lastAccessed": 1775194626381
+  },
+  "test_session_clean_1775194592001_4": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is my Computer Engineering Semester 5 schedule for tomorrow?"
+      },
+      {
+        "role": "assistant",
+        "content": "There are no classes scheduled for Saturday in your Computer Engineering Semester 5."
+      }
+    ],
+    "lastAccessed": 1775194612383
+  },
+  "test_session_clean_1775194483143_3": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to finish quickly. Can I register for 42 credits this semester?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. The absolute maximum credit limit per semester is 40 credits. You can register for up to 40 credits this semester and use the full 180‑credit requirement to accelerate your graduation, but 42 credits is strictly prohibited."
+      }
+    ],
+    "lastAccessed": 1775194591994
+  },
+  "test_session_clean_1775194439651_2": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "My CGPA is 9.2 but I had one backlog in the second semester. Am I eligible for Honours?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. Honours requires **both** a CGPA ≥ 8.5 **and** having passed every course on the first attempt. Since you have a backlog from the second semester, you are permanently ineligible for Honours, regardless of your 9.2 CGPA."
+      }
+    ],
+    "lastAccessed": 1775194483137
+  },
+  "test_session_clean_1775194339370_1": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am in semester 3 but I have a backlog in semester 1 Applied Physics. Can I register for it?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes. Since Applied Physics (APS1112) is a first‑year (Semester 1) course, it can be taken in any later semester, and the parity check confirms that registration is permitted for your current Semester 3 (odd) status.\n\n**What you need to do**\n\n| Requirement | Details |\n|-------------|---------|\n| **Registration mode** | Register in **Mode A** (fulfil attendance and appear in all evaluation components). |\n| **Attendance** | Maintain at least 75 % attendance to be eligible for the end‑semester exam (condonation is possible only between 65 %– 75 %). |\n| **Credit limit** | Ensure the total credits you register for this semester do not exceed the hard cap of 40 credits. |\n| **Backlog policy** | As a backlog, the course must be cleared before you can progress to higher‑level courses that depend on it. |\n\nSo you may add APS1112 to your Semester 3 registration, provided you meet the above conditions."
+      }
+    ],
+    "lastAccessed": 1775194439641
+  },
+  "test_session_clean_1775194282695_0": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am a Computer Engineering student in semester 5. Can I register for AIC2042?"
+      },
+      {
+        "role": "assistant",
+        "content": "You cannot register for **AIC2042 – Principles of Machine Learning**. It is offered in Semester 4 (an even‑semester course), while you are currently in Semester 5 (odd). According to the parity rules, registration for this course is strictly forbidden."
+      }
+    ],
+    "lastAccessed": 1775194339337
+  },
+  "test_session_clean_1775194175572_1": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am in semester 3 but I have a backlog in semester 1 Applied Physics. Can I register for it?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, you can register for **APS1112 – Applied Physics** (4 credits) in your current Semester 3.  \n\n- First‑year courses (Semester 1 & 2) are offered in **both odd and even semesters**, so the parity rule does not block you.  \n- The course’s parity evaluation confirms that registration is **PERMITTED**.  \n- Register the course in **Mode A** (full attendance and appearance in all evaluation components), which is the standard requirement for clearing a backlog.  \n\nMake sure the total credits you register for this semester do not exceed the 40‑credit limit."
+      }
+    ],
+    "lastAccessed": 1775194221605
+  },
+  "test_session_clean_1775194134469_0": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am a Computer Engineering student in semester 5. Can I register for AIC2042?"
+      },
+      {
+        "role": "assistant",
+        "content": "You cannot register for **AIC2042 – Principles of Machine Learning**. It is offered in Semester 4 (an even‑semester course), while you are currently in Semester 5 (odd). According to the registration rules, courses from an even semester are **strictly forbidden** to register for in an odd semester (except first‑year courses, which this is not)."
+      }
+    ],
+    "lastAccessed": 1775194175559
+  },
+  "test_session_1775194080257_5": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Do NPTEL courses count towards my graduation credits, and how many minimum credits can I take online?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes. NPTEL (and other MOOC/SWAYAM) courses are accepted as Programme Elective (PE) or Open Elective (OE) credits toward graduation.\n\n**Minimum online credit requirement:** 12 credits in total must be earned from online platforms (MOOC/NPTEL/SWAYAM). At least four PE/OE courses must be sourced from these platforms."
+      }
+    ],
+    "lastAccessed": 1775194081693
+  },
+  "test_session_1775194014738_4": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is my Computer Engineering Semester 5 schedule for tomorrow?"
+      },
+      {
+        "role": "assistant",
+        "content": "There are no classes scheduled for Saturday in your Computer Engineering Semester 5."
+      }
+    ],
+    "lastAccessed": 1775194080245
+  },
+  "test_session_1775194013400_3": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to finish quickly. Can I register for 42 credits this semester?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. The absolute maximum credit limit per semester is 40 credits. Registering for 42 credits is strictly prohibited. You can accelerate your graduation by taking up to 40 credits each semester, keeping in mind the total requirement of 180 credits for the B.Tech program."
+      }
+    ],
+    "lastAccessed": 1775194014736
+  },
+  "test_session_1775193956688_2": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "My CGPA is 9.2 but I had one backlog in the second semester. Am I eligible for Honours?"
+      },
+      {
+        "role": "assistant",
+        "content": "No, you are not eligible for Honours. Despite having a CGPA of 9.2, the fact that you had a backlog in the second semester disqualifies you from being considered for Honours. According to the rules, to be eligible for Honours, a student must pass every single course on the first attempt, with no backlogs or failures. Since you had a backlog, you do not meet this criterion, regardless of your high CGPA."
+      }
+    ],
+    "lastAccessed": 1775194013393
+  },
+  "test_session_1775193898423_1": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am in semester 3 but I have a backlog in semester 1 Applied Physics. Can I register for it?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, you can register for **APS1112 – Applied Physics** in your current Semester 3.\n\n- **Parity:** The course is from an odd‑semester (Semester 1) and you are in an odd‑semester (Semester 3); the parity check confirms registration is permitted.  \n- **First‑year exception:** Even if you were in an even semester, Semester 1/2 courses are offered in both odd and even semesters, so you would still be allowed to take the backlog.  \n- **Registration mode:** Register the course in **Mode A** (fulfil attendance requirement and appear in all evaluation components). If you have already satisfied the attendance requirement for this course, you may also consider Mode B or Mode C, but Mode A is the default safe choice for a backlog.  \n- **Credits:** The course carries **4 credits**, well within the maximum of **40 credits per semester**.  \n\nProceed with the registration as a backlog course in Mode A, and ensure you meet the attendance requirement for the theory component."
+      }
+    ],
+    "lastAccessed": 1775193956679
+  },
+  "test_session_1775193837553_0": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am a Computer Engineering student in semester 5. Can I register for ELC4000?"
+      },
+      {
+        "role": "assistant",
+        "content": "ELC4000 is not listed in the ZHCET curriculum, so it cannot be registered for. Please verify the course code or title and try again."
+      }
+    ],
+    "lastAccessed": 1775193898409
+  },
   "session_1775191691865": {
     "messages": [
       {

@@ -4,58 +4,63 @@
 
 :root {
     /* --- Core Palette --- */
-    --primary: #7C3AED;
-    --primary-hover: #6D28D9;
-    --primary-light: rgba(124, 58, 237, 0.12);
-    --primary-glow: rgba(124, 58, 237, 0.25);
-    --accent: #A78BFA;
-    --accent-glow: rgba(167, 139, 250, 0.30);
+    --primary: #06B6D4;       /* Cyan */
+    --primary-hover: #0891B2; /* Richer Cyan */
+    --primary-light: rgba(6, 182, 212, 0.12);
+    --primary-glow: rgba(6, 182, 212, 0.35);
+    --accent: #3B82F6;        /* Bright Blue */
+    --accent-glow: rgba(59, 130, 246, 0.40);
+    --gradient-brand: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
 
     /* --- Surfaces --- */
-    --bg-deep: #0B0B14;
-    --bg-main: #10101C;
-    --bg-card: #16162A;
-    --bg-elevated: #1E1E36;
-    --bg-input: #13132A;
+    --bg-deep: #05050A;       /* Almost pitch black */
+    --bg-main: #0A0A12;       /* Very dark space */
+    --bg-card: #11111E;       /* Slightly elevated */
+    --bg-elevated: #161628;   /* Elevated surfaces */
+    --bg-input: #0D0D18;      /* Input background */
 
     /* --- Sidebar --- */
-    --sidebar-bg: rgba(12, 12, 22, 0.85);
-    --sidebar-border: rgba(124, 58, 237, 0.08);
-    --sidebar-hover: rgba(124, 58, 237, 0.08);
-    --sidebar-active: rgba(124, 58, 237, 0.15);
+    --sidebar-bg: rgba(7, 7, 13, 0.85);
+    --sidebar-border: rgba(6, 182, 212, 0.1);
+    --sidebar-hover: rgba(6, 182, 212, 0.08);
+    --sidebar-active: rgba(6, 182, 212, 0.15);
 
     /* --- Text --- */
-    --text-primary: #EAEAF5;
-    --text-secondary: #9494B8;
-    --text-muted: #6B6B8D;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
 
     /* --- Messages --- */
-    --bot-msg-bg: #1A1A34;
-    --bot-msg-border: rgba(124, 58, 237, 0.10);
-    --user-msg-bg: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #7C3AED 100%);
+    --bot-msg-bg: #141424;
+    --bot-msg-border: rgba(6, 182, 212, 0.12);
+    --user-msg-bg: var(--gradient-brand);
     --user-msg-text: #FFFFFF;
 
     /* --- Borders & Misc --- */
-    --border-color: rgba(124, 58, 237, 0.10);
+    --border-color: rgba(6, 182, 212, 0.15);
     --border-subtle: rgba(255, 255, 255, 0.04);
-    --success: #34D399;
-    --error: #F87171;
+    --success: #10B981;
+    --error: #EF4444;
 
-    /* --- Chips --- */
-    --chip-bg: rgba(124, 58, 237, 0.06);
-    --chip-border: rgba(124, 58, 237, 0.18);
-    --chip-hover-bg: rgba(124, 58, 237, 0.14);
-    --chip-hover-border: rgba(167, 139, 250, 0.5);
+    /* --- Chips & Bento --- */
+    --chip-bg: rgba(6, 182, 212, 0.05);
+    --chip-border: rgba(6, 182, 212, 0.2);
+    --chip-hover-bg: rgba(6, 182, 212, 0.12);
+    --chip-hover-border: rgba(59, 130, 246, 0.6);
 
-    /* --- Shadows --- */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
-    --shadow-glow-lg: 0 0 40px rgba(124, 58, 237, 0.2);
-
-    /* --- Geometry --- */
+    /* --- Geometry & Effects --- */
+    --radius-sm: 8px;
     --radius: 12px;
     --radius-lg: 16px;
+    --radius-pill: 9999px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.2);
+    --shadow-glow-lg: 0 0 50px rgba(59, 130, 246, 0.25);
+    
+    /* --- Typography --- */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
 }
 
 /* ========== Reset ========== */
@@ -82,8 +87,8 @@ body {
     display: flex;
     height: 100vh;
     width: 100vw;
-    background: radial-gradient(ellipse at 20% 50%, rgba(124, 58, 237, 0.06) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.04) 0%, transparent 50%),
+    background: radial-gradient(ellipse at 20% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
         var(--bg-deep);
 }
 
@@ -113,8 +118,8 @@ body {
     height: 100%;
     background: linear-gradient(to bottom,
             transparent,
-            rgba(124, 58, 237, 0.2) 30%,
-            rgba(167, 139, 250, 0.15) 70%,
+            rgba(6, 182, 212, 0.3) 30%,
+            rgba(59, 130, 246, 0.2) 70%,
             transparent);
     pointer-events: none;
 }
@@ -133,7 +138,7 @@ body {
 
 .brand-icon {
     font-size: 1.5rem;
-    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.4));
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
 }
 
 .brand h2 {
@@ -146,7 +151,7 @@ body {
 .new-chat-btn {
     width: 100%;
     padding: 11px 16px;
-    background: linear-gradient(135deg, var(--primary), #A855F7);
+    background: var(--gradient-brand);
     color: white;
     border: none;
     border-radius: 10px;
@@ -158,7 +163,7 @@ body {
     justify-content: center;
     gap: 8px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.35);
+    box-shadow: 0 2px 12px rgba(6, 182, 212, 0.35);
     position: relative;
     overflow: hidden;
 }
@@ -174,7 +179,7 @@ body {
 
 .new-chat-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
 }
 
 .new-chat-btn:hover::before {
@@ -215,8 +220,8 @@ body {
 .session-item.active {
     background-color: var(--sidebar-active);
     color: #FFFFFF;
-    border-color: rgba(124, 58, 237, 0.25);
-    box-shadow: 0 0 12px rgba(124, 58, 237, 0.1);
+    border-color: rgba(6, 182, 212, 0.25);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.1);
 }
 
 /* --- Admin Panel Link in Sidebar --- */
@@ -231,8 +236,8 @@ body {
     align-items: center;
     gap: 10px;
     padding: 10px 14px;
-    background: rgba(124, 58, 237, 0.06);
-    border: 1px solid rgba(124, 58, 237, 0.1);
+    background: rgba(6, 182, 212, 0.06);
+    border: 1px solid rgba(6, 182, 212, 0.1);
     border-radius: 10px;
     color: var(--text-secondary);
     text-decoration: none;
@@ -242,9 +247,9 @@ body {
 }
 
 .admin-link-btn:hover {
-    background: rgba(124, 58, 237, 0.12);
+    background: rgba(6, 182, 212, 0.12);
     color: var(--accent-light);
-    border-color: rgba(124, 58, 237, 0.2);
+    border-color: rgba(6, 182, 212, 0.2);
 }
 
 /* ========== Chat Container ========== */
@@ -265,7 +270,7 @@ body {
     border-bottom: 1px solid var(--border-color);
     background: linear-gradient(135deg,
             var(--bg-card) 0%,
-            rgba(124, 58, 237, 0.05) 50%,
+            rgba(6, 182, 212, 0.05) 50%,
             var(--bg-card) 100%);
     background-size: 200% 200%;
     animation: headerShift 8s ease-in-out infinite;
@@ -285,8 +290,8 @@ body {
     height: 1px;
     background: linear-gradient(to right,
             transparent,
-            rgba(124, 58, 237, 0.3),
-            rgba(167, 139, 250, 0.2),
+            rgba(6, 182, 212, 0.3),
+            rgba(59, 130, 246, 0.2),
             transparent);
 }
 
@@ -367,7 +372,7 @@ body {
     gap: 18px;
     scroll-behavior: smooth;
     background:
-        radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.04) 0%, transparent 50%),
         var(--bg-main);
 }
 
@@ -400,7 +405,7 @@ body {
     font-size: 4rem;
     margin-bottom: 20px;
     animation: float 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.35));
+    filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.35));
 }
 
 @keyframes float {
@@ -457,6 +462,79 @@ body {
     margin-bottom: 16px;
 }
 
+/* ========== Bento Box Grid ========== */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.bento-card {
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: chipAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+    backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+}
+
+.bento-wide {
+    grid-column: span 2;
+}
+
+.bento-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.4));
+}
+
+.bento-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+}
+
+.bento-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            var(--accent-glow) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.bento-card:hover::before {
+    opacity: 1;
+}
+
+.bento-card:hover {
+    background: var(--chip-hover-bg);
+    border-color: var(--chip-hover-border);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px var(--shadow-glow), 0 0 0 1px var(--primary-glow);
+}
+.bento-card:hover .bento-text {
+    color: var(--primary);
+}
+.bento-card:active {
+    transform: translateY(0) scale(0.97);
+}
+
 /* ========== Option Chips — Glass Style ========== */
 
 .option-chips {
@@ -472,13 +550,13 @@ body {
     padding: 10px 20px;
     background: var(--chip-bg);
     border: 1px solid var(--chip-border);
-    border-radius: 24px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--text-primary);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: inherit;
+    font-family: var(--font-body);
     white-space: nowrap;
     animation: chipAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     opacity: 0;
@@ -491,9 +569,9 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 24px;
+    border-radius: var(--radius-pill);
     background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-            rgba(167, 139, 250, 0.15) 0%, transparent 60%);
+            var(--accent-glow) 0%, transparent 60%);
     opacity: 0;
     transition: opacity 0.3s;
     pointer-events: none;
@@ -503,52 +581,22 @@ body {
     opacity: 1;
 }
 
-.option-chip:nth-child(1) {
-    animation-delay: 0.05s;
-}
-
-.option-chip:nth-child(2) {
-    animation-delay: 0.1s;
-}
-
-.option-chip:nth-child(3) {
-    animation-delay: 0.15s;
-}
-
-.option-chip:nth-child(4) {
-    animation-delay: 0.2s;
-}
-
-.option-chip:nth-child(5) {
-    animation-delay: 0.25s;
-}
-
-.option-chip:nth-child(6) {
-    animation-delay: 0.3s;
-}
-
-.option-chip:nth-child(7) {
-    animation-delay: 0.35s;
-}
-
-.option-chip:nth-child(8) {
-    animation-delay: 0.4s;
-}
-
-.option-chip:nth-child(9) {
-    animation-delay: 0.45s;
-}
-
-.option-chip:nth-child(10) {
-    animation-delay: 0.5s;
-}
+.option-chip:nth-child(1), .bento-card:nth-child(1) { animation-delay: 0.05s; }
+.option-chip:nth-child(2), .bento-card:nth-child(2) { animation-delay: 0.1s; }
+.option-chip:nth-child(3), .bento-card:nth-child(3) { animation-delay: 0.15s; }
+.option-chip:nth-child(4), .bento-card:nth-child(4) { animation-delay: 0.2s; }
+.option-chip:nth-child(5), .bento-card:nth-child(5) { animation-delay: 0.25s; }
+.option-chip:nth-child(6), .bento-card:nth-child(6) { animation-delay: 0.3s; }
+.option-chip:nth-child(7), .bento-card:nth-child(7) { animation-delay: 0.35s; }
+.option-chip:nth-child(8), .bento-card:nth-child(8) { animation-delay: 0.4s; }
+.option-chip:nth-child(9), .bento-card:nth-child(9) { animation-delay: 0.45s; }
+.option-chip:nth-child(10), .bento-card:nth-child(10) { animation-delay: 0.5s; }
 
 @keyframes chipAppear {
     from {
         opacity: 0;
         transform: translateY(8px) scale(0.94);
     }
-
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -558,9 +606,9 @@ body {
 .option-chip:hover {
     background: var(--chip-hover-bg);
     border-color: var(--chip-hover-border);
-    color: var(--accent);
+    color: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.2), 0 0 0 1px rgba(167, 139, 250, 0.15);
+    box-shadow: 0 4px 16px var(--shadow-glow), 0 0 0 1px var(--primary-glow);
 }
 
 .option-chip:active {
@@ -574,7 +622,7 @@ body {
     gap: 6px;
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid rgba(124, 58, 237, 0.08);
+    border-top: 1px solid var(--border-color);
 }
 
 .message-options .option-chip {
@@ -623,7 +671,7 @@ body {
     color: var(--text-primary);
     border-top-left-radius: 4px;
     border: 1px solid var(--bot-msg-border);
-    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(124, 58, 237, 0.03);
+    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(6, 182, 212, 0.03);
 }
 
 .user-message .message-content {
@@ -631,7 +679,7 @@ body {
     background-size: 200% 100%;
     color: var(--user-msg-text);
     border-top-right-radius: 4px;
-    box-shadow: var(--shadow-md), 0 4px 20px rgba(124, 58, 237, 0.25);
+    box-shadow: var(--shadow-md), 0 4px 20px rgba(6, 182, 212, 0.25);
     animation: userMsgGlow 3s ease-in-out infinite;
 }
 
@@ -693,8 +741,8 @@ body {
 .copy-btn:hover {
     opacity: 1 !important;
     color: var(--accent);
-    background: rgba(124, 58, 237, 0.1);
-    border-color: rgba(124, 58, 237, 0.15);
+    background: rgba(6, 182, 212, 0.1);
+    border-color: rgba(6, 182, 212, 0.15);
 }
 
 .copy-btn.copied {
@@ -707,31 +755,19 @@ body {
 /* ========== Input Area ========== */
 
 .chat-input-area {
-    padding: 16px 24px 20px;
-    border-top: 1px solid var(--border-color);
-    background: var(--bg-card);
+    padding: 16px 24px 24px;
+    background: transparent;
     position: relative;
-}
-
-.chat-input-area::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(to right,
-            transparent,
-            rgba(124, 58, 237, 0.25),
-            rgba(167, 139, 250, 0.15),
-            transparent);
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .powered-by {
     text-align: center;
     font-size: 0.65rem;
     color: var(--text-muted);
-    margin-top: 10px;
+    margin-top: 12px;
     letter-spacing: 0.04em;
     opacity: 0.6;
 }
@@ -740,22 +776,27 @@ body {
     display: flex;
     gap: 10px;
     align-items: flex-end;
+    background: var(--bg-card);
+    padding: 10px;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
+    backdrop-filter: blur(20px);
 }
 
 #user-input {
     flex: 1;
-    padding: 14px 18px;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius);
+    padding: 12px 16px;
+    border: none;
+    border-radius: var(--radius-pill);
     font-size: 0.9375rem;
     outline: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
-    background: var(--bg-input);
+    background: transparent;
     color: var(--text-primary);
     resize: none;
-    min-height: 48px;
-    max-height: 150px;
+    min-height: 44px;
+    max-height: 120px;
     line-height: 1.5;
     overflow-y: auto;
 }
@@ -764,17 +805,20 @@ body {
     color: var(--text-muted);
 }
 
-#user-input:focus {
-    border-color: var(--primary);
+#user-input::placeholder {
+    color: var(--text-muted);
+}
+
+#chat-form:focus-within {
+    box-shadow: 0 0 0 2px var(--primary), var(--shadow-glow);
     background: var(--bg-elevated);
-    box-shadow: 0 0 0 3px var(--primary-glow), var(--shadow-glow);
 }
 
 #send-btn {
-    background: linear-gradient(135deg, var(--primary), #A855F7);
+    background: var(--gradient-brand);
     color: white;
     border: none;
-    border-radius: var(--radius);
+    border-radius: var(--radius-pill);
     padding: 12px 16px;
     cursor: pointer;
     font-weight: 600;
@@ -782,7 +826,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 2px 12px rgba(6, 182, 212, 0.3);
     min-height: 48px;
     position: relative;
     overflow: hidden;
@@ -799,7 +843,7 @@ body {
 
 #send-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
 }
 
 #send-btn:hover::after {
@@ -830,16 +874,16 @@ body {
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(124, 58, 237, 0.2);
+    background: rgba(6, 182, 212, 0.2);
     border-radius: 10px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
-    background: rgba(124, 58, 237, 0.35);
+    background: rgba(6, 182, 212, 0.35);
 }
 
 .session-list::-webkit-scrollbar-thumb {
-    background: rgba(124, 58, 237, 0.15);
+    background: rgba(6, 182, 212, 0.15);
     border-radius: 10px;
 }
 
@@ -863,7 +907,7 @@ body {
     background: var(--accent);
     border-radius: 50%;
     animation: bounce 1.4s infinite ease-in-out both;
-    box-shadow: 0 0 6px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
 }
 
 .typing-dot:nth-child(1) {
@@ -929,13 +973,13 @@ body {
 }
 
 .message-content code {
-    background: rgba(124, 58, 237, 0.12);
+    background: rgba(6, 182, 212, 0.12);
     padding: 2px 7px;
     border-radius: 5px;
     font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
     font-size: 0.84em;
     color: var(--accent);
-    border: 1px solid rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.08);
 }
 
 .message-content pre {
@@ -945,7 +989,7 @@ body {
     border-radius: 10px;
     overflow-x: auto;
     margin-bottom: 8px;
-    border: 1px solid rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.08);
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -991,17 +1035,17 @@ body {
 }
 
 .message-content th {
-    background: rgba(124, 58, 237, 0.1);
+    background: rgba(6, 182, 212, 0.1);
     font-weight: 600;
     color: var(--accent);
 }
 
 .message-content tr:nth-child(even) {
-    background: rgba(124, 58, 237, 0.03);
+    background: rgba(6, 182, 212, 0.03);
 }
 
 .message-content tr:hover {
-    background: rgba(124, 58, 237, 0.06);
+    background: rgba(6, 182, 212, 0.06);
 }
 
 /* --- Markdown Links --- */
@@ -1009,7 +1053,7 @@ body {
 .message-content a {
     color: var(--accent);
     text-decoration: none;
-    border-bottom: 1px solid rgba(167, 139, 250, 0.3);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.3);
     transition: all 0.2s;
 }
 
@@ -1183,7 +1227,7 @@ body {
     max-width: 380px;
     width: 90%;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(124, 58, 237, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(6, 182, 212, 0.1);
     animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
     overflow: hidden;
@@ -1271,8 +1315,8 @@ body {
 }
 
 .confirm-modal-btn.cancel:hover {
-    background: rgba(124, 58, 237, 0.08);
-    border-color: rgba(124, 58, 237, 0.2);
+    background: rgba(6, 182, 212, 0.08);
+    border-color: rgba(6, 182, 212, 0.2);
 }
 
 .confirm-modal-btn.delete {
@@ -1293,10 +1337,10 @@ body {
 /* ========== Upload Button ========== */
 
 .upload-btn {
-    background: var(--bg-elevated);
+    background: transparent;
     color: var(--text-secondary);
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius);
+    border: none;
+    border-radius: var(--radius-pill);
     padding: 12px 14px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1314,7 +1358,7 @@ body {
     border-color: var(--primary);
     background: var(--primary-light);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.2);
+    box-shadow: 0 4px 16px rgba(6, 182, 212, 0.2);
 }
 
 .upload-btn:active {
@@ -1357,18 +1401,18 @@ body {
     font-size: 3rem;
     text-align: center;
     padding: 16px 0 4px;
-    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3));
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.3));
 }
 
 /* ========== Upload Welcome Chip ========== */
 
 .upload-chip {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(52, 211, 153, 0.08) 100%) !important;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(52, 211, 153, 0.08) 100%) !important;
     border-color: rgba(52, 211, 153, 0.25) !important;
 }
 
 .upload-chip:hover {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(52, 211, 153, 0.14) 100%) !important;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.18) 0%, rgba(52, 211, 153, 0.14) 100%) !important;
     border-color: rgba(52, 211, 153, 0.45) !important;
     color: #34D399 !important;
 }
@@ -1383,7 +1427,7 @@ body {
     content: '📄 Drop your registration card here';
     position: absolute;
     inset: 0;
-    background: rgba(124, 58, 237, 0.15);
+    background: rgba(6, 182, 212, 0.15);
     backdrop-filter: blur(4px);
     border: 3px dashed var(--accent);
     border-radius: var(--radius);

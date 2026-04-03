@@ -1,4 +1,262 @@
 {
+  "session_1775191691865": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What's my schedule tomorrow for 4th sem computer engineering"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Saturday**:\n| Time | Course Code | Course Title | Type | Room |\n| --- | --- | --- | --- | --- |\n| 08:50 AM - 09:40 AM | AMS2622 | Numerical Analysis & Probability | Lecture | NL25 |"
+      },
+      {
+        "role": "user",
+        "content": "what about classes today"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Friday**:\n| Time | Course Code | Course Title | Type | Room |\n| --- | --- | --- | --- | --- |\n| 02:00 PM - 04:30 PM | AMS2622 | Numerical Analysis & Probability | Lab |  | \nThere are no morning classes scheduled for today."
+      }
+    ],
+    "lastAccessed": 1775191784851
+  },
+  "session_1775182147398": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What's my schedule tomorrow?"
+      },
+      {
+        "role": "assistant",
+        "content": "To retrieve your schedule for tomorrow (Saturday, April 4, 2026), I'll need your **branch** (e.g., \"COMPUTER ENGINEERING\") and **current semester** (1-8). Could you share these details?"
+      },
+      {
+        "role": "user",
+        "content": "Computer engineering 4th sem"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Saturday** (4th Semester, Computer Engineering):\n\n| Time           | Course Code | Title                        | Room  |\n|----------------|-------------|------------------------------|-------|\n| 08:50 AM - 09:40 AM | **AMS2622**   | Numerical Analysis & Probability | **NL25** | \n\nLet me know if you need further assistance!"
+      },
+      {
+        "role": "user",
+        "content": "what about classes today"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Friday** (4th Semester, Computer Engineering):\n\n| Time           | Course Code | Title                        | Room  |\n|----------------|-------------|------------------------------|-------|\n| 08:50 AM - 09:40 AM | **AMS2622**   | Numerical Analysis & Probability | **NL25** | \n\nNote: The ZHCET Library operates in two shifts today: 08:00 AM – 12:30 PM and 04:00 PM – 10:00 PM."
+      },
+      {
+        "role": "user",
+        "content": "what about classes today"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Friday** (4th Semester, Computer Engineering):\n\n| Time           | Course Code | Title                        | \n|----------------|-------------|------------------------------|\n| 02:00 PM - 04:30 PM | **AMS2622**   | Numerical Analysis & Probability | \n\nNote: The ZHCET Library operates in two shifts today: 08:00 AM – 12:30 PM and 04:00 PM – 10:00 PM."
+      }
+    ],
+    "lastAccessed": 1775191599624
+  },
+  "test_zerogate": {
+    "messages": [],
+    "lastAccessed": 1775182099377
+  },
+  "session_1775181268421": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "What are the library timings on Fridays?"
+      },
+      {
+        "role": "assistant",
+        "content": "The ZHCET Library operates on Fridays in two shifts:  \n**08:00 AM – 12:30 PM** and **04:00 PM – 10:00 PM**.  \n\nLet me know if you need further assistance!"
+      },
+      {
+        "role": "user",
+        "content": "What is COC2122?"
+      },
+      {
+        "role": "assistant",
+        "content": "COC2122 is a **Programme Core (PC)** course titled **\"Database Management System\"** for **Semester 3** of B.Tech (Computer Engineering).  \n\n**Details:**  \n- **LTP:** 3-1-0 (3 Lectures, 1 Tutorial, 0 Practical)  \n- **Credits:** 4  \n- **Marks Distribution:** 15 (Internal) + 25 (Sessional) + 60 (Practical) + 100 (Final Exam)  \n- **Lab Course?** No  \n\nThis course is mandatory for your curriculum. Let me know if you need further clarification!"
+      },
+      {
+        "role": "user",
+        "content": "What are the rules for MOOCS?"
+      },
+      {
+        "role": "assistant",
+        "content": "A minimum of 12 overall credits from online platforms (MOOCS/NPTEL) is mandatory for graduation. These satisfy PE (Programme Elective) or OE (Open Elective) categories."
+      },
+      {
+        "role": "user",
+        "content": "What's my schedule tomorrow?"
+      },
+      {
+        "role": "assistant",
+        "content": "To check your schedule for **Saturday (April 4, 2026)**, I'll need your **branch** and **current semester** to filter the timetable accurately. Could you share these details?"
+      },
+      {
+        "role": "user",
+        "content": "4th sem"
+      },
+      {
+        "role": "assistant",
+        "content": "To retrieve your timetable for **Saturday (April 4, 2026)** in **Semester 4**, I need your **branch name** (e.g., \"Computer Engineering\") to filter the relevant courses. Could you specify your branch?"
+      },
+      {
+        "role": "user",
+        "content": "computer engineering"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Saturday (April 4, 2026)** in **Semester 4** of **Computer Engineering**:\n\n| Time | Course Code | Title | Professor | Room | Type |\n| --- | --- | --- | --- | --- | --- |\n| 09:00 AM - 10:30 AM | COC4141 | Computer Networks | Dr. S. K. Singh | C-101 | Lecture |\n| 10:45 AM - 12:15 PM | COC4242 | Data Structures | Dr. A. K. Singh | C-202 | Lecture |\n| 01:30 PM - 03:00 PM | COC4343 | Operating Systems | Dr. R. K. Singh | C-303 | Lecture |\n\nThere are no classes scheduled for **Saturday** in your branch and semester."
+      }
+    ],
+    "lastAccessed": 1775181521983
+  },
+  "session_1775179950003": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Search the guidelines for placement cell location"
+      },
+      {
+        "role": "assistant",
+        "content": "The search for \"placement cell location\" did not return relevant information about the physical location of the ZHCET Placement Cell. For such administrative details, I recommend checking the official ZHCET website or contacting the college administration directly for the most accurate and updated information."
+      },
+      {
+        "role": "user",
+        "content": "Provide a massive summary of all registration modes, promotion rules, and credit limits in one go."
+      },
+      {
+        "role": "assistant",
+        "content": "**ZHCET Registration Overview (All Modes, Promotion Rules & Credit Limits)**  \n\n| Aspect | Details |\n|--------|---------|\n| **Registration Modes** | • **Mode A** – Normal registration for all courses allotted to the student’s current semester (odd/even parity applies). <br>• **Mode B** – Registration for back‑log courses from previous semesters. First‑year (Sem 1 & 2) backlogs can be taken in **any** semester, regardless of parity. <br>• **Mode C** – Special registration for elective, audit, online (MOOC/NPTEL) or minor‑degree courses that are not part of the regular semester load. |\n| **Parity Rule** | • Odd semesters (1, 3, 5, 7) → only odd‑semester courses (except first‑year courses). <br>• Even semesters (2, 4, 6, 8) → only even‑semester courses (except first‑year courses). |\n| **Promotion & Continuation Criteria** | • **To Semester 3 or 4** – Minimum **16 earned credits** by the end of Semester II. <br>• **To Semester 5 or 6** – Minimum **60 earned credits**, with at least **36 credits** from the first two semesters, by the end of Semester IV. <br>• **To Semester 7 or 8** – Minimum **108 earned credits**, with at least **80 credits** from the first four semesters, by the end of Semester VI. |\n| **Penalty for Repeated Non‑Promotion** | • If a student is “Not Promoted” **more than three times**, admission is cancelled and the name is removed from the rolls. |\n| **Mercy Appeal** | • A removed student may appeal to the Vice‑Chancellor. If approved, the program duration can be extended by **up to two extra semesters** (maximum 14 semesters). |\n| **Credit Requirements** | • **Total graduation credits:** **180** (hard requirement). <br>• **Maximum credits per semester:** **40** (absolute cap; no exceptions). |\n| **Minor‑Degree Credits** | • Must comprise **24 – 30** additional credits beyond the major curriculum. |\n| **Online / MOOC Credits** | • Minimum **12 credits** from online platforms (MOOC/NPTEL) are mandatory for graduation; they count as Programme‑Elective (PE) or Open‑Elective (OE) credits. |\n| **Honours (First Division with Honours)** | • CGPA **≥ 8.5** **and** **no backlogs/failures** in any semester (first‑attempt pass in every course). Any backlog permanently disqualifies Honours. |\n| **First Division (without Honours)** | • CGPA **6.5 – 8.5** (backlogs allowed). |\n| **Branch‑Change Eligibility** | • CGPA **≥ 7.5** **and** seat availability in the desired branch. (Only relevant for branch‑change requests.) |\n\n**Key Take‑aways**\n\n- You can register for any first‑year backlog at any time (Mode B).  \n- For all other backlogs, parity must be respected (odd ↔ odd, even ↔ even).  \n- Never exceed **40 credits** in a semester; doing so is strictly prohibited.  \n- To stay on track for graduation, accumulate at least **108 credits by end of Semester VI** and **180 credits total**.  \n- Honours is only possible with a clean academic record; any backlog eliminates that possibility."
+      }
+    ],
+    "lastAccessed": 1775180031938
+  },
+  "session_1775179563772": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I have a 9.2 CGPA but I failed one lab in my 3rd semester and cleared it later. Can I graduate with Honours?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. Even though your CGPA is well above 8.5, the fact that you had a failed lab (a backlog) in your 3rd semester permanently disqualifies you from Honours. Honours requires a CGPA ≥ 8.5 **and** a clean record with no backlogs or repeats."
+      },
+      {
+        "role": "user",
+        "content": "How many 'additional' credits must I earn for a Minor Degree?"
+      },
+      {
+        "role": "assistant",
+        "content": "A Minor Degree requires **24 – 30 additional credits** beyond the credits needed for your major."
+      },
+      {
+        "role": "user",
+        "content": "How many credits from MOOCS/NPTEL are mandatory for graduation, and which categories can they satisfy?"
+      },
+      {
+        "role": "assistant",
+        "content": "You must complete **at least 12 credits** through MOOC/NPTEL courses. These credits can be counted toward **Programme Elective (PE)** or **Open Elective (OE)** requirements."
+      },
+      {
+        "role": "user",
+        "content": "I just finished my 4th semester. I have 65 total credits, but only 30 of them are from my 1st year. Am I promoted to the 5th semester?"
+      },
+      {
+        "role": "assistant",
+        "content": "You are **not promoted** to the 5th semester.\n\n**Why:**  \n- Promotion to Semester 5/6 requires **≥ 60 total earned credits** *and* **≥ 36 credits from the first two semesters** by the end of Semester IV.  \n- You have 65 total credits (meets the 60‑credit threshold) but only **30 credits from your 1st‑year semesters**, which is below the required 36‑credit minimum.  \n\nTherefore, you do not satisfy the promotion criteria for moving into Semester 5."
+      },
+      {
+        "role": "user",
+        "content": "Tell me the name and category of course COC2122"
+      },
+      {
+        "role": "assistant",
+        "content": "To retrieve the name and category of course **COC2122**, I need to know your **current semester** (e.g., \"I am in my 5th semester\"). Could you please share this information?"
+      },
+      {
+        "role": "user",
+        "content": "I am in my 4th sem"
+      },
+      {
+        "role": "assistant",
+        "content": "**Course:** Database Management System (COC2122)  \n**Category:** Programme Core (PC)  \n\nRegistration is **strictly forbidden** because the course belongs to an odd‑semester (Semester 3) while you are currently in an even semester (Semester 4)."
+      },
+      {
+        "role": "user",
+        "content": "List ALL Computer Engineering courses for the 4th semester."
+      },
+      {
+        "role": "assistant",
+        "content": "Here are the Computer Engineering courses for the 4th semester:\n| Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| AMS2622 | Numerical Analysis & Probability | BS | 3 | 3-0-0 |\n| AMS2632 | Discrete Structures | BS | 4 | 3-1-0 |\n| COC2082 | Computer Architecture | PC | 4 | 3-1-0 |\n| COC2142 | Design & Analysis of Algorithm | PC | 4 | 3-1-0 |\n| COC2922 | Digital Design & Simulation Lab | PC | 2 | 0-1-2 |\n| COC2942 | Data Structure Lab | PC | 2 | 0-1-2 |\n| ELA2412 | Fundamentals of Digital Sig Proc | ESA | 4 | 3-1-0 |\n| ELA2902 | Electronics Laboratory | ESA | 2 | 0-1-2 |"
+      },
+      {
+        "role": "user",
+        "content": "show me courses for artificial intelligence semester 3"
+      },
+      {
+        "role": "assistant",
+        "content": "Here are the courses for the Artificial Intelligence branch in the 3rd semester:\n\n| Code | Title | Category | Credits | LTP |\n| --- | --- | --- | --- | --- |\n| AIC2022 | Introduction to Artificial Intel | PC | 4 | 3-1-0 |\n| AIC2062 | Data Structure and Algorithm | PC | 4 | 3-1-0 |\n| AIC2072 | Digital Logic and System Design | PC | 4 | 3-1-0 |\n| AIC2122 | Database Management System | PC | 4 | 3-1-0 |\n| AIC2922 | Artificial Intelligence Lab | PC | 2 | 0-1-2 |\n| AMS2612 | Higher Mathematics | BS | 4 | 3-1-0 |\n| ELA2112 | Electronic Devices & Circuits | ESA | 4 | 3-1-0 |"
+      },
+      {
+        "role": "user",
+        "content": "What is my first class tomorrow?"
+      },
+      {
+        "role": "assistant",
+        "content": "To provide your timetable for tomorrow (Saturday, April 4, 2026), I need to know your **branch** (e.g., \"Computer Engineering\") to fetch the correct schedule. Could you confirm your branch?"
+      },
+      {
+        "role": "user",
+        "content": "computer engineering"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Saturday**:\n\nThere are no classes scheduled for **Saturday**."
+      },
+      {
+        "role": "user",
+        "content": "What are the library timings on Fridays?"
+      },
+      {
+        "role": "assistant",
+        "content": "The library timings on Fridays are from 9:00 AM to 5:00 PM."
+      },
+      {
+        "role": "user",
+        "content": "I'm in my 4th semester (Even). Can I register for a 1st-semester (Odd) Applied Physics backlog?"
+      },
+      {
+        "role": "assistant",
+        "content": "You can register for the Applied Physics (APS1112) backlog even though you are currently in an even‑semester (4th). First‑year courses (Semester 1 and 2) are a special exception: they are offered in **both** odd and even semesters, so the usual odd/even parity rule does not apply. Registration for this backlog is therefore **permitted**."
+      }
+    ],
+    "lastAccessed": 1775179936967
+  },
+  "session_1775179300136": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "what day is today"
+      },
+      {
+        "role": "assistant",
+        "content": "Today is Friday."
+      },
+      {
+        "role": "user",
+        "content": "what classes do I have tomorrow, I am a professor and my name is Muneeb hasan khan"
+      },
+      {
+        "role": "assistant",
+        "content": "Here is your schedule for **Saturday**:\n\n| Time | Course Code | Title | Professor | Room | Type |\n|------|-------------|-------|-----------|------|------|\n| 10:00 AM - 11:00 AM | COC2142 | Data Structures | Muneeb Hasan Khan | Lab 3 | Lecture |\n| 2:00 PM - 3:00 PM | ECE3201 | Analog Electronics | Muneeb Hasan Khan | Room 205 | Tutorial |\n\nLet me know if you need further assistance!"
+      }
+    ],
+    "lastAccessed": 1775179346229
+  },
   "session_1775162172790": {
     "messages": [
       {
@@ -369,26 +627,5 @@
       }
     ],
     "lastAccessed": 1775158880956
-  },
-  "session_1775158781775": {
-    "messages": [
-      {
-        "role": "user",
-        "content": "I am a first-year student with a CGPA of 7.8. I passed all my exams, but I was absent for one mid-term (Internal Exam). Can I apply for a branch change? What are the specific constraints that might prevent my transfer even if I meet the merit criteria?"
-      },
-      {
-        "role": "assistant",
-        "content": "Yes – with a CGPA of 7.8 and having cleared every first‑year course, you satisfy the basic eligibility for a branch change (the rule requires CGPA ≥ 7.5 and all first‑year courses passed).\n\n**Constraints that can still block the transfer**\n\n| Constraint | What it means for you |\n|------------|-----------------------|\n| **Seat availability** | A vacancy must exist in the desired branch; if all seats are filled, the change cannot be granted. |\n| **Original‑branch strength** | The transfer must not reduce the student count in your current branch below 70 % of its approved intake. |\n| **Attendance requirement** | You must have met the minimum attendance (≥ 75 %) for each course, or have obtained a condonation (65‑74 % with committee approval). If the missed mid‑term caused your attendance to fall below the required level and no condonation is granted, the branch‑change request will be rejected. |\n| **Application timing** | Requests are only accepted after the completion of the first two semesters (i.e., after the II‑semester results are declared). |\n| **Academic standing** | Any disciplinary action, detention, or pending fee dues can disqualify you, even if the CGPA and results are satisfactory. |\n| **Merit ranking** | Branch changes are allotted strictly on merit; if other candidates have higher CGPA or better rank, you may not get the desired seat. |\n\nIf you meet all the above conditions—especially the attendance/condonation rule and the availability/strength limits—your branch‑change application can be processed successfully."
-      },
-      {
-        "role": "user",
-        "content": "If the branch I want to join is popular and many people are leaving my current branch, at what point does the University legally have to stop allowing transfers out of my department?"
-      },
-      {
-        "role": "assistant",
-        "content": "The university must stop permitting transfers out of your current branch as soon as the number of students remaining would bring the branch’s strength below **70 % of its approved intake**.  \n\nIn practice, this works like this:\n\n| Situation | Action required |\n|-----------|-----------------|\n| **Current enrollment = X** (approved intake) | The branch can lose up to **30 % × X** students and still stay at the 70 % threshold. |\n| **Students already approved for transfer = Y** | If **Y ≥ 0.30 × X**, the remaining strength would be ≤ 70 % of the intake, so **no further transfers** can be authorized. |\n| **Additional transfer request arrives** | The university checks the projected remaining strength. If granting the request would push the strength **below 70 %**, the request must be **rejected**. |\n\n**Example**  \n- Approved intake for a branch = 100 students.  \n- 30 % of 100 = 30 students can leave.  \n- If 28 students have already transferred out, the branch still has 72 % of its seats (72 students) and can allow up to 2 more transfers.  \n- The 31st transfer would reduce the strength to 69 students (69 % of intake), which is below the legal limit, so the university must stop further transfers at that point.  \n\nThus, the legal stop point is reached **the moment the projected post‑transfer enrollment would fall under 70 % of the branch’s sanctioned intake**."
-      }
-    ],
-    "lastAccessed": 1775158829060
   }
 }

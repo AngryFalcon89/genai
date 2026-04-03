@@ -83,7 +83,8 @@ const CONSTANTS_SUMMARY = `MANDATORY ACADEMIC CONSTANTS (These are non-negotiabl
       A backlog in ANY semester permanently disqualifies a student from Honours, even if their final CGPA is 9.5.
   - First Division: CGPA between 6.5 and 8.5 (backlogs do NOT disqualify from this tier).
   - Branch Change Requirement: CGPA of 7.5 or above AND seat availability. (NOT related to graduation honours)
-  - These three thresholds are DISTINCT. Never substitute one for another.`;
+  - These three thresholds are DISTINCT. Never substitute one for another.
+• Friday Library Rule: The ZHCET Library operates on a unique two-shift schedule on Fridays: 08:00 AM – 12:30 PM and 04:00 PM – 10:00 PM. You MUST use this specific timing whenever Friday is mentioned. Do NOT hallucinate continuous hours for Friday.`;
 const MAX_HISTORY_MESSAGES = 8;
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_CONTEXT_CHARS = 12000;
@@ -547,9 +548,9 @@ const TOOLS = [
                 type: "object",
                 properties: {
                     course_code: { type: "string", description: "The exact course code (e.g. 'COC2142')" },
-                    student_current_semester: { type: "integer", description: "The student's current semester (1-8). Extract this from the conversation (e.g., '6th semester' = 6). If unknown, ask the user." }
+                    student_current_semester: { type: "integer", description: "The student's current semester (1-8). Optional — only provide if known from the conversation. Used for parity evaluation." }
                 },
-                required: ["course_code", "student_current_semester"]
+                required: ["course_code"]
             }
         }
     },
@@ -745,36 +746,70 @@ async function executeTool(toolCall) {
             return JSON.stringify(REGISTRATION_RULES);
         }
         case 'search_general_guidelines': {
-            const store = await getVectorStore();
-            // Fetch a wider pool for reranking (ENABLE_LLM_RERANK) or fall back to top 4
-            const kFetch = ENABLE_LLM_RERANK ? LLM_RERANK_LIMIT : 4;
-            const results = await store.similaritySearch(args.query, kFetch);
+            // ── RRF Hybrid Retrieval: Semantic (HNSW) + Lexical (BM25) ────────
+            const RRF_K = 60; // RRF constant
+            const RRF_TOP_N = 5; // Final results to return
 
-            if (results.length === 0) {
+            // 1. Semantic search via HNSW vector store
+            const store = await getVectorStore();
+            const semanticK = VECTOR_K_PER_QUERY; // default 24
+            const semanticResults = await store.similaritySearch(args.query, semanticK);
+            console.log(`[RRF] Semantic search returned ${semanticResults.length} results for: "${args.query}"`);
+
+            // 2. BM25 lexical search using the pre-built index
+            const lexIndex = getLexicalIndex();
+            const queryTokens = tokenize(args.query);
+            const lexicalScored = lexIndex.docs
+                .map(doc => ({ doc, score: bm25Score(queryTokens, doc, lexIndex) }))
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, LEXICAL_K_PER_QUERY); // default 40
+            console.log(`[RRF] BM25 lexical search returned ${lexicalScored.length} results.`);
+
+            // 3. RRF Fusion — merge both ranked lists
+            const rrfScores = new Map(); // key → { score, doc }
+
+            for (let rank = 0; rank < semanticResults.length; rank++) {
+                const doc = semanticResults[rank];
+                const key = uniqueResultKey(doc);
+                const existing = rrfScores.get(key) || { score: 0, doc };
+                existing.score += 1 / (RRF_K + rank + 1);
+                rrfScores.set(key, existing);
+            }
+
+            for (let rank = 0; rank < lexicalScored.length; rank++) {
+                const doc = lexicalScored[rank].doc;
+                const key = doc.key || uniqueResultKey(doc);
+                const existing = rrfScores.get(key) || { score: 0, doc };
+                existing.score += 1 / (RRF_K + rank + 1);
+                rrfScores.set(key, existing);
+            }
+
+            // 4. Sort by fused RRF score and take top N
+            const rrfRanked = Array.from(rrfScores.values())
+                .sort((a, b) => b.score - a.score)
+                .slice(0, RRF_TOP_N);
+
+            if (rrfRanked.length === 0) {
                 return JSON.stringify({
                     note: 'System Note: No relevant documents found in the knowledge base for this query. Try rephrasing the query with different keywords, or inform the user that this information is not available.'
                 });
             }
 
-            // Task 2: LLM Mini-Rerank — ask the model to pick the top 3 most relevant snippets
-            if (ENABLE_LLM_RERANK && results.length > 3) {
-                console.log(`[LLM Rerank] Reranking ${results.length} chunks for query: "${args.query}"`);
+            console.log(`[RRF] Top ${rrfRanked.length} fused results (scores: ${rrfRanked.map(r => r.score.toFixed(4)).join(', ')})`);
+
+            // 5. Optional LLM reranking on top of RRF output
+            if (ENABLE_LLM_RERANK && rrfRanked.length > 3) {
+                console.log(`[LLM Rerank] Reranking ${rrfRanked.length} RRF chunks for query: "${args.query}"`);
                 try {
-                    const candidatesText = results
-                        .map((r, i) => `[${i + 1}] ${r.pageContent.slice(0, 400)}`)
+                    const candidatesText = rrfRanked
+                        .map((r, i) => `[${i + 1}] ${r.doc.pageContent.slice(0, 400)}`)
                         .join('\n\n');
 
-                    const rerankPrompt = `You are a relevance judge. Given the user's query and a list of candidate text snippets, return ONLY a JSON array of the 3 most relevant snippet numbers (1-indexed integers), ordered from most to least relevant. No explanation.
-
-Query: "${args.query}"
-
-Candidates:
-${candidatesText}
-
-Reply with ONLY a JSON array, e.g.: [3, 1, 5]`;
+                    const rerankPrompt = `You are a relevance judge. Given the user's query and a list of candidate text snippets, return ONLY a JSON array of the 3 most relevant snippet numbers (1-indexed integers), ordered from most to least relevant. No explanation.\n\nQuery: "${args.query}"\n\nCandidates:\n${candidatesText}\n\nReply with ONLY a JSON array, e.g.: [3, 1, 5]`;
 
                     const rerankResp = await groq.chat.completions.create({
-                        model: FALLBACK_MODEL, // Use the lighter model for reranking to save quota
+                        model: FALLBACK_MODEL,
                         messages: [{ role: 'user', content: rerankPrompt }],
                         temperature: 0,
                         max_tokens: 64,
@@ -785,34 +820,33 @@ Reply with ONLY a JSON array, e.g.: [3, 1, 5]`;
                     if (arrMatch) {
                         const indices = JSON.parse(arrMatch[0]);
                         const reranked = indices
-                            .map(i => results[i - 1])
+                            .map(i => rrfRanked[i - 1])
                             .filter(Boolean)
                             .slice(0, 3);
                         if (reranked.length > 0) {
                             console.log(`[LLM Rerank] Selected indices: ${indices.join(', ')} → ${reranked.length} snippets returned.`);
-                            return JSON.stringify(reranked.map(r => r.pageContent));
+                            return JSON.stringify(reranked.map(r => r.doc.pageContent));
                         }
                     }
-                    console.warn('[LLM Rerank] Could not parse rerank response, falling back to top-4 results.');
+                    console.warn('[LLM Rerank] Could not parse rerank response, falling back to RRF top results.');
                 } catch (rerankErr) {
-                    console.warn(`[LLM Rerank] Rerank failed (${rerankErr.message}), falling back to top-4 results.`);
+                    console.warn(`[LLM Rerank] Rerank failed (${rerankErr.message}), falling back to RRF top results.`);
                 }
             }
 
-            return JSON.stringify(results.slice(0, 4).map(r => r.pageContent));
+            return JSON.stringify(rrfRanked.map(r => r.doc.pageContent));
         }
         case 'get_active_timetable': {
             const activeTimetable = TimetableManager.getActiveTimetable({
                 branch: args.branch,
                 semester: args.semester
             });
-            if (!activeTimetable) return JSON.stringify({ message: "No active timetable found." });
+            if (!activeTimetable) return JSON.stringify({ requested_day: args.day || 'ALL', message: "No active timetable found." });
 
-            // Task 2: Server-side day filtering — narrow entries to the requested day
+            // Server-side day filtering — narrow entries to the requested day
             if (args.day) {
                 const dayFilter = args.day.trim().toLowerCase();
                 if (Array.isArray(activeTimetable)) {
-                    // activeTimetable is an array of timetable objects
                     const filtered = activeTimetable.map(tt => ({
                         ...tt,
                         entries: (tt.entries || []).filter(e =>
@@ -822,16 +856,17 @@ Reply with ONLY a JSON array, e.g.: [3, 1, 5]`;
                     const hasEntries = filtered.some(tt => tt.entries.length > 0);
                     if (!hasEntries) {
                         return JSON.stringify({
-                            day: args.day,
+                            requested_day: args.day,
                             message: `No classes scheduled for ${args.day}.`,
                             timetables: filtered
                         });
                     }
-                    return JSON.stringify({ day: args.day, timetables: filtered });
+                    // Task 3: Explicit day anchor so the LLM never confuses which day this data is for
+                    return JSON.stringify({ requested_day: args.day, timetables: filtered });
                 }
             }
 
-            return JSON.stringify(activeTimetable);
+            return JSON.stringify({ requested_day: 'ALL', timetables: activeTimetable });
         }
         case 'validate_registration_card': {
             return JSON.stringify(validateRegistrationCard(toolCall._sessionId));
@@ -872,7 +907,7 @@ async function extractRegistrationCardData(filePath, mimeType) {
             }
         ],
         temperature: 0,
-        max_tokens: 4096
+        max_tokens: 2048
     });
 
     const rawOcrText = (groqVisionResult.choices[0]?.message?.content || '').trim();
@@ -1281,18 +1316,23 @@ async function getChatResponse(sessionId, question) {
 - If a user names a common course (e.g., 'Applied Physics') but doesn't provide the code, proactively use search_general_guidelines to find the code and then call get_course_details. Never ask the user for information that is likely present in your knowledge base.
 - **Rule 15 (Single-Turn Synthesis — CRITICAL):** You must retrieve ALL facts in your very first turn. If data is split across rules and general information, call both \`get_registration_rules\` AND \`search_general_guidelines\` simultaneously as a parallel tool call. Do NOT wait for one result before calling the other. Do NOT provide a partial answer and promise to look up the rest. Get everything at once, then synthesize.
 - **Rule 16 (Ordinance Priority):** When providing totals (like Minor credits or Graduation credits), always prioritize the range specified in the Ordinances (e.g., 24–30) over a manual sum of courses found in the database. Explicitly state the ordinance range first.
-- **Rule 17 (Direct Identification):** If a user provides a course code, immediately state the subject name if found, before asking for a semester.
+- **Rule 17 (Zero-Gate Course ID — CRITICAL):** If a user provides a course code (e.g., COC3112), you MUST immediately call \`get_course_details\` with only the \`course_code\` parameter and provide the course name and category. Do NOT ask for the student's semester first. Only ask for the semester AFTER providing the name if you need it to check registration eligibility or parity.
 - Friendly, warm tone.
 
 ### Date Context:
 - ${dateContext}
 - **Timetable Day Mapping (CRITICAL):** When a user asks about 'today', 'tomorrow', or a named day, you MUST first derive the exact weekday name using the current date above (e.g. if today is Thursday, tomorrow is Friday). Then call \`get_active_timetable\` with the \`day\` parameter set to that exact weekday string (e.g. \`day: "Friday"\`). Never call \`get_active_timetable\` without the \`day\` parameter when the user is asking about a specific day.
 
+### Timetable Integrity (NON-NEGOTIABLE):
+- **Forbid Invented Data:** You are strictly forbidden from adding 'Professor Names' or 'Room Numbers' if they are not explicitly present in the JSON returned by \`get_active_timetable\`. Never assume or invent staff names, room numbers, or building names. Only include columns for which the tool returned actual data.
+- **Rule 18 (The Empty Day Rule — CRITICAL):** If \`get_active_timetable\` returns no entries for a specific day, you MUST NOT generate a Markdown table. Your only response for that day should be: "There are no classes scheduled for [Day]." Never provide a 'sample', 'typical', or 'example' schedule for an empty day. **Day-Change Reset:** If the user changes the day they are asking about (e.g., from 'tomorrow' to 'today'), treat it as a completely fresh query and IGNORE all previous timetable entries in the conversation history. Only use the data returned by the latest tool call or pre-fetched injection.
+- **Timetable Citations (MANDATORY):** When providing a timetable, you MUST explicitly state the day at the top of your response (e.g. "Here is your schedule for **Friday**:"). Always verify the \`requested_day\` field in the tool response matches the day the user asked about.
+- **Rule 20 (History Isolation — CRITICAL):** Every user query must be answered using ONLY the most recent tool output or pre-fetched system injection for that specific day. You are strictly forbidden from reusing a Markdown table from a previous turn (e.g., Saturday's schedule) for a different day (e.g., Friday), even if the course codes are the same. If the data for the new day is different, you MUST generate a new table from the fresh data. Old timetable data in conversation history is stale and must be ignored.
+
 ### Format style:
 - Ensure that all course and timetable data is returned in clean Markdown tables.
 - Format course returns as nice Markdown tables with columns: Code, Title, Category, Credits, LTP.
-- If returning a timetable schedule, include these columns: Time, Course Code, Title, Professor, Room, Type.
-- **Timetable Citations (MANDATORY):** When providing a timetable, you MUST explicitly state the day at the top of your response (e.g. "Here is your schedule for **Friday**:"). If the tool returns no entries for that day, you MUST explicitly state: "There are no classes scheduled for [Day]."
+- If returning a timetable schedule, only include columns that have actual data from the tool response (e.g. Time, Course Code, Title). Do NOT add Professor or Room columns if the data is absent.
 - You may dynamically append interactive options to the very end of your final response using EXACTLY this format if helpful: <<OPTIONS: Option 1 | Option 2>>`;
 
 
@@ -1379,9 +1419,9 @@ async function getChatResponse(sessionId, question) {
             break;
         case 'BASIC':
         default:
-            activeModel   = TIER2_MODEL;
-            // General chain: 70B → Qwen → 8B
-            FAILOVER_ORDER = [TIER2_MODEL, TIER3_MODEL, ROUTER_MODEL];
+            activeModel   = TIER3_MODEL;
+            // General chain: Qwen (500k TPD) → 70B → 8B — avoids 429s on 70B's 100k TPD cap
+            FAILOVER_ORDER = [TIER3_MODEL, TIER2_MODEL, ROUTER_MODEL];
             break;
     }
     console.log(`[Router] Intent: ${intentCategory} → activeModel: ${activeModel} | failover: [${FAILOVER_ORDER.join(', ')}]`);
@@ -1446,6 +1486,85 @@ async function getChatResponse(sessionId, question) {
         } catch (injectErr) {
             // Non-fatal — model will call the tool itself as a fallback
             console.warn(`[Proactive Inject] Failed to pre-fetch data: ${injectErr.message}. Model will tool-call instead.`);
+        }
+    }
+
+    // ── Task 4: Proactive Day-Aware Injection for DATA Queries ───────────────
+    // If the query mentions a day, pre-fetch timetable + library timings so the
+    // LLM already has the answer in its context on the first call.
+    if (intentCategory === 'DATA') {
+        const qLower = question.toLowerCase();
+        const dayKeywords = ['today', 'tomorrow', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const hasDayRef = dayKeywords.some(k => qLower.includes(k));
+
+        if (hasDayRef) {
+            try {
+                // Derive the target day name
+                let targetDay = todayName; // default to today
+                if (qLower.includes('tomorrow')) targetDay = tomorrowName;
+                for (const d of ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']) {
+                    if (qLower.includes(d)) { targetDay = d.charAt(0).toUpperCase() + d.slice(1); break; }
+                }
+
+                // Extract user profile (branch, semester) from conversation summary
+                let extractedBranch = undefined;
+                let extractedSemester = undefined;
+                const summaryMsg = contextMessages.find(m => m._isSummary);
+                if (summaryMsg) {
+                    const text = summaryMsg.content;
+                    const branchMatch = text.match(/branch:\s*([^\n,]+)/i);
+                    if (branchMatch) extractedBranch = branchMatch[1].trim();
+                    const semMatch = text.match(/semester:\s*(\d+)/i);
+                    if (semMatch) extractedSemester = Number(semMatch[1]);
+                }
+                // Also try to extract from the current question or recent history
+                if (!extractedBranch) {
+                    for (const m of contextMessages.slice().reverse()) {
+                        if (!m.content) continue;
+                        const bm = m.content.match(/(?:branch|department)[:\s]+([A-Za-z\s&]+(?:engineering|intelligence|technology))/i);
+                        if (bm) { extractedBranch = bm[1].trim(); break; }
+                    }
+                }
+                if (!extractedSemester) {
+                    for (const m of contextMessages.slice().reverse()) {
+                        if (!m.content) continue;
+                        const sm = m.content.match(/(?:semester|sem)[:\s]*(\d+)/i);
+                        if (sm) { extractedSemester = Number(sm[1]); break; }
+                    }
+                }
+
+                // Build timetable args with profile if available
+                const timetableArgs = { day: targetDay };
+                if (extractedBranch) timetableArgs.branch = extractedBranch;
+                if (extractedSemester) timetableArgs.semester = extractedSemester;
+                console.log(`[Day-Aware Inject] Profile: branch=${extractedBranch || 'unknown'}, semester=${extractedSemester || 'unknown'}, day=${targetDay}`);
+
+                const [timetableJson, libraryJson] = await Promise.all([
+                    executeTool({
+                        function: { name: 'get_active_timetable', arguments: JSON.stringify(timetableArgs) },
+                        _sessionId: sessionId, _userQuestion: question, id: 'proactive_inject_timetable'
+                    }),
+                    executeTool({
+                        function: { name: 'search_general_guidelines', arguments: JSON.stringify({ query: `library timings ${targetDay}` }) },
+                        _sessionId: sessionId, _userQuestion: question, id: 'proactive_inject_library'
+                    })
+                ]);
+
+                const dayInjection =
+                    `\n\n---\n**[SYSTEM: Pre-fetched Day-Aware Data for ${targetDay}]**\n` +
+                    `⚠️ IMPORTANT: This data is for **${targetDay} ONLY**. Do NOT reuse timetable data from any previous turn.\n` +
+                    `Target Day: ${targetDay}\n` +
+                    `The following timetable data is already available — you do NOT need to call get_active_timetable again.\n\`\`\`json\n${timetableJson}\n\`\`\`\n\n` +
+                    `The following library/general info is already available — you do NOT need to call search_general_guidelines again.\n\`\`\`json\n${libraryJson}\n\`\`\`\n---`;
+
+                if (groqMessages[0]?.role === 'system') {
+                    groqMessages[0].content += dayInjection;
+                }
+                console.log(`[Day-Aware Inject] Pre-loaded timetable + library data for ${targetDay} (~${timetableJson.length + libraryJson.length} chars).`);
+            } catch (injectErr) {
+                // Non-fatal — model will call the tools itself as a fallback
+                console.warn(`[Day-Aware Inject] Failed to pre-fetch data: ${injectErr.message}. Model will tool-call instead.`);
+            }
         }
     }
 
@@ -1821,7 +1940,9 @@ app.post('/api/chat', async (req, res) => {
         const { text, options, debug } = await getChatResponse(finalSessionId, message.trim());
         res.json({ response: text, options, sessionId: finalSessionId, debug });
     } catch (error) {
-        // ── Task 2: Detailed error logging — surface the exact line that failed
+        // ── Task 5: Detailed error logging — surface the exact line that failed
+        const logLine = `[${new Date().toISOString()}] [/api/chat ERROR]\n${error.stack || error.message || error}\n\n`;
+        try { fs.appendFileSync('./server.log', logLine); } catch (_) {}
         console.error('[/api/chat] Detailed Error:', error.stack || error.message || error);
         res.status(500).json({ error: 'Internal server error' });
     }

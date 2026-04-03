@@ -9,7 +9,7 @@
         content="ZHCET Buddy - AI Academic Advisor for Zakir Husain College of Engineering & Technology, AMU">
     <meta name="theme-color" content="#0B0B14">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 </head>
@@ -65,20 +65,35 @@
                         you with courses, rules, grading, and everything ZHCET!</p>
                     <div class="quick-start">
                         <h3>What would you like to know?</h3>
-                        <div class="option-chips" id="welcome-chips">
-                            <button class="option-chip" data-message="📋 Show me course structures">📋 Course
-                                Structures</button>
-                            <button class="option-chip" data-message="📖 Tell me about rules and ordinances">📖 Rules &
-                                Ordinances</button>
-                            <button class="option-chip" data-message="📊 Explain the grading system">📊 Grading
-                                System</button>
-                            <button class="option-chip" data-message="🏫 Tell me about ZHCET">🏫 About ZHCET</button>
-                            <button class="option-chip" data-message="🎓 What are the promotion rules?">🎓 Promotion
-                                Rules</button>
-                            <button class="option-chip" data-message="📚 Tell me about the library">📚 Library
-                                Info</button>
-                            <button class="option-chip upload-chip" id="welcome-upload-chip">📄 Upload Registration
-                                Card</button>
+                        <div class="bento-grid" id="welcome-chips">
+                            <button class="bento-card" data-message="📋 Show me course structures">
+                                <div class="bento-icon">📋</div>
+                                <div class="bento-text">Course Structures</div>
+                            </button>
+                            <button class="bento-card" data-message="📖 Tell me about rules and ordinances">
+                                <div class="bento-icon">📖</div>
+                                <div class="bento-text">Rules & Ordinances</div>
+                            </button>
+                            <button class="bento-card" data-message="📊 Explain the grading system">
+                                <div class="bento-icon">📊</div>
+                                <div class="bento-text">Grading System</div>
+                            </button>
+                            <button class="bento-card bento-wide" data-message="🏫 Tell me about ZHCET">
+                                <div class="bento-icon">🏫</div>
+                                <div class="bento-text">About ZHCET</div>
+                            </button>
+                            <button class="bento-card" data-message="🎓 What are the promotion rules?">
+                                <div class="bento-icon">🎓</div>
+                                <div class="bento-text">Promotion Rules</div>
+                            </button>
+                            <button class="bento-card" data-message="📚 Tell me about the library">
+                                <div class="bento-icon">📚</div>
+                                <div class="bento-text">Library Info</div>
+                            </button>
+                            <button class="bento-card bento-upload upload-chip" id="welcome-upload-chip">
+                                <div class="bento-icon">📄</div>
+                                <div class="bento-text">Upload Reg. Card</div>
+                            </button>
                         </div>
                     </div>
                 </div>

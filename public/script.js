@@ -148,14 +148,35 @@ function clearChat() {
         <p>Your friendly academic advisor for Zakir Husain College of Engineering & Technology. I can help you with courses, rules, grading, and everything ZHCET!</p>
         <div class="quick-start">
             <h3>What would you like to know?</h3>
-            <div class="option-chips" id="welcome-chips">
-                <button class="option-chip" data-message="📋 Show me course structures">📋 Course Structures</button>
-                <button class="option-chip" data-message="📖 Tell me about rules and ordinances">📖 Rules & Ordinances</button>
-                <button class="option-chip" data-message="📊 Explain the grading system">📊 Grading System</button>
-                <button class="option-chip" data-message="🏫 Tell me about ZHCET">🏫 About ZHCET</button>
-                <button class="option-chip" data-message="🎓 What are the promotion rules?">🎓 Promotion Rules</button>
-                <button class="option-chip" data-message="📚 Tell me about the library">📚 Library Info</button>
-                <button class="option-chip upload-chip" id="welcome-upload-chip">📄 Upload Registration Card</button>
+            <div class="bento-grid" id="welcome-chips">
+                <button class="bento-card" data-message="📋 Show me course structures">
+                    <div class="bento-icon">📋</div>
+                    <div class="bento-text">Course Structures</div>
+                </button>
+                <button class="bento-card" data-message="📖 Tell me about rules and ordinances">
+                    <div class="bento-icon">📖</div>
+                    <div class="bento-text">Rules & Ordinances</div>
+                </button>
+                <button class="bento-card" data-message="📊 Explain the grading system">
+                    <div class="bento-icon">📊</div>
+                    <div class="bento-text">Grading System</div>
+                </button>
+                <button class="bento-card bento-wide" data-message="🏫 Tell me about ZHCET">
+                    <div class="bento-icon">🏫</div>
+                    <div class="bento-text">About ZHCET</div>
+                </button>
+                <button class="bento-card" data-message="🎓 What are the promotion rules?">
+                    <div class="bento-icon">🎓</div>
+                    <div class="bento-text">Promotion Rules</div>
+                </button>
+                <button class="bento-card" data-message="📚 Tell me about the library">
+                    <div class="bento-icon">📚</div>
+                    <div class="bento-text">Library Info</div>
+                </button>
+                <button class="bento-card bento-upload upload-chip" id="welcome-upload-chip">
+                    <div class="bento-icon">📄</div>
+                    <div class="bento-text">Upload Reg. Card</div>
+                </button>
             </div>
         </div>
     `;
@@ -165,7 +186,7 @@ function clearChat() {
 }
 
 function bindWelcomeChips() {
-    document.querySelectorAll('#welcome-chips .option-chip:not(.upload-chip), #welcome-screen .option-chip:not(.upload-chip)').forEach(chip => {
+    document.querySelectorAll('#welcome-chips .bento-card:not(.upload-chip), #welcome-screen .bento-card:not(.upload-chip), #welcome-chips .option-chip:not(.upload-chip), #welcome-screen .option-chip:not(.upload-chip)').forEach(chip => {
         chip.addEventListener('click', () => {
             const message = chip.getAttribute('data-message');
             if (message) sendMessage(message);
@@ -534,7 +555,7 @@ document.addEventListener('click', (e) => {
 
 // Chip hover glow tracking
 document.addEventListener('mousemove', (e) => {
-    const chips = document.querySelectorAll('.option-chip');
+    const chips = document.querySelectorAll('.option-chip, .bento-card');
     chips.forEach(chip => {
         const rect = chip.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;

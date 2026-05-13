@@ -1847,6 +1847,21 @@ app.patch('/api/admin/timetable/:id/entries', (req, res) => {
     }
 });
 
+// Re-sync dynamic (PE/OE/HM/AU) courses from a timetable's entries into zhcet_courses.json.
+// Useful for timetables uploaded before the PE-sync feature existed.
+app.post('/api/admin/timetable/:id/sync', (req, res) => {
+    try {
+        const result = TimetableManager.resyncCoursesFromTimetable(req.params.id);
+        if (result) {
+            res.json({ success: true, message: `Dynamic courses re-synced from timetable "${req.params.id}".`, ...result });
+        } else {
+            res.status(404).json({ error: 'Timetable not found.' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Upload registration card endpoint (chat-specific)
 app.post('/api/chat/upload', upload.single('file'), async (req, res) => {
     try {

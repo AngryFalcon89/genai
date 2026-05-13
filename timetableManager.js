@@ -20,6 +20,7 @@ function getGroq() {
 const TIMETABLE_FILE = './knowledge_base/active_timetable.json';
 const TIMETABLE_FILE_TMP = './knowledge_base/active_timetable.json.tmp';
 const COURSES_JSON = './knowledge_base/zhcet_courses.json';
+const COURSES_JSON_TMP = './knowledge_base/zhcet_courses.json.tmp';
 
 // Cache courses DB in memory so we don't re-read the file on every call
 let _coursesDbCache = null;
@@ -36,6 +37,219 @@ function getCoursesDb() {
         _coursesDbCache = [];
     }
     return _coursesDbCache;
+}
+
+/** Invalidate the in-memory courses cache so the next read picks up disk changes. */
+function invalidateCoursesCache() {
+    _coursesDbCache = null;
+}
+
+/**
+ * Normalize a branch name for fuzzy matching:
+ * strips leading/trailing whitespace, uppercases, and collapses inner spaces.
+ * E.g. "Computer Engineering" → "COMPUTER ENGINEERING"
+ */
+function normalizeBranch(name) {
+    return (name || '').trim().toUpperCase().replace(/\s+/g, ' ');
+}
+
+/**
+ * Atomically write the courses JSON to disk and invalidate the cache.
+ */
+function saveCoursesAtomically(coursesArray) {
+    const payload = JSON.stringify(coursesArray, null, 2);
+    fs.writeFileSync(COURSES_JSON_TMP, payload, 'utf8');
+    const writtenBytes = fs.statSync(COURSES_JSON_TMP).size;
+    const expectedBytes = Buffer.byteLength(payload, 'utf8');
+    if (writtenBytes !== expectedBytes) {
+        fs.unlinkSync(COURSES_JSON_TMP);
+        throw new Error(
+            `[PE Sync] Atomic write integrity check failed: ` +
+            `expected ${expectedBytes} bytes, got ${writtenBytes}.`
+        );
+    }
+    fs.renameSync(COURSES_JSON_TMP, COURSES_JSON);
+    invalidateCoursesCache();
+    console.log(`   ✅ zhcet_courses.json updated atomically.`);
+}
+
+/**
+ * Dynamic categories whose course codes are NOT fixed in the curriculum and
+ * must be resolved from the active timetable each semester.
+ * These are treated as "PE-like" slots that can be populated.
+ */
+const DYNAMIC_CATEGORIES = new Set(['PE', 'OE', 'AU', 'HM']);
+
+/**
+ * Scan a timetable's entries and fill null-code PE / OE / HM / AU placeholders
+ * in zhcet_courses.json for the matching branch+semester.
+ *
+ * Strategy:
+ *  1. Collect all course codes present in the timetable entries.
+ *  2. Find which of those codes are already known (non-null) in zhcet_courses.json.
+ *  3. The remaining "unknown" codes are elective/dynamic courses.
+ *  4. For each dynamic placeholder (null course_code) in zhcet_courses.json that
+ *     matches the timetable's branch+semester, assign the next unknown code in
+ *     the category order (PE first, then OE, HM, AU), and stamp source_timetable_id.
+ *  5. Update searchable_text to include the real code and title.
+ *
+ * @param {object} timetable - The saved timetable object (with id, branch, semester, entries)
+ */
+function syncPECoursesFromTimetable(timetable) {
+    console.log(`🔗 [PE Sync] Syncing dynamic courses from timetable "${timetable.id}" (${timetable.branch} Sem ${timetable.semester})...`);
+
+    const courses = getCoursesDb();
+    const semNum = parseInt(timetable.semester, 10);
+    const normTimetableBranch = normalizeBranch(timetable.branch);
+
+    // ── Step 1: Collect unique course codes from timetable entries ────────────
+    const timetableCodes = new Set(
+        (timetable.entries || [])
+            .map(e => (e.course_code || '').trim())
+            .filter(c => c.length > 0)
+    );
+
+    if (timetableCodes.size === 0) {
+        console.log('   ⚠️  No course codes in timetable entries — skipping PE sync.');
+        return;
+    }
+
+    // ── Step 2: Identify which codes are already static in courses.json ───────
+    // A code is "static" if it exists with a non-null course_code in any entry.
+    const staticCodes = new Set(
+        courses
+            .filter(c => c.course_code !== null && c.course_code !== undefined)
+            .map(c => c.course_code)
+    );
+
+    // ── Step 3: Unknown codes = timetable codes not in the static set ─────────
+    // These are the elective/dynamic courses picked for this semester.
+    const unknownCodes = [...timetableCodes].filter(code => !staticCodes.has(code));
+
+    if (unknownCodes.length === 0) {
+        console.log('   ℹ️  All timetable course codes are already in the static curriculum — no PE placeholders to fill.');
+        return;
+    }
+    console.log(`   🎯 Dynamic (elective) codes found in timetable: [${unknownCodes.join(', ')}]`);
+
+    // Build a lookup: code → { title, professor } from first timetable entry for that code
+    const codeInfo = {};
+    for (const entry of (timetable.entries || [])) {
+        const code = (entry.course_code || '').trim();
+        if (!code || staticCodes.has(code)) continue;
+        if (!codeInfo[code]) {
+            codeInfo[code] = {
+                title: (entry.course_title || '').trim() || null,
+            };
+        }
+    }
+
+    // ── Step 4: Match branch in courses.json ─────────────────────────────────
+    // Find the canonical branch name stored in courses.json that fuzzy-matches
+    // the timetable branch (e.g. "Computer Engineering" → "COMPUTER ENGINEERING").
+    const matchingBranchName = [...new Set(courses.map(c => c.branch))]
+        .find(b => normalizeBranch(b) === normTimetableBranch);
+
+    if (!matchingBranchName) {
+        console.log(`   ⚠️  Branch "${timetable.branch}" not found in zhcet_courses.json — skipping PE sync.`);
+        return;
+    }
+
+    // ── Step 5: Find null-code dynamic placeholders for this branch+semester ──
+    const placeholders = courses.filter(c =>
+        c.branch === matchingBranchName &&
+        parseInt(c.semester, 10) === semNum &&
+        c.course_code === null &&
+        DYNAMIC_CATEGORIES.has(c.course_category)
+    );
+
+    if (placeholders.length === 0) {
+        console.log(`   ℹ️  No null-code dynamic placeholders found for ${matchingBranchName} Sem ${semNum}.`);
+        return;
+    }
+
+    // Sort placeholders: PE first, then OE, HM, AU — to fill most-specific first.
+    const categoryOrder = ['PE', 'OE', 'HM', 'AU'];
+    placeholders.sort((a, b) => {
+        const ai = categoryOrder.indexOf(a.course_category);
+        const bi = categoryOrder.indexOf(b.course_category);
+        return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
+    // Assign unknown codes to placeholders round-robin
+    let assignedCount = 0;
+    const codeQueue = [...unknownCodes];
+
+    for (const placeholder of placeholders) {
+        // Skip placeholders already linked to another timetable
+        if (placeholder.source_timetable_id && placeholder.source_timetable_id !== timetable.id) continue;
+        // Skip if already filled by this timetable
+        if (placeholder.source_timetable_id === timetable.id && placeholder.course_code !== null) continue;
+
+        if (codeQueue.length === 0) break;
+
+        const code = codeQueue.shift();
+        const info = codeInfo[code] || {};
+        const realTitle = info.title || placeholder.course_title; // keep generic title if no real one
+
+        placeholder.course_code = code;
+        if (info.title) placeholder.course_title = info.title;
+        placeholder.source_timetable_id = timetable.id;
+        // Update searchable_text
+        placeholder.searchable_text =
+            `In ${placeholder.program} ${placeholder.branch}, Semester ${placeholder.semester}, ` +
+            `students take the course ${code}: ${placeholder.course_title}. ` +
+            `This is a ${placeholder.course_category_full} (${placeholder.course_category}) ` +
+            `category course worth ${placeholder.credits} credits.`;
+
+        console.log(`   ✅ Filled placeholder "${placeholder.course_title}" ← ${code}`);
+        assignedCount++;
+    }
+
+    if (assignedCount > 0) {
+        saveCoursesAtomically(courses);
+        console.log(`🔗 [PE Sync] ${assignedCount} dynamic course(s) linked from timetable "${timetable.id}".`);
+    } else {
+        console.log('   ℹ️  No placeholders were updated (all may already be filled or no matching category).');
+    }
+}
+
+/**
+ * Revert all courses in zhcet_courses.json that were filled by a specific
+ * timetable back to their null/generic-placeholder state.
+ *
+ * @param {string} timetableId - The id of the timetable being deleted.
+ * @param {object} [timetableMeta] - Optional { branch, semester } to scope the revert.
+ */
+function revertPECoursesForTimetable(timetableId, timetableMeta = {}) {
+    console.log(`🧹 [PE Revert] Reverting dynamic courses linked to timetable "${timetableId}"...`);
+
+    const courses = getCoursesDb();
+    const linked = courses.filter(c => c.source_timetable_id === timetableId);
+
+    if (linked.length === 0) {
+        console.log('   ℹ️  No dynamic courses were linked to this timetable — nothing to revert.');
+        return;
+    }
+
+    for (const course of linked) {
+        console.log(`   ↩️  Reverting "${course.course_title}" (${course.course_code}) back to null`);
+        course.course_code = null;
+        delete course.source_timetable_id;
+        // Restore contact_periods to null if it was null before (they always are for PE/OE)
+        if (!course.contact_periods || course.contact_periods === 'null') {
+            course.contact_periods = null;
+        }
+        // Restore searchable_text to generic form
+        course.searchable_text =
+            `In ${course.program} ${course.branch}, Semester ${course.semester}, ` +
+            `students take the course ${course.course_title}. ` +
+            `This is a ${course.course_category_full} (${course.course_category}) ` +
+            `category course worth ${course.credits} credits.`;
+    }
+
+    saveCoursesAtomically(courses);
+    console.log(`🧹 [PE Revert] ${linked.length} dynamic course(s) reverted for timetable "${timetableId}".`);
 }
 
 /**
@@ -424,6 +638,14 @@ export const TimetableManager = {
             allTimetables.push(newTimetable);
             step5_saveAtomically(allTimetables);
 
+            // ── Step 6 — Sync dynamic (PE/OE/HM/AU) courses from this timetable ──
+            // Non-fatal: a failure here must not undo the timetable save.
+            try {
+                syncPECoursesFromTimetable(newTimetable);
+            } catch (syncErr) {
+                console.error(`⚠️  [PE Sync] Non-fatal: failed to sync dynamic courses: ${syncErr.message}`);
+            }
+
             // ── Clean up local temp file AFTER confirmed save ──────────────────────
             console.log('🧹 [Cleanup] Removing temp files after confirmed save...');
             if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
@@ -520,15 +742,52 @@ export const TimetableManager = {
         return tt;
     },
 
+    /**
+     * Manually re-trigger the PE/OE/HM/AU course sync for an existing timetable.
+     * Useful for timetables that were uploaded before this feature was introduced.
+     * @param {string} id - Timetable ID to re-sync.
+     * @returns {{ synced: true, timetableId: string } | null}
+     */
+    resyncCoursesFromTimetable(id) {
+        const all = this.getAllTimetables();
+        const tt = all.find(t => t.id === id);
+        if (!tt) return null;
+        syncPECoursesFromTimetable(tt);
+        return { synced: true, timetableId: id };
+    },
+
     deleteTimetable(id) {
         const all = this.getAllTimetables();
+        const timetable = all.find(t => t.id === id);
         const filtered = all.filter(t => t.id !== id);
         if (filtered.length === all.length) return false;
         step5_saveAtomically(filtered);
+        // Revert any dynamic (PE/OE/HM/AU) courses that were linked to this timetable.
+        // Non-fatal: a revert failure must not report a failed delete.
+        if (timetable) {
+            try {
+                revertPECoursesForTimetable(id, { branch: timetable.branch, semester: timetable.semester });
+            } catch (revertErr) {
+                console.error(`⚠️  [PE Revert] Non-fatal: failed to revert dynamic courses: ${revertErr.message}`);
+            }
+        }
         return true;
     },
 
     deleteAllTimetables() {
+        // Revert PE courses for every active timetable before removing the file.
+        try {
+            const all = this.getAllTimetables();
+            for (const tt of all) {
+                try {
+                    revertPECoursesForTimetable(tt.id, { branch: tt.branch, semester: tt.semester });
+                } catch (revertErr) {
+                    console.error(`⚠️  [PE Revert] Non-fatal revert for timetable "${tt.id}": ${revertErr.message}`);
+                }
+            }
+        } catch (e) {
+            console.error(`⚠️  [PE Revert] Could not load timetables for bulk revert: ${e.message}`);
+        }
         if (fs.existsSync(TIMETABLE_FILE)) {
             fs.unlinkSync(TIMETABLE_FILE);
             return true;

@@ -3,8 +3,30 @@ node_modules/
 .DS_Store
 secret.txt
 questions.txt
+
+# Runtime data (not version-controlled)
 sessions.json
+sessions.json.bak
+sessions.json.tmp
+*.json.bak
+*.json.tmp
+
+# Vector store (rebuild with node index.js)
 vector_store/
+
+# File uploads (transient)
 uploads/
-active_timetable.json
+
+# Timetable (managed via admin panel)
+knowledge_base/active_timetable.json
+
+# Logs and test outputs
 server.log
+ragas_results.json
+ragas_report.md
+test_report.md
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
